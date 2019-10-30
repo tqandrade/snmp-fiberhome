@@ -23,8 +23,8 @@ It is loaded using the require() function:
 
 ## Tests
 
-| OLT |
-|-|
+| OLT | Status |
+|-----|--------|
 | AN5516-01 | Tested |
 | AN5116 | Not Tested |
 
