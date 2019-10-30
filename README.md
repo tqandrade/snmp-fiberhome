@@ -37,17 +37,17 @@ It is loaded using the require() function:
 
 ## Initial settings
 
-	const fh = require('snmp-fiberhome')
+    const fh = require('snmp-fiberhome')
 
-	const options = {
-		ip: '0.0.0.0',					 // OLT IP
-		community: 'default'
-		port: 161,
-		trapPort: 162,
-		enableWarnings: true
-	}
-	
-	fh.function(options, ...)	  // Call of functions
+    const options = {
+        ip: '0.0.0.0',             // OLT IP
+        community: 'default'
+        port: 161,
+        trapPort: 162,
+        enableWarnings: true
+    }
+
+    fh.function(options, ...)      // Call of functions
 
 ---
 
