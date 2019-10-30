@@ -28,8 +28,8 @@ It is loaded using the require() function:
 | AN5516-01 | Tested |
 | AN5116 | Not Tested |
 
-| ONU | Tech |
-|-|-|-|
+| ONU | Tech | Status |
+|-----|------|--------|
 | AN5506-01-A1 | GPON | Tested |
 | AN5506-04-F1 | GPON | Tested |
 
