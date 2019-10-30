@@ -1,0 +1,28 @@
+{
+  "name": "snmp-fiberhome",
+  "version": "1.0.0",
+  "description": "This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, pon ports and ONUs by performing read and write functions directly in OLT.",
+  "main": "snmp-fiberhome.js",
+  "private": false,
+  "keywords": [
+    "snmp",
+    "fiberhome",
+    "olt",
+    "onu",
+    "slot",
+    "management",
+    "protocol"
+  ],
+  "author": "Davi D. Baltar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/davibaltar/snmp-fiberhome.git"
+  },
+  "dependencies": {
+    "net-snmp": "^1.2.4",
+    "promise-queue": "^2.2.5",
+    "string.prototype.padstart": "^3.0.0",
+    "vow": "^0.4.20"
+  }
+}
