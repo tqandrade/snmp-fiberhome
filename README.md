@@ -24,12 +24,14 @@ It is loaded using the require() function:
 ## Tests
 
 | OLT | Status |
-|-----|--------|
+|-|-|
 | AN5516-01 | Tested |
 | AN5116 | Not Tested |
 
+-
+
 | ONU | Tech | Status |
-|-----|------|--------|
+|-|-|-|
 | AN5506-01-A1 | GPON | Tested |
 | AN5506-04-F1 | GPON | Tested |
 
@@ -49,7 +51,7 @@ It is loaded using the require() function:
 
 ---
 
-**IMPORTANT! ** For ONUs using GPON technology, the `macAddress` parameter in the following functions will receive the equipment SERIAL.
+**IMPORTANT!** For ONUs using GPON technology, the `macAddress` parameter in the following functions will receive the equipment SERIAL.
 
 The following functions are assigned the **slot**, **pon** and **onuId** parameters to specify a particular ONU. If you work with onuIndex, use the `parseOnuIndex()` function to convert onuIndex to an object containing the values of **slot**, **pon** and **onuId**.
 
@@ -65,7 +67,7 @@ See the function `convertToOnuIndex()`
 
 ### getOltInformation()
 
-**Description: ** Get relevant information from OLT.
+**Description:** Get relevant information from OLT.
 
 **Function signature:**
 
@@ -108,7 +110,7 @@ Output:
 
 ### getOltModel()
 
-**Description: ** Returns the OLT model.
+**Description:** Returns the OLT model.
 
 **Function signature:**
 
@@ -128,7 +130,7 @@ Output:
 
 ### getSubrackInformation()
 
-**Description: ** Returns information regarding the subrack.
+**Description:** Returns information regarding the subrack.
 
 **Function signature:**
 
@@ -153,7 +155,7 @@ Output:
 
 ### getPonPortList()
 
-**Description: ** Returns an array with the relevant information from all PON ports in the OLT.
+**Description:** Returns an array with the relevant information from all PON ports in the OLT.
 
 **Function signature:**
 
@@ -191,7 +193,7 @@ Output:
 
 ### getPonPort()
 
-**Description: ** Returns the relevant information for a given PON port in OLT.
+**Description:** Returns the relevant information for a given PON port in OLT.
 
 **Function signature:**
 
@@ -226,7 +228,7 @@ Output:
 
 ### getSlots()
 
-**Description: ** Returns an array with the number of each slot.
+**Description:** Returns an array with the number of each slot.
 
 **Function signature:**
 
@@ -246,7 +248,7 @@ Output:
 
 ### getSlotsInformationList()
 
-**Description: ** Retorna uma array com informações relevantes de todos os slots na OLT.
+**Description:** Retorna uma array com informações relevantes de todos os slots na OLT.
 
 **Function signature:**
 
@@ -291,7 +293,7 @@ Output:
 
 ### getCardList()
 
-**Description: ** Returns an array with relevant information from all cards.
+**Description:** Returns an array with relevant information from all cards.
 
 **Function signature:**
 
@@ -329,7 +331,7 @@ Output:
 
 ### getCard()
 
-**Description: ** Retorna informações relevantes de um determinado card. If not found, the return will be `false`.
+**Description:** Retorna informações relevantes de um determinado card. If not found, the return will be `false`.
 
 **Function signature:**
 
@@ -365,7 +367,7 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 ### addAllOnus()
 
-**Description: ** This function performs WAN and Vlans authorization and configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `vlans` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `vlans` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
+**Description:** This function performs WAN and Vlans authorization and configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `vlans` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `vlans` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
 
 **Function signature:**
 
@@ -523,9 +525,9 @@ Output:
 
 ### enableLanPorts()
 
-**Description: ** Enables and disables LAN ports for a specific ONU. If successful, the function returns `onuIndex`, otherwise `false`.
+**Description:** Enables and disables LAN ports for a specific ONU. If successful, the function returns `onuIndex`, otherwise `false`.
 
-**Function signature: **
+**Function signature:**
 
 	enableLanPorts(options: <objecy>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
 
@@ -550,7 +552,7 @@ Output:
 
 **Description:** Returns a list of all authorized ONUs in OLT.
 
-**Function signature: **
+**Function signature:**
 
 	getAuthorizedOnus(options: <object>) => Promise <Array>
 
@@ -579,7 +581,7 @@ Output:
 
 **Description:** Searches for a ONU in OLT based on mac address. The ONU must be authorized. NOTE: The input parameters `slot` and `pon` are not required, but their use will make the search faster. On success, returns an object containing basic ONU information, otherwise returns `null`.
 
-**Function signature: **
+**Function signature:**
 
 	getBasicOnuInfo(options: <object>, macAddress: <string>, slot: <number>, pon: <number>) => Promise <object>
 
@@ -611,7 +613,7 @@ Output:
 
 **Description:** Returns the LAN ports settings of a given ONU.
 
-**Function signature: **
+**Function signature:**
 
 	getLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
 
@@ -655,9 +657,9 @@ Output:
 
 ### getMacAddressList()
 
-**Description: ** Returns a list containing the mac address of all authorized ONUs in a given OLT
+**Description:** Returns a list containing the mac address of all authorized ONUs in a given OLT
 
-**Function signature: **
+**Function signature:**
 
 	getMacAddressList(options: <object>) => Promise <Array>
 
@@ -683,9 +685,9 @@ Output:
 
 **Description:** Returns relevant information from a particular ONU, such as: opticalPowers (signals), distance, model, macAddress, enters others.
 
-**NOTE: ** The `opticalPower` parameter is available for GPON technology only. EPON technology will return the parameters with zero value.
+**NOTE:** The `opticalPower` parameter is available for GPON technology only. EPON technology will return the parameters with zero value.
 
-**Function signature: **
+**Function signature:**
 
 	getOnu(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
 
@@ -769,9 +771,9 @@ Output:
 
 ### getOnuBandwidth()
 
-**Description: ** Returns the bandwidth of a given ONU.
+**Description:** Returns the bandwidth of a given ONU.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuBandwidth(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
 
@@ -797,9 +799,9 @@ Output:
 
 ### getOnuDistance()
 
-**Description: ** Returns the distance traveled by the fiber to a particular ONU in the kilometer unit.
+**Description:** Returns the distance traveled by the fiber to a particular ONU in the kilometer unit.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuDistance(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
 
@@ -821,9 +823,9 @@ Output:
 
 ### getOnuIdList()
 
-**Description: ** Returns a list with the `onuId` of all authorized ONUs in OLT.
+**Description:** Returns a list with the `onuId` of all authorized ONUs in OLT.
  
-**Function signature: **
+**Function signature: *
 
 	getOnuIdList(options: <object>) => Promise <Array>
 
@@ -851,9 +853,9 @@ Output:
 
 ### getOnuIndexList()
 
-** Descrição: ** Returns a list with the index of all authorized ONUs in OLT.
+**Description:** Returns a list with the index of all authorized ONUs in OLT.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuIndexList(options: <object>) => Promise <Array>
 
@@ -871,9 +873,9 @@ Output:
 
 ### getOnuLastOffTime()
 
-**Description: ** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second).
+**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second).
 
-**Function signature: **
+**Function signature:**
 
 	getOnuLastOffTime(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
 
@@ -895,9 +897,9 @@ Output:
 
 ### getOnuListByPon()
 
-**Description: ** Returns a list of all connected ONUs on a given PON port.
+**Description:** Returns a list of all connected ONUs on a given PON port.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
 
@@ -952,11 +954,11 @@ Output:
 
 ### getOnuOpticalPower()
 
-**Description: ** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. 
+**Description:** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. 
 
-**NOTE: ** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
+**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuOpticalPower(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
 
@@ -996,11 +998,11 @@ Output:
 
 ### getOnuOpticalPowerList()
 
-** Description: ** Returns a signal list of all authorized ONUs in OLT.
+**Description:** Returns a signal list of all authorized ONUs in OLT.
 
-**NOTE: ** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
+**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuOpticalPowerList(options: <object>) => Promise <Array>
 
@@ -1049,9 +1051,9 @@ Output:
 
 ### getOnuUplinkInterface()
 
-** Description: ** Returns information regarding the uplink interface of a given ONU.
+**Description:** Returns information regarding the uplink interface of a given ONU.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuUplinkInterface(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
 
@@ -1079,9 +1081,9 @@ Output:
 
 ### getOnuWebAdmin()
 
-**Description: ** Returns an array of web access settings for a given ONU.
+**Description:** Returns an array of web access settings for a given ONU.
 
-**Function signature: **
+**Function signature:**
 
 	getOnuWebAdmin: (options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
 
@@ -1113,9 +1115,9 @@ Output:
 
 ### getRxPowerListByPon()
 
-**Description: ** Returns a list containing the Rx signal from all ONUs of a given PON port in OLT.
+**Description:** Returns a list containing the Rx signal from all ONUs of a given PON port in OLT.
 
-**Function signature: **
+**Function signature:**
 
 	getRxPowerListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
 
@@ -1143,7 +1145,7 @@ Output:
 
 ### getUnauthorizedOnus()
 
-** Description: ** Returns an array containing all unauthorized ONUs in OLT.
+**Description:** Returns an array containing all unauthorized ONUs in OLT.
 
 **Function signature:**
 
@@ -1185,9 +1187,9 @@ Not all ONUs will have the `mode` parameter on `onuType`
 
 ### parseOnuIndex()
 
-**Description: ** Converts a `onuIndex` to `slot`, `pon`, and `onuId`.
+**Description:** Converts a `onuIndex` to `slot`, `pon`, and `onuId`.
 
-**Function signature: **
+**Function signature:**
 
 	parseOnuIndex(onuIndex: <number>) => <object>
 
@@ -1209,9 +1211,9 @@ Output:
 
 ### setLanPorts()
 
-**Description: ** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `transparent` and `tag` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7
+**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `transparent` and `tag` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7
 
-**Function signature: **
+**Function signature:**
 
 	setLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
 
@@ -1266,9 +1268,9 @@ Output:
 
 ### setOnuBandwidth()
 
-**Description: ** Sets the bandwidth of a given ONU. The input parameters `upBw` and `downBw` must be in the unit of Kbit/s and the values must be within the range 256 to 1000000.
+**Description:** Sets the bandwidth of a given ONU. The input parameters `upBw` and `downBw` must be in the unit of Kbit/s and the values must be within the range 256 to 1000000.
 
-**Function signature: **
+**Function signature:**
 
 	setOnuBandwidth(options: <object>, slot: <number>, pon: <number>, onuId: <number>, upBw: <number>, downBw: <number>) => Promise <number>
 
@@ -1286,9 +1288,9 @@ Output:
 
 ### setOnuWebAdmin()
 
-** Description: ** Set the ONU access settings via web. Returns `true` on success and `false` otherwise. Some ONUs only accept a single 'admin' group profile, such as AN5506-01-A1, mas caso mais de um perfil seja informado, o perfil do grupo 'admin' será configurado e os demais serão ignorados para esse tipo de ONU.
+**Description:** Set the ONU access settings via web. Returns `true` on success and `false` otherwise. Some ONUs only accept a single 'admin' group profile, such as AN5506-01-A1, mas caso mais de um perfil seja informado, o perfil do grupo 'admin' será configurado e os demais serão ignorados para esse tipo de ONU.
 
-**Function signature: **
+**Function signature:**
 
 	setOnuWebAdmin: (options: <object>, slot: <number>, pon: <number>, onuId: <number>, aWebConfig: <Array>) => Promise <boolean>
 
@@ -1310,50 +1312,50 @@ Output:
 
 ### setWan()
 
-**Description: ** Performs the WAN settings. Values not entered in `profiles` parameter will be set to `false`, except for the `lans` and `ssids` parameters, which are all set to true by default.
+**Description:** Performs the WAN settings. Values not entered in `profiles` parameter will be set to `false`, except for the `lans` and `ssids` parameters, which are all set to true by default.
 
-**Function signature: **
+**Function signature:**
 
 	setWan(options: <object>, slot: <number>, pon: <number>, onuId: <number>, profiles: <Array>) => Promise <number>
 
 `profiles: <Array>` parameter:
 
-	var profile = {            // Values:
-		wanMode:             // 'tr069', 'internet', 'tr069_internet', 'multcast', 'voip', 'voip_internet', 'radius', 'radius_internet' or 'other'
-		wanConnType:      // 'router' or 'bridge'
-		wanVlan:               // <number> or false
-		wanCos:                // <number> or false
-		wanNat:                // true or false
-		ipMode:                // 'dhcp', 'static' or 'pppoe'
-		wanIp:                   // 'x.y.w.z' or false
-		wanMask:             // 'x.y.w.z' or false
+	var profile = {        // Values:
+		wanMode:           // 'tr069', 'internet', 'tr069_internet', 'multcast', 'voip', 'voip_internet', 'radius', 'radius_internet' or 'other'
+		wanConnType:       // 'router' or 'bridge'
+		wanVlan:           // <number> or false
+		wanCos:            // <number> or false
+		wanNat:            // true or false
+		ipMode:            // 'dhcp', 'static' or 'pppoe'
+		wanIp:             // 'x.y.w.z' or false
+		wanMask:           // 'x.y.w.z' or false
 		wanGateway:        // 'x.y.w.z' or false
-		wanMasterDNS:    // 'x.y.w.z' or false
-		wanSlaveDNS:      // 'x.y.w.z' or false
-		pppoeProxy:         // true or false
-		pppoeUsername:  // <string> or false
-		pppoePassword:   // <string> or false
-		pppoeName:        // <string> or false
-		pppoeMode:        // 'auto' or 'payload'
-		wanQoS:               // true or false
-		vlanMode:            // 'transparent' or 'tag'
+		wanMasterDNS:      // 'x.y.w.z' or false
+		wanSlaveDNS:       // 'x.y.w.z' or false
+		pppoeProxy:        // true or false
+		pppoeUsername:     // <string> or false
+		pppoePassword:     // <string> or false
+		pppoeName:         // <string> or false
+		pppoeMode:         // 'auto' or 'payload'
+		wanQoS:            // true or false
+		vlanMode:          // 'transparent' or 'tag'
 		translationValue:  // <number> or false
-		cos:                       // <number> or false
-		QinQ:                    // true or false
+		cos:               // <number> or false
+		QinQ:              // true or false
 		tpid: 33024,
-		svlan:                    // <number> or false
-		svlanCos:              // <number> or false
+		svlan:             // <number> or false
+		svlanCos:          // <number> or false
 		lans: { 
-			lan1: 				// true or false
-			lan2: 				// true or false
-			lan3: 				// true or false
-			lan4: 				// true or false
+			lan1:          // true or false
+			lan2:          // true or false
+			lan3:          // true or false
+			lan4:          // true or false
 			},
 		ssids: { 
-			ssid1:				// true or false
-			ssid2:				// true or false
-			ssid3:				// true or false
-			ssid4:				// true or false
+			ssid1:         // true or false
+			ssid2:         // true or false
+			ssid3:         // true or false
+			ssid4:         // true or false
 		}
 	}
 
