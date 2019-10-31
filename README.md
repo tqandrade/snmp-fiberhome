@@ -19,7 +19,7 @@ This module is installed using node package manager (npm):
 
 It is loaded using the require() function:
 
-    const  fh = require('snmp-fiberhome')
+    const fh = require('snmp-fiberhome')
 
 ## Tests
 
