@@ -423,12 +423,12 @@ Example:
 ```js
 fh.addAllOnus(options,
 [
-    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2000, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
-    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2001, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2001, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
+    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
 ],
 [
-    { lan: 1, vlans: [{ transparent: 3000 }, { tag: 3001, cos: 4 }] },
-    { lan: 3, enable: false }
+    { lan: 1, vlans: [{ transparent: 2001 }, { tag: 3011, cos: 3 }] },
+    { lan: 2, enable: false }
 ]
 ).then(authOnuList => {
     console.log(authOnuList)
@@ -484,12 +484,12 @@ Example:
 ```js
 fh.addOnu(options, { slot: 11, pon: 1, onuTypeCode: 765, macAddress: 'FHTT1231e796' }, 
 [
-    { wanMode: 'internet', vlanId: 2000, mode: 'router', pppoe: true, translationValue: 2000, svlan: 2000 },
-    { wanMode: 'tr069', vlanId: 2001, mode: 'router', dhcp: true, translationValue: 2000, svlan: 2000 }
+    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2001, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
+    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
 ],
 [
-    { lan: 1, vlans: [{ transparent: 3000 }, { tag: 3001, cos: 4 }] },
-    { lan: 3, enable: false }
+    { lan: 1, vlans: [{ transparent: 2001 }, { tag: 3011, cos: 3 }] },
+    { lan: 2, enable: false }
 ]
 ).then(onu => {
     console.log(onu)
@@ -1521,8 +1521,8 @@ Example:
 
 ```js
 fh.setWan(options, 11, 1, 1, [
-    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2000, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
-    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2001, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2001, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
+    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
 ]
 ).then(onuIndex => {
     console.log(onuIndex)
