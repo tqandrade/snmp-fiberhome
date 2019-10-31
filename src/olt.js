@@ -129,7 +129,7 @@ function getPonPort(options, slot, ponPort) {
                     portIndex = convertToOnuIndex(slot, ponPort, 0)
                     var oid = OID.getPonPortList
                     snmp_fh.get(options, [oid + '.1.' + portIndex, oid + '.2.' + portIndex, oid + '.3.' + portIndex, oid + '.4.' + portIndex, oid + '.5.' + portIndex, oid + '.6.' + portIndex, oid + '.12.' + portIndex, oid + '.13.' + portIndex,]).then(data => {
-                        console.log(data)
+                        //console.log(data)
                         data.forEach((e, idx) => {
                             if (e.oid.split('.')[13] == 1) {
                                 pon = { portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] }

@@ -99,7 +99,7 @@ function oidEncodeIntToHex(intValue) {
         bin = ("000000000000000000000000" + (intValue.toString(2))).slice(-24)
         //TODO: implementar
     } else {
-        console.log("Erro: O tamanho do número", intValue, " em 'oidEncodeIntToHex', não é suportado. Valor máximo: 2097151 ")
+        //console.log("Erro: O tamanho do número", intValue, " em 'oidEncodeIntToHex', não é suportado. Valor máximo: 2097151 ")
         return null
     }
     return hex

@@ -60,17 +60,20 @@ function addAllOnus(options, profilesWan, vlans) {
         try {
             getUnauthorizedOnus(options).then(result => {
                 if (result.length > 0) {
-                    console.log(`Foram localizadas ${result.length} ONUs aguardando configuracao (${result.map(m => (m.serial)).join(',')})`)
+                    if (options.enableWarnings)
+                        console.error(`ONUs found: ${result.length}`)
                     result.forEach(onu => {
                         queue.add(f => addOnu(options, onu, profilesWan, vlans)).then(onuAuth => {
                             aAuthOnus.push(onuAuth)
-                            console.log('\t' + onuAuth.macAddress + ' OK')
+                            if (options.enableWarnings)
+                                console.error('\t' + onuAuth.macAddress + ' OK')
                             if (result.length == aAuthOnus.length)
                                 return resolve(aAuthOnus)
                         })
                     })
                 } else {
-                    console.log(`Foram localizadas 0 ONUs aguardando configuracao`)
+                    if (options.enableWarnings)
+                        console.error(`ONUs found: 0`)
                     return resolve([])
                 }
             })
@@ -1114,17 +1117,40 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
                                         var vlanNum = null
                                         if (vlan.tag) {
                                             bodyLan[4] = `01`
+                                            if ((vlan.tag < 1 || vlan.tag > 4085) && (options.enableWarnings))
+                                                console.error('Warning! setLanPorts(): Invalid values for vlan tag. Values must be in the range 1 to 4085. The limit value has been set.')
+                                            if (vlan.tag < 1)
+                                                vlanNum = 1
+                                            if (vlan.tag > 4085)
+                                                vlanNum = 4085
+
                                             vlanNum = vlan.tag.toHex(4)
                                         } else if (vlan.transparent) {
                                             bodyLan[4] = `03`
+                                            if ((vlan.transparent < 1 || vlan.transparent > 4085) && (options.enableWarnings))
+                                                console.error('Warning! setLanPorts(): Invalid values for vlan transparent. Values must be in the range 1 to 4085. The limit value has been set.')
+                                            if (vlan.transparent < 1)
+                                                vlanNum = 1
+                                            if (vlan.transparent > 4085)
+                                                vlanNum = 4085
                                             vlanNum = vlan.transparent.toHex(4)
                                         } else {
-                                            console.log('Atenção! Modos "tag" ou "transparent" não foram encontrados". Ignorando config: ' + JSON.stringify(v))
+                                            if (options.enableWarnings)
+                                                console.error('Warning! setLanPorts(): "transparent" or "tag" modes not found ". Ignoring config: ' + JSON.stringify(v))
                                             return
                                         }
+
                                         bodyLan[7] = vlanNum.slice(0, 2)
                                         bodyLan[8] = vlanNum.slice(2, 4)
                                         bodyLan[9] = vlan.cos && vlan.cos >= 0 && vlan.cos < 8 ? vlan.cos.toHex(2) : 'ff'
+
+                                        if (vlan.cos < 0)
+                                            bodyLan[9] = '00'
+                                        if (vlan.cos > 7)
+                                            bodyLan[9] = '07'
+                                        if (options.enableWarnings && (vlan.cos < 0 || vlan.cos > 7))
+                                            console.error('Warning! setLanPorts(): Invalid values for "cos". Values must be in the range 0 to 7. The limit value has been set.')
+
                                         bodyLan = bodyLan.join(' ')
 
                                         aLan[idx].vlansHex.push(bodyLan)

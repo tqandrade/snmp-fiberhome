@@ -201,7 +201,7 @@ function sendSnmp(oid, value, opt, waitResponse = false) {
 
         })
         client.once("err", function (err) {
-            console.log("client error: \n" + err.stack)
+            //console.log("client error: \n" + err.stack)
             client.close()
         })
 
