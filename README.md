@@ -13,13 +13,17 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 
 ## Installation
 
-This module is installed using node package manager (npm):
+This is a [Node.js](https://nodejs.org/en/) module available through the [npm](https://www.npmjs.com/).
 
-    npm install --save snmp-fiberhome 
+```bash
+$ npm install --save snmp-fiberhome 
+```
 
 It is loaded using the require() function:
 
-    const fh = require('snmp-fiberhome')
+```js
+const fh = require('snmp-fiberhome')
+```
 
 ## Tests
 
@@ -37,17 +41,19 @@ It is loaded using the require() function:
 
 ## Initial settings
 
-    const fh = require('snmp-fiberhome')
+```js
+const fh = require('snmp-fiberhome')
 
-    const options = {
-        ip: '0.0.0.0',             // OLT IP
-        community: 'default'
-        port: 161,
-        trapPort: 162,
-        enableWarnings: true
-    }
+const options = {
+    ip: '0.0.0.0',             // OLT IP
+    community: 'default',
+    port: 161,
+    trapPort: 162,
+    enableWarnings: true
+}
 
-    fh.function(options, ...)      // Call of functions
+fh.function(options, ...)      // Call of functions
+```
 
 ---
 
@@ -71,39 +77,45 @@ See the function `convertToOnuIndex()`
 
 **Function signature:**
 
-    getOltInformation(options: <object>) => Promise <object>
+```js
+getOltInformation(options: <object>) => Promise <object>
+```
 
 Example:
 
-    fh.getOltInformation(options).then(oltInfo => {
-        console.log(oltInfo)
-    })
+```js
+fh.getOltInformation(options).then(oltInfo => {
+    console.log(oltInfo)
+})
+```
 
 Output:
 
-    {
-        alias: 'AN5516-01',
-        hardwareModel: 'An5516-01',
-        hardwareVersion: 'WKE2.115.331R1A',
-        ip: "1.2.3.4",        // OLT IP
-        macAddress: '10-0b-d2-12-35-7d',
-        oid: '1.3.6.1.4.1.5875.800.1001.11',
-        slots: [11, 16, 19, 20],
-        softwareVersion: 'RP0700',
-        subrack: {
-            subrackIndex: 1,
-            subrackName: 'AN5516-06',
-            subrackType: 'An5516-06',
-            totalSlotNumber: 14
-        },
-        systemContact: 'DefaultsysContact',
-        systemLocation: 'DefaultsysLocation',
-        systemName: 'Test',
-        systemRunningTime: 133001838,
-        systemRunningTimeUnit: 'ms',
-        temperature: 39,
-        temperatureUnit: '°C'
-    }
+```js
+{
+    alias: 'AN5516-01',
+    hardwareModel: 'An5516-01',
+    hardwareVersion: 'WKE2.115.331R1A',
+    ip: "1.2.3.4",        // OLT IP
+    macAddress: '10-0b-d2-12-35-7d',
+    oid: '1.3.6.1.4.1.5875.800.1001.11',
+    slots: [11, 16, 19, 20],
+    softwareVersion: 'RP0700',
+    subrack: {
+        subrackIndex: 1,
+        subrackName: 'AN5516-06',
+        subrackType: 'An5516-06',
+        totalSlotNumber: 14
+    },
+    systemContact: 'DefaultsysContact',
+    systemLocation: 'DefaultsysLocation',
+    systemName: 'Test',
+    systemRunningTime: 133001838,
+    systemRunningTimeUnit: 'ms',
+    temperature: 39,
+    temperatureUnit: '°C'
+}
+```
 
 ---
 
@@ -113,17 +125,23 @@ Output:
 
 **Function signature:**
 
-    getOltModel(options: <object>) => Promise<string>
+```js
+getOltModel(options: <object>) => Promise<string>
+```
 
 Example:
 
-    fh.getOltModel(options).then(onuModel => {
-        console.log(onuModel)
-    })
+```js
+fh.getOltModel(options).then(onuModel => {
+    console.log(onuModel)
+})
+```
 
 Output:
 
-    'An5516-01'
+```js
+'An5516-01'
+```
 
 ---
 
@@ -133,22 +151,28 @@ Output:
 
 **Function signature:**
 
-    getSubrackInformation(options <object>) => Promise<object>
+```js
+getSubrackInformation(options <object>) => Promise<object>
+```
 
 Example:
 
-    fh.getSubrackInformation(options).then(info => {
-        console.log(info)
-    })
+```js
+fh.getSubrackInformation(options).then(info => {
+    console.log(info)
+})
+```
 
 Output:
 
-    {
-        subrackIndex: 1,
-        subrackName: 'AN5516-06',
-        subrackType: 'An5516-06',
-        totalSlotNumber: 14
-    }
+```js
+{
+    subrackIndex: 1,
+    subrackName: 'AN5516-06',
+    subrackType: 'An5516-06',
+    totalSlotNumber: 14
+}
+```
 
 ---
 
@@ -158,54 +182,22 @@ Output:
 
 **Function signature:**
 
-     getPonPortList(options: <object>) => Promise<Array>
+```js
+getPonPortList(options: <object>) => Promise<Array>
+```
 
 Example:
 
-    fh.getPonPortList(options).then(ponPorts => {
-        console.log(ponPorts)
-    })
+```js
+fh.getPonPortList(options).then(ponPorts => {
+    console.log(ponPorts)
+})
+```
 
 Output:
 
-    [
-        {
-            authorizedOnus: 2,
-            portDescription: 'PON 11/1',
-            portUplinkRate: 1250,
-            portUplinkRateUnit: 'Mbit/s',
-            portDownlinkRate: 2500,
-            portDownlinkRateUnit: 'Mbit/s',
-            portEnableStatus: 'enable',
-            portEnableStatusValue: 1,
-            portIndex: 369623040,
-            portName: 'PON 11/1',
-            portOnlineStatus: 'online',
-            portOnlineStatusValue: 1,
-            portType: 'PON',
-            portTypeValue: 1
-        },
-        // { ... }
-    ]
-
----
-
-### getPonPort()
-
-**Description:** Returns the relevant information for a given PON port in OLT.
-
-**Function signature:**
-
-    getPonPort(options: <object>, slot: <number>, ponPort: <number>) => Promise <object>
-
-Example:
-
-    fh.getPonPort(options, 11, 1).then(ponPort => {
-        console.log(ponPort)
-    })
-
-Output:
-
+```js
+[
     {
         authorizedOnus: 2,
         portDescription: 'PON 11/1',
@@ -221,7 +213,51 @@ Output:
         portOnlineStatusValue: 1,
         portType: 'PON',
         portTypeValue: 1
-    }
+    },
+    // { ... }
+]
+```
+
+---
+
+### getPonPort()
+
+**Description:** Returns the relevant information for a given PON port in OLT.
+
+**Function signature:**
+
+```js
+getPonPort(options: <object>, slot: <number>, ponPort: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getPonPort(options, 11, 1).then(ponPort => {
+    console.log(ponPort)
+})
+```
+
+Output:
+
+```js
+{
+    authorizedOnus: 2,
+    portDescription: 'PON 11/1',
+    portUplinkRate: 1250,
+    portUplinkRateUnit: 'Mbit/s',
+    portDownlinkRate: 2500,
+    portDownlinkRateUnit: 'Mbit/s',
+    portEnableStatus: 'enable',
+    portEnableStatusValue: 1,
+    portIndex: 369623040,
+    portName: 'PON 11/1',
+    portOnlineStatus: 'online',
+    portOnlineStatusValue: 1,
+    portType: 'PON',
+    portTypeValue: 1
+}
+```
 
 ## Slot functions
 
@@ -231,17 +267,23 @@ Output:
 
 **Function signature:**
 
-    getSlots(options: <object>) => Promise <Array>
+```js
+getSlots(options: <object>) => Promise <Array>
+```
 
 Example:
 
-    fh.getSlots(options).then(slots => {
-        console.log(slots)
-    })
+```js
+fh.getSlots(options).then(slots => {
+    console.log(slots)
+})
+```
 
 Output:
 
-    [11, 16, 19, 20]
+```js
+[11, 16, 19, 20]
+```
 
 ---
 
@@ -251,64 +293,30 @@ Output:
 
 **Function signature:**
 
-    getSlotsInformationList(options: <object>) => Promise <Array>
+```js
+getSlotsInformationList(options: <object>) => Promise <Array>
+```
 
 Example:
 
-    fh.getSlotsInformationList(options).then(slots => { 
-        console.log(slots)
-    })
+```js
+fh.getSlotsInformationList(options).then(slots => { 
+    console.log(slots)
+})
+```
 
 Output:
 
-    [
-        {
-            slot: 11,
-            actualCardType: 'GC8B',
-            actualCardTypeValue: 527,
-            authorizedCardType: 'GC8B'
-            authorizedCardTypeValue: 527,
-            cardPresentStatus: 'present',
-            cardInformation: {
-                availablePorts: 8,
-                numberOfPorts: 8,
-                cardStatus: 'normal',
-                cardStatusValue: 1,
-                cardType: 'GC8B',
-                cardTypeValue: 527,
-                cpu: 4.75,
-                cpuUnit: '%',
-                memory: 41.54,
-                memoryUnit: '%',
-                hardwareVersion: 'WKE2.200.012R1C',
-                slot: '11',
-                softwateVersion: 'RP0700'
-            }
-        },
-        // { ... }
-    ]
-
-## Card functions
-
-### getCardList()
-
-**Description:** Returns an array with relevant information from all cards.
-
-**Function signature:**
-
-    getCardsInformationList(options: <object>) => Promise <Array>
-
-Example:
-
-    fh.getCardsInformationList(options).then(cards => {
-        console.log(cards)
-    })
-
-
-Output:
-
-    [
-        {
+```js
+[
+    {
+        slot: 11,
+        actualCardType: 'GC8B',
+        actualCardTypeValue: 527,
+        authorizedCardType: 'GC8B'
+        authorizedCardTypeValue: 527,
+        cardPresentStatus: 'present',
+        cardInformation: {
             availablePorts: 8,
             numberOfPorts: 8,
             cardStatus: 'normal',
@@ -322,28 +330,36 @@ Output:
             hardwareVersion: 'WKE2.200.012R1C',
             slot: '11',
             softwateVersion: 'RP0700'
-        },
-        // { ... }
-    ]
+        }
+    },
+    // { ... }
+]
+```
 
----
+## Card functions
 
-### getCard()
+### getCardList()
 
-**Description:** Retorna informações relevantes de um determinado card. If not found, the return will be `false`.
+**Description:** Returns an array with relevant information from all cards.
 
 **Function signature:**
 
-     getCard(options: <object>, slot: <number>) => Promise <object>
+```js
+getCardsInformationList(options: <object>) => Promise <Array>
+```
 
 Example:
 
-    fh.getCard(options, 11).then(card => {
-        console.log(card)
-    })
+```js
+fh.getCardsInformationList(options).then(cards => {
+    console.log(cards)
+})
+```
 
 Output:
 
+```js
+[
     {
         availablePorts: 8,
         numberOfPorts: 8,
@@ -358,8 +374,50 @@ Output:
         hardwareVersion: 'WKE2.200.012R1C',
         slot: '11',
         softwateVersion: 'RP0700'
-    }
+    },
+    // { ... }
+]
+```
 
+---
+
+### getCard()
+
+**Description:** Retorna informações relevantes de um determinado card. If not found, the return will be `false`.
+
+**Function signature:**
+
+```js
+getCard(options: <object>, slot: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getCard(options, 11).then(card => {
+    console.log(card)
+})
+```
+
+Output:
+
+```js
+{
+    availablePorts: 8,
+    numberOfPorts: 8,
+    cardStatus: 'normal',
+    cardStatusValue: 1,
+    cardType: 'GC8B',
+    cardTypeValue: 527,
+    cpu: 4.75,
+    cpuUnit: '%',
+    memory: 41.54,
+    memoryUnit: '%',
+    hardwareVersion: 'WKE2.200.012R1C',
+    slot: '11',
+    softwateVersion: 'RP0700'
+}
+```
 
 ## ONU functions
 For all the following functions, if the ONU, pon port or slot is not found, the return is **false**.
@@ -370,43 +428,49 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 **Function signature:**
 
-    addAllOnus(options: <object>, profilesWan: <Array>, vlans: <Array>) => Promise <Array>
+```js
+addAllOnus(options: <object>, profilesWan: <Array>, vlans: <Array>) => Promise <Array>
+```
 
 Example:
 
-    fh.addAllOnus(options,
-    [
-        { wanMode: 'internet', wanConnType: 'router', wanVlan: 2000, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
-        { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2001, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
-    ],
-    [
-        { lan: 1, vlans: [{ transparent: 3000 }, { tag: 3001, cos: 4 }] },
-        { lan: 3, enable: false }
-    ]
-    ).then(authOnuList => {
-        console.log(authOnuList)
-    })
+```js
+fh.addAllOnus(options,
+[
+    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2000, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
+    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2001, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+],
+[
+    { lan: 1, vlans: [{ transparent: 3000 }, { tag: 3001, cos: 4 }] },
+    { lan: 3, enable: false }
+]
+).then(authOnuList => {
+    console.log(authOnuList)
+})
+```
 
 Output:
 
-    [
-        {
-            _onuIndex: 369623296,
-            index: 0,
-            slot: 11,
-            pon: 1,
-            onuId: 1,
-            macAddress: 'FHTT1231e796',
-            onuType: {
-                category: 'SFU',
-                code: 765,
-                mode: 'dual',
-                model: 'AN5506-04-F1',
-                type: 'GPON'
-            }
-        },
-        // { ... }
-    ]
+```js
+[
+    {
+        _onuIndex: 369623296,
+        index: 0,
+        slot: 11,
+        pon: 1,
+        onuId: 1,
+        macAddress: 'FHTT1231e796',
+        onuType: {
+            category: 'SFU',
+            code: 765,
+            mode: 'dual',
+            model: 'AN5506-04-F1',
+            type: 'GPON'
+        }
+    },
+    // { ... }
+]
+```
 
 ---
 
@@ -416,48 +480,56 @@ Output:
 
 **Function signature:**
 
-    addOnu(options: <object>, onu: <object>, profilesWan: <Array>, vlans: <Array>) => Promise <object>
+```js
+addOnu(options: <object>, onu: <object>, profilesWan: <Array>, vlans: <Array>) => Promise <object>
+```
 
 `onu: <object>` parameter:
 
-    onu: {
-        slot: <number>,
-        pon: <number>, 
-        onuTypeCode: <number>, 
-        macAddress: <string>
-    }
+```js
+onu: {
+    slot: <number>,
+    pon: <number>, 
+    onuTypeCode: <number>, 
+    macAddress: <string>
+}
+```
 
 Example:
 
-    fh.addOnu(options, { slot: 11, pon: 1, onuTypeCode: 765, macAddress: 'FHTT1231e796' }, 
-    [
-        { wanMode: 'internet', vlanId: 2000, mode: 'router', pppoe: true, translationValue: 2000, svlan: 2000 },
-        { wanMode: 'tr069', vlanId: 2001, mode: 'router', dhcp: true, translationValue: 2000, svlan: 2000 }
-    ],
-    [
-        { lan: 1, vlans: [{ transparent: 3000 }, { tag: 3001, cos: 4 }] },
-        { lan: 3, enable: false }
-    ]
-    ).then(onu => {
-        console.log(onu)
-    })
+```js
+fh.addOnu(options, { slot: 11, pon: 1, onuTypeCode: 765, macAddress: 'FHTT1231e796' }, 
+[
+    { wanMode: 'internet', vlanId: 2000, mode: 'router', pppoe: true, translationValue: 2000, svlan: 2000 },
+    { wanMode: 'tr069', vlanId: 2001, mode: 'router', dhcp: true, translationValue: 2000, svlan: 2000 }
+],
+[
+    { lan: 1, vlans: [{ transparent: 3000 }, { tag: 3001, cos: 4 }] },
+    { lan: 3, enable: false }
+]
+).then(onu => {
+    console.log(onu)
+})
+```
 
 Output:
 
-    {
-        _onuIndex: 369623296,
-        slot: 11,
-        onuId: 1,
-        pon: 1,
-        macAddress: 'FHTT1231e796',
-        onuType: {
-                category: 'SFU',
-                code: 765,
-                mode: 'dual'
-                model: 'AN5506-04-F1'
-                type: 'GPON'
-            }
-    }
+```js
+{
+    _onuIndex: 369623296,
+    slot: 11,
+    onuId: 1,
+    pon: 1,
+    macAddress: 'FHTT1231e796',
+    onuType: {
+            category: 'SFU',
+            code: 765,
+            mode: 'dual'
+            model: 'AN5506-04-F1'
+            type: 'GPON'
+        }
+}
+```
 
 ---
 
@@ -467,28 +539,34 @@ Output:
 
 **Function signature:**
 
-    authenticateOnu(options: <object>, slot: <number>, pon: <number>, onuTypeCode: <number>, macAddress: <string>) => Promise <object>
+```js
+authenticateOnu(options: <object>, slot: <number>, pon: <number>, onuTypeCode: <number>, macAddress: <string>) => Promise <object>
+```
 
 Example:
 
-    fh.authenticateOnu(options, 11, 1, 765, 'FHTT1231e796').then(authOnu => {
-        console.log(authOnu)
-    })
+```js
+fh.authenticateOnu(options, 11, 1, 765, 'FHTT1231e796').then(authOnu => {
+    console.log(authOnu)
+})
+```
 
 Output:
 
-    {
-        slot: 11,
-        pon: 1,
-        macAddress: 'FHTT1231e796',
-        onuType: {
-            category: 'SFU',
-            code: 765,
-            mode: 'dual'
-            model: 'AN5506-04-F1'
-            type: 'GPON'
-        }
+```js
+{
+    slot: 11,
+    pon: 1,
+    macAddress: 'FHTT1231e796',
+    onuType: {
+        category: 'SFU',
+        code: 765,
+        mode: 'dual'
+        model: 'AN5506-04-F1'
+        type: 'GPON'
     }
+}
+```
 
 ---
 
@@ -498,27 +576,35 @@ Output:
 
 **Function signature:**
 
-    delOnu(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <string>
+```js
+delOnu(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <string>
+```
 
 **Function signature:**
 
-    delOnuByMacAddress(options: <object>, macAddress: <string>) => Promise <string>
+```js
+delOnuByMacAddress(options: <object>, macAddress: <string>) => Promise <string>
+```
 
 Example:
 
-    fh.delOnu(options, 11, 1, 1).then(macAddress => {
-        console.log(macAddress)
-    })
+```js
+fh.delOnu(options, 11, 1, 1).then(macAddress => {
+    console.log(macAddress)
+})
 
-    // or
+// or
 
-    fh.delOnuByMacAddress(options, 'FHTT1231e796').then(macAddress => {
-        console.log(macAddress)
-    })
+fh.delOnuByMacAddress(options, 'FHTT1231e796').then(macAddress => {
+    console.log(macAddress)
+})
+```
 
 Output:
 
-    'FHTT1231e796'
+```js
+'FHTT1231e796'
+```
 
 ---
 
@@ -528,22 +614,28 @@ Output:
 
 **Function signature:**
 
-    enableLanPorts(options: <objecy>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
+```js
+enableLanPorts(options: <objecy>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
+```
 
 Example:
 
-    fh.enableLanPorts(options, 11, 1, 1, 
-    [
-        { lan: 2,  enable: false },
-        { lan: 3,  enable: true }
-    ]
-    ).then(onuIndex => {
-        console.log(onuIndex)
-    })
+```js
+fh.enableLanPorts(options, 11, 1, 1, 
+[
+    { lan: 2,  enable: false },
+    { lan: 3,  enable: true }
+]
+).then(onuIndex => {
+    console.log(onuIndex)
+})
+```
 
 Output:
 
-    369623296
+```js
+369623296
+```
 
 ---
 
@@ -553,26 +645,32 @@ Output:
 
 **Function signature:**
 
-    getAuthorizedOnus(options: <object>) => Promise <Array>
+```js
+getAuthorizedOnus(options: <object>) => Promise <Array>
+```
 
 Example:
 
-    fh.getAuthorizedOnus(options).then(onuList => {
-        console.log(onuList)
-    })
+```js
+fh.getAuthorizedOnus(options).then(onuList => {
+    console.log(onuList)
+})
+```
 
 Output:
 
-    [
-        {
-            _onuIndex: 369623296,
-            slot: 11,
-            pon: 1,
-            onuId: 1,
-            macAddress: 'FHTT1231e796'
-        },
-        // { ... }
-    ]
+```js
+[
+    {
+        _onuIndex: 369623296,
+        slot: 11,
+        pon: 1,
+        onuId: 1,
+        macAddress: 'FHTT1231e796'
+    },
+    // { ... }
+]
+```
 
 ---
 
@@ -582,29 +680,35 @@ Output:
 
 **Function signature:**
 
-    getBasicOnuInfo(options: <object>, macAddress: <string>, slot: <number>, pon: <number>) => Promise <object>
+```js
+getBasicOnuInfo(options: <object>, macAddress: <string>, slot: <number>, pon: <number>) => Promise <object>
+```
 
 Example:
 
-    fh.getBasicOnuInfo(options, 'FHTT1231e796').then(onu => {
-        console.log(onu)
-    })
+```js
+fh.getBasicOnuInfo(options, 'FHTT1231e796').then(onu => {
+    console.log(onu)
+})
 
-    // or
+// or
 
-    fh.getBasicOnuInfo(options, 'FHTT1231e796', 11, 1).then(onu => {
-        console.log(onu)
-    })
+fh.getBasicOnuInfo(options, 'FHTT1231e796', 11, 1).then(onu => {
+    console.log(onu)
+})
+```
 
 Output:
 
-    {
-        _onuIndex: 369623296,
-        slot: 11,
-        pon: 1,
-        onuId: 1,
-        macAddress: 'FHTT1231e796'
-    }
+```js
+{
+    _onuIndex: 369623296,
+    slot: 11,
+    pon: 1,
+    onuId: 1,
+    macAddress: 'FHTT1231e796'
+}
+```
 
 ---
 
@@ -614,43 +718,49 @@ Output:
 
 **Function signature:**
 
-    getLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
+```js
+getLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
+```
 
 Example:
 
-    fh.getLanPorts(options, 11, 1, 1).then(lanPorts => {
-        console.log(lanPorts)
-    })
+```js
+fh.getLanPorts(options, 11, 1, 1).then(lanPorts => {
+    console.log(lanPorts)
+})
+```
 
 Output:
 
-    [
-        {
-            lan: 1,
-            enable: true,
-            vlans: [
-                { transparent: 3000 },
-                { tag: 3001, cos: 4 }
-            ]
-        },
-        { 
-            lan: 2,
-            enable: true,
-            vlans: [ ]
-        },
-        { 
-            lan: 3,
-            enable: false,
-            vlans: [ ]
-        },
-        {
-            lan: 4,
-            enable: true,
-            vlans: [
-                { transparent: 2005 }
-            ]
-        }
-    ]
+```js
+[
+    {
+        lan: 1,
+        enable: true,
+        vlans: [
+            { transparent: 3000 },
+            { tag: 3001, cos: 4 }
+        ]
+    },
+    { 
+        lan: 2,
+        enable: true,
+        vlans: [ ]
+    },
+    { 
+        lan: 3,
+        enable: false,
+        vlans: [ ]
+    },
+    {
+        lan: 4,
+        enable: true,
+        vlans: [
+            { transparent: 2005 }
+        ]
+    }
+]
+```
 
 ---
 
@@ -660,23 +770,29 @@ Output:
 
 **Function signature:**
 
-    getMacAddressList(options: <object>) => Promise <Array>
+```js
+getMacAddressList(options: <object>) => Promise <Array>
+```
 
 Example:
 
-    fh.getMacAddressList(options).then(macAddressList => {
-        console.log(macAddressList)
-    })
+```js
+fh.getMacAddressList(options).then(macAddressList => {
+    console.log(macAddressList)
+})
+```
 
 Output:
 
-    [
-        {
-            _onuIndex: 369623296,
-            macAddress: 'FHTT1231e796'
-        },
-        // { ... }
-    ]
+```js
+[
+    {
+        _onuIndex: 369623296,
+        macAddress: 'FHTT1231e796'
+    },
+    // { ... }
+]
+```
 
 ---
 
@@ -688,41 +804,390 @@ Output:
 
 **Function signature:**
 
-    getOnu(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```js
+getOnu(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
 
 Example:
 
-    fh.getOnu(options, 11, 1, 1).then(onu => {
-        console.log(onu)
-    })
+```js
+fh.getOnu(options, 11, 1, 1).then(onu => {
+    console.log(onu)
+})
+```
 
 Output:
 
+```js
+{
+    _onuIndex: 369623296,
+    slot: 11,
+    pon: 1,
+    onuId: 1,
+    macAddress: 'FHTT1231e796',
+    onuLogicAuthId: '',
+    onuLogicAuthIdPass: '',
+    onuStatus: 'online',
+    onuStatusValue: 1,
+    softwareVersion: 'RP2522',
+    systemName: '',
+    firmwareVersion: '',
+    hardwareVersion: 'GJ-2.134.285F4G',
+    ip: '0.0.0.0',
+    distance: {
+        _onuIndex: 369623296,
+        value: '1.282',
+        unit: 'km'
+    },
+    lastOffTime: {
+        _onuIndex: 369623296,
+        date: '2019-01-21',
+        time: '08:01:04'
+    },
+    opticalPower: {
+        _onuIndex: 369623296,
+        rxPower:{
+            value: '-19.25',
+            unit: 'dBm'
+        },
+        txPower: {
+            value: '3.03',
+            unit: 'dBm'
+        },
+        temperature: {
+            value: '45.10',
+            unit: '°C'
+        },
+        voltage: {
+            value: '3.21'
+            unit: 'V'
+        },
+        currTxBias: {
+            value: '9.70'
+            unit: 'mA'
+        }
+    },
+    onuType: {
+        category: 'SFU'
+        code: 765
+        mode: 'dual'
+        model: 'AN5506-04-F1'
+        type: 'GPON'
+    }, 
+    upLinkInterface: {
+        downlinkRate: 2500
+        downlinkRateUnit: 'Mbit/s'
+        portDescription: 'PON 11/1/1'
+        portName: 'PON 11/1/1'
+        portStatus: 'enable'
+        portStatusValue: 1
+        portType: 1
+        uplinkRate: 1250
+        uplinkRateUnit: 'Mbit/s'
+    }
+}
+```
+
+---
+
+### getOnuBandwidth()
+
+**Description:** Returns the bandwidth of a given ONU.
+
+**Function signature:**
+
+```js
+getOnuBandwidth(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getOnuBandwidth(options, 11, 1, 2).then(onu => {
+    console.log(onu)
+})
+```
+
+Output:
+
+```js
+{
+    _onuIndex: 369623552,
+    slot: 11,
+    pon: 1,
+    onuId: 2,
+    upBw: 2048,
+    downBw: 1024,
+    bandwidthUnit: 'Kbit/s'
+}
+```
+
+---
+
+### getOnuDistance()
+
+**Description:** Returns the distance traveled by the fiber to a particular ONU in the kilometer unit.
+
+**Function signature:**
+
+```js
+getOnuDistance(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getOnuDistance(options, 11, 1, 1).then(onu => {
+    console.log(onu)
+})
+```
+
+Output:
+
+```js
+{
+    _onuIndex: 369623296,
+    value: '1.282',
+    unit: 'km'
+}
+```
+
+---
+
+### getOnuIdList()
+
+**Description:** Returns a list with the `onuId` of all authorized ONUs in OLT.
+
+**Function signature:**
+
+```js
+getOnuIdList(options: <object>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getOnuIdList(options).then(onuList => {
+    console.log(onuList)
+})
+```
+
+Output:
+
+```js
+[
+    {
+        _onuIndex: 369623296,
+        onuId: 1
+    },
+    {
+        _onuIndex: 369623552,
+        onuId: 2
+    },
+    // { ... }
+]
+```
+
+---
+
+### getOnuIndexList()
+
+**Description:** Returns a list with the index of all authorized ONUs in OLT.
+
+**Function signature:**
+
+```js
+getOnuIndexList(options: <object>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getOnuIndexList(options).then(onuList => {
+    console.log(onuList)
+})
+```
+
+Output:
+
+```js
+[ 369623296, 371720448, 371720704 ]
+```
+
+---
+
+### getOnuLastOffTime()
+
+**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second).
+
+**Function signature:**
+
+```js
+getOnuLastOffTime(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getOnuLastOffTime(options, 11, 1, 1).then(onu => {
+    console.log(onu)
+})
+```
+
+Output:
+
+```js
+{
+    _onuIndex: 369623296,
+    date: '2019-01-21',
+    time: '08:01:04'
+}
+```
+
+---
+
+### getOnuListByPon()
+
+**Description:** Returns a list of all connected ONUs on a given PON port.
+
+**Function signature:**
+
+```js
+getOnuListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getOnuListByPon(options, 11, 1).then(onuList => {
+    console.log(onuList)
+})
+```
+
+Output:
+
+```js
+[
     {
         _onuIndex: 369623296,
         slot: 11,
         pon: 1,
         onuId: 1,
         macAddress: 'FHTT1231e796',
-        onuLogicAuthId: '',
-        onuLogicAuthIdPass: '',
+        ip: '0.0.0.0',
+        opticalRxPower: '-10.30',
+        opticalRxPowerUnit: 'dBm',
         onuStatus: 'online',
         onuStatusValue: 1,
         softwareVersion: 'RP2522',
-        systemName: '',
+        systemName: ''
         firmwareVersion: '',
         hardwareVersion: 'GJ-2.134.285F4G',
-        ip: '0.0.0.0',
-        distance: {
-            _onuIndex: 369623296,
-            value: '1.282',
-            unit: 'km'
-        },
+        onuLogicAuthId: '',
+        onuLogicAuthIdPass: '',
         lastOffTime: {
             _onuIndex: 369623296,
             date: '2019-01-21',
             time: '08:01:04'
         },
+        distance: {
+            _onuIndex: 369623296,
+            value: '1.282'
+            unit: 'km',
+        },
+        onuType: {
+            category: 'SFU',
+            code: 765,
+            mode: 'dual',
+            model: 'AN5506-04-F1',
+            type: 'GPON'
+        }
+    },
+    // { ... }
+]
+```
+
+---
+
+### getOnuOpticalPower()
+
+**Description:** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. 
+
+**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
+
+**Function signature:**
+
+```js
+getOnuOpticalPower(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getOnuOpticalPower(options, 11, 1, 1).then(onuOpticalPower => {
+    console.log(onuOpticalPower)
+})
+```
+
+Output:
+
+```js
+{
+    _onuIndex: 369623296,
+    rxPower:{
+        value: '-19.25',
+        unit: 'dBm'
+    },
+    txPower: {
+        value: '3.03',
+        unit: 'dBm'
+    },
+    temperature: {
+        value: '45.10',
+        unit: '°C'
+    },
+    voltage: {
+        value: '3.21'
+        unit: 'V'
+    },
+    currTxBias: {
+        value: '9.70'
+        unit: 'mA'
+    }
+}
+```
+
+---
+
+### getOnuOpticalPowerList()
+
+**Description:** Returns a signal list of all authorized ONUs in OLT.
+
+**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
+
+**Function signature:**
+
+```js
+getOnuOpticalPowerList(options: <object>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getOnuOpticalPowerList(options).then(onuList => {
+    console.log(onuList)
+})
+```
+
+Output:
+
+```js
+[
+    {
+        _onuIndex: 369623296
+        slot: 11,
+        pon: 1,
+        onuId: 1,
         opticalPower: {
             _onuIndex: 369623296,
             rxPower:{
@@ -745,306 +1210,11 @@ Output:
                 value: '9.70'
                 unit: 'mA'
             }
-        },
-        onuType: {
-            category: 'SFU'
-            code: 765
-            mode: 'dual'
-            model: 'AN5506-04-F1'
-            type: 'GPON'
-        }, 
-        upLinkInterface: {
-            downlinkRate: 2500
-            downlinkRateUnit: 'Mbit/s'
-            portDescription: 'PON 11/1/1'
-            portName: 'PON 11/1/1'
-            portStatus: 'enable'
-            portStatusValue: 1
-            portType: 1
-            uplinkRate: 1250
-            uplinkRateUnit: 'Mbit/s'
         }
-    }
-
----
-
-### getOnuBandwidth()
-
-**Description:** Returns the bandwidth of a given ONU.
-
-**Function signature:**
-
-    getOnuBandwidth(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
-
-Example:
-
-    fh.getOnuBandwidth(options, 11, 1, 2).then(onu => {
-        console.log(onu)
-    })
-
-Output:
-
-    {
-        _onuIndex: 369623552,
-        slot: 11,
-        pon: 1,
-        onuId: 2,
-        upBw: 2048,
-        downBw: 1024,
-        bandwidthUnit: 'Kbit/s'
-    }
-
----
-
-### getOnuDistance()
-
-**Description:** Returns the distance traveled by the fiber to a particular ONU in the kilometer unit.
-
-**Function signature:**
-
-    getOnuDistance(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
-
-Example:
-
-    fh.getOnuDistance(options, 11, 1, 1).then(onu => {
-        console.log(onu)
-    })
-
-Output:
-
-    {
-        _onuIndex: 369623296,
-        value: '1.282',
-        unit: 'km'
-    }
-
----
-
-### getOnuIdList()
-
-**Description:** Returns a list with the `onuId` of all authorized ONUs in OLT.
- 
-**Function signature: *
-
-    getOnuIdList(options: <object>) => Promise <Array>
-
-Example:
-
-    fh.getOnuIdList(options).then(onuList => {
-        console.log(onuList)
-    })
-
-Output:
-
-    [
-        {
-            _onuIndex: 369623296,
-            onuId: 1
-        },
-        {
-            _onuIndex: 369623552,
-            onuId: 2
-        },
-        // { ... }
-    ]
-
----
-
-### getOnuIndexList()
-
-**Description:** Returns a list with the index of all authorized ONUs in OLT.
-
-**Function signature:**
-
-    getOnuIndexList(options: <object>) => Promise <Array>
-
-Example:
-
-    fh.getOnuIndexList(options).then(onuList => {
-        console.log(onuList)
-    })
-
-Output:
-
-    [ 369623296, 371720448, 371720704 ]
-
----
-
-### getOnuLastOffTime()
-
-**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second).
-
-**Function signature:**
-
-    getOnuLastOffTime(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
-
-Example:
-
-    fh.getOnuLastOffTime(options, 11, 1, 1).then(onu => {
-        console.log(onu)
-    })
-
-Output:
-
-    {
-        _onuIndex: 369623296,
-        date: '2019-01-21',
-        time: '08:01:04'
-    }
-
----
-
-### getOnuListByPon()
-
-**Description:** Returns a list of all connected ONUs on a given PON port.
-
-**Function signature:**
-
-    getOnuListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
-
-Example:
-
-    fh.getOnuListByPon(options, 11, 1).then(onuList => {
-        console.log(onuList)
-    })
-
-Output:
-
-    [
-        {
-            _onuIndex: 369623296,
-            slot: 11,
-            pon: 1,
-            onuId: 1,
-            macAddress: 'FHTT1231e796',
-            ip: '0.0.0.0',
-            opticalRxPower: '-10.30',
-            opticalRxPowerUnit: 'dBm',
-            onuStatus: 'online',
-            onuStatusValue: 1,
-            softwareVersion: 'RP2522',
-            systemName: ''
-            firmwareVersion: '',
-            hardwareVersion: 'GJ-2.134.285F4G',
-            onuLogicAuthId: '',
-            onuLogicAuthIdPass: '',
-            lastOffTime: {
-                _onuIndex: 369623296,
-                date: '2019-01-21',
-                time: '08:01:04'
-            },
-            distance: {
-                _onuIndex: 369623296,
-                value: '1.282'
-                unit: 'km',
-            },
-            onuType: {
-                category: 'SFU',
-                code: 765,
-                mode: 'dual',
-                model: 'AN5506-04-F1',
-                type: 'GPON'
-            }
-        },
-        // { ... }
-    ]
-
----
-
-### getOnuOpticalPower()
-
-**Description:** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. 
-
-**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
-
-**Function signature:**
-
-    getOnuOpticalPower(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
-
-Example:
-
-    fh.getOnuOpticalPower(options, 11, 1, 1).then(onuOpticalPower => {
-        console.log(onuOpticalPower)
-    })
-
-Output:
-
-    {
-        _onuIndex: 369623296,
-        rxPower:{
-            value: '-19.25',
-            unit: 'dBm'
-        },
-        txPower: {
-            value: '3.03',
-            unit: 'dBm'
-        },
-        temperature: {
-            value: '45.10',
-            unit: '°C'
-        },
-        voltage: {
-            value: '3.21'
-            unit: 'V'
-        },
-        currTxBias: {
-            value: '9.70'
-            unit: 'mA'
-        }
-    }
-
----
-
-### getOnuOpticalPowerList()
-
-**Description:** Returns a signal list of all authorized ONUs in OLT.
-
-**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
-
-**Function signature:**
-
-    getOnuOpticalPowerList(options: <object>) => Promise <Array>
-
-Example:
-
-    fh.getOnuOpticalPowerList(options).then(onuList => {
-        console.log(onuList)
-    })
-
-Output:
-
-    [
-        {
-            _onuIndex: 369623296
-            slot: 11,
-            pon: 1,
-            onuId: 1,
-            opticalPower: {
-                _onuIndex: 369623296,
-                rxPower:{
-                    value: '-19.25',
-                    unit: 'dBm'
-                },
-                txPower: {
-                    value: '3.03',
-                    unit: 'dBm'
-                },
-                temperature: {
-                    value: '45.10',
-                    unit: '°C'
-                },
-                voltage: {
-                    value: '3.21'
-                    unit: 'V'
-                },
-                currTxBias: {
-                    value: '9.70'
-                    unit: 'mA'
-                }
-            }
-        },
-        // { ... }
-    ]
+    },
+    // { ... }
+]
+```
 
 ---
 
@@ -1054,27 +1224,33 @@ Output:
 
 **Function signature:**
 
-    getOnuUplinkInterface(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```js
+getOnuUplinkInterface(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
 
 Example:
 
-    fh.getOnuUplinkInterface(options, 11, 1, 1).then(upLink => {
-        console.log(upLink)
-    })
+```js
+fh.getOnuUplinkInterface(options, 11, 1, 1).then(upLink => {
+    console.log(upLink)
+})
+```
 
 Output:
 
-    {
-        downlinkRate: 2500,
-        downlinkRateUnit: 'Mbit/s',
-        portDescription: 'PON 11/1/1',
-        portName: 'PON 11/1/1',
-        portStatus: 'enable',
-        portStatusValue: 1,
-        portType: 1,
-        uplinkRate: 1250,
-        uplinkRateUnit: 'Mbit/s'
-    }
+```js
+{
+    downlinkRate: 2500,
+    downlinkRateUnit: 'Mbit/s',
+    portDescription: 'PON 11/1/1',
+    portName: 'PON 11/1/1',
+    portStatus: 'enable',
+    portStatusValue: 1,
+    portType: 1,
+    uplinkRate: 1250,
+    uplinkRateUnit: 'Mbit/s'
+}
+```
 
 ---
 
@@ -1084,31 +1260,37 @@ Output:
 
 **Function signature:**
 
-    getOnuWebAdmin: (options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
+```js
+getOnuWebAdmin(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
+```
 
 Example:
 
-    fh.getOnuWebAdmin(options, 11, 1, 2).then(profiles => { 
-        console.log(profiles)
-    })
+```js
+fh.getOnuWebAdmin(options, 11, 1, 2).then(profiles => { 
+    console.log(profiles)
+})
+```
 
 Output:
 
-    [
-        {
-            group: 'common',
-            groupValue: 1,
-            webUsername: 'user1',
-            webPassword: '1111'
-        },
-        {
-            group: 'admin',
-            groupValue: 2,
-            webUsername: 'user2',
-            webPassword: '2222'
-        },
-        // { ... }
-    ]
+```js
+[
+    {
+        group: 'common',
+        groupValue: 1,
+        webUsername: 'user1',
+        webPassword: '1111'
+    },
+    {
+        group: 'admin',
+        groupValue: 2,
+        webUsername: 'user2',
+        webPassword: '2222'
+    },
+    // { ... }
+]
+```
 
 ---
 
@@ -1118,27 +1300,33 @@ Output:
 
 **Function signature:**
 
-    getRxPowerListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
+```js
+getRxPowerListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
+```
 
 Example:
 
-    fh.getRxPowerListByPon(options, 11, 1).then(rxList => {
-        console.log(rxList)
-    })
-    
+```js
+fh.getRxPowerListByPon(options, 11, 1).then(rxList => {
+    console.log(rxList)
+})
+```
+
 Output:
 
-    [
-        {
-            _onuIndex: 369623296,
-            slot: 11,
-            pon: 1,
-            onuId: 1,
-            opticalRxPower: '-20.30',
-            opticalRxPowerUnit: 'dBm',
-        },
-        // { ... }
-    ]
+```js
+[
+    {
+        _onuIndex: 369623296,
+        slot: 11,
+        pon: 1,
+        onuId: 1,
+        opticalRxPower: '-20.30',
+        opticalRxPowerUnit: 'dBm',
+    },
+    // { ... }
+]
+```
 
 ---
 
@@ -1148,32 +1336,38 @@ Output:
 
 **Function signature:**
 
-    getUnauthorizedOnus(options: <object>) => Promise <Array>
+```js
+getUnauthorizedOnus(options: <object>) => Promise <Array>
+```
 
 Example:
 
-    fh.getUnauthorizedOnus(options).then(unauthOnus => {
-        console.log(unauthOnus)
-    })
+```js
+fh.getUnauthorizedOnus(options).then(unauthOnus => {
+    console.log(unauthOnus)
+})
+```
 
 Output:
 
-    [
-        {
-            index: 0,
-            slot: 11,
-            pon: 1,
-            macAddress: 'FHTT1231e796',
-            onuType: {
-                category: 'SFU',
-                code: 765,
-                mode: 'dual'
-                model: 'AN5506-04-F1'
-                type: 'GPON'
-            }
-        },
-        // { ... }
-    ]
+```js
+[
+    {
+        index: 0,
+        slot: 11,
+        pon: 1,
+        macAddress: 'FHTT1231e796',
+        onuType: {
+            category: 'SFU',
+            code: 765,
+            mode: 'dual'
+            model: 'AN5506-04-F1'
+            type: 'GPON'
+        }
+    },
+    // { ... }
+]
+```
 
 **NOTE:** The `mode` parameter in `onuType` is the reference to the ONU mode of operation, which can be:
 * **router**: operates as a router only
@@ -1184,27 +1378,33 @@ Not all ONUs will have the `mode` parameter on `onuType`
 
 ---
 
-### parseOnuIndex()
+* ### parseOnuIndex()
 
 **Description:** Converts a `onuIndex` to `slot`, `pon`, and `onuId`.
 
 **Function signature:**
 
-    parseOnuIndex(onuIndex: <number>) => <object>
+```js
+parseOnuIndex(onuIndex: <number>) => <object>
+```
 
 Example:
 
-    var onu = fh.parseOnuIndex(369623296)
-    console.log(onu)
+```js
+var onu = fh.parseOnuIndex(369623296)
+console.log(onu)
+```
 
 Output:
 
-    {
-        _onuIndex: 369623296,
-        slot: 11,
-        pon: 1,
-        onuId: 1
-    }
+```js
+{
+    _onuIndex: 369623296,
+    slot: 11,
+    pon: 1,
+    onuId: 1
+}
+```
 
 ---
 
@@ -1214,54 +1414,62 @@ Output:
 
 **Function signature:**
 
-    setLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
+```js
+setLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
+```
 
 `aLanPorts` parameter:
 
-    aLanPorts = [
-        {
-            lan: <number>,
-            anable: <boolean>,          // (optional)
-            vlans: [
-                {
-                    transparent or tag: <number>,
-                    cos: <number>         // (optional) Priority or COS
-                },
-                // { ... }
-            ]
-        },
-        // { ... }
-    ]
+```js
+aLanPorts = [
+    {
+        lan: <number>,
+        anable: <boolean>,            // (optional)
+        vlans: [
+            {
+                transparent or tag: <number>,
+                cos: <number>         // (optional) Priority or COS
+            },
+            // { ... }
+        ]
+    },
+    // { ... }
+]
+```
 
 Example:
 
-    fh.setLanPorts(options, 11, 1, 1, [
-        {
-            lan: 1,
-            vlans: [
-                { transparent: 3000 },
-                { tag: 3001, cos: 4 }
-            ]
-        }, 
-        { 
-            lan: 3,
-            enable: false
-        }, 
-        { 
-            lan: 4,
-            vlans: [
-                { transparent: 2005 }
-            ]
-        }
-    ]).then(onuIndex => {
-        console.log(onuIndex)
-    })
+```js
+fh.setLanPorts(options, 11, 1, 1, [
+    {
+        lan: 1,
+        vlans: [
+            { transparent: 3000 },
+            { tag: 3001, cos: 4 }
+        ]
+    }, 
+    { 
+        lan: 3,
+        enable: false
+    }, 
+    { 
+        lan: 4,
+        vlans: [
+            { transparent: 2005 }
+        ]
+    }
+]).then(onuIndex => {
+    console.log(onuIndex)
+})
+```
 
 **NOTE:** LAN port 2 will not be changed in the example above.
 
 Output:
 
-    369623296
+```js
+369623296
+```
 
 ---
 
@@ -1271,17 +1479,23 @@ Output:
 
 **Function signature:**
 
-    setOnuBandwidth(options: <object>, slot: <number>, pon: <number>, onuId: <number>, upBw: <number>, downBw: <number>) => Promise <number>
+```js
+setOnuBandwidth(options: <object>, slot: <number>, pon: <number>, onuId: <number>, upBw: <number>, downBw: <number>) => Promise <number>
+```
 
 Example:
 
-    fh.setOnuBandwidth(options, 11, 1, 2, 2048, 1024).then(onuIndex => {
-        console.log(onuIndex)
-    })
+```js
+fh.setOnuBandwidth(options, 11, 1, 2, 2048, 1024).then(onuIndex => {
+    console.log(onuIndex)
+})
+```
 
 Output:
 
-    369623552
+```js
+369623552
+```
 
 ---
 
@@ -1291,21 +1505,27 @@ Output:
 
 **Function signature:**
 
-    setOnuWebAdmin: (options: <object>, slot: <number>, pon: <number>, onuId: <number>, aWebConfig: <Array>) => Promise <boolean>
+```js
+setOnuWebAdmin(options: <object>, slot: <number>, pon: <number>, onuId: <number>, aWebConfig: <Array>) => Promise <boolean>
+```
 
 Example:
 
-    fh.setOnuWebAdmin(options, 11, 1, 1, [
-        {username: 'user1', password: '1111', group: 'common'},
-        {username: 'user2', password: '2222', group: 'admin'},
-        {username: 'user3', password: '3333', group: 'common'}
-    ]).then(config => {
-        console.log(config)
-    })
+```js
+fh.setOnuWebAdmin(options, 11, 1, 1, [
+    {username: 'user1', password: '1111', group: 'common'},
+    {username: 'user2', password: '2222', group: 'admin'},
+    {username: 'user3', password: '3333', group: 'common'}
+]).then(config => {
+    console.log(config)
+})
+```
 
 Output:
 
-    true
+```js
+true
+```
 
 ---
 
@@ -1315,60 +1535,67 @@ Output:
 
 **Function signature:**
 
-    setWan(options: <object>, slot: <number>, pon: <number>, onuId: <number>, profiles: <Array>) => Promise <number>
+```js
+setWan(options: <object>, slot: <number>, pon: <number>, onuId: <number>, profiles: <Array>) => Promise <number>
+```
 
 `profiles: <Array>` parameter:
 
-    var profile = {        // Values:
-        wanMode:           // 'tr069', 'internet', 'tr069_internet', 'multcast', 'voip', 'voip_internet', 'radius', 'radius_internet' or 'other'
-        wanConnType:       // 'router' or 'bridge'
-        wanVlan:           // <number> or false
-        wanCos:            // <number> or false
-        wanNat:            // true or false
-        ipMode:            // 'dhcp', 'static' or 'pppoe'
-        wanIp:             // 'x.y.w.z' or false
-        wanMask:           // 'x.y.w.z' or false
-        wanGateway:        // 'x.y.w.z' or false
-        wanMasterDNS:      // 'x.y.w.z' or false
-        wanSlaveDNS:       // 'x.y.w.z' or false
-        pppoeProxy:        // true or false
-        pppoeUsername:     // <string> or false
-        pppoePassword:     // <string> or false
-        pppoeName:         // <string> or false
-        pppoeMode:         // 'auto' or 'payload'
-        wanQoS:            // true or false
-        vlanMode:          // 'transparent' or 'tag'
-        translationValue:  // <number> or false
-        cos:               // <number> or false
-        QinQ:              // true or false
-        tpid: 33024,
-        svlan:             // <number> or false
-        svlanCos:          // <number> or false
-        lans: { 
-            lan1:          // true or false
-            lan2:          // true or false
-            lan3:          // true or false
-            lan4:          // true or false
-            },
-        ssids: { 
-            ssid1:         // true or false
-            ssid2:         // true or false
-            ssid3:         // true or false
-            ssid4:         // true or false
-        }
+```js
+var profile = {        // Values:
+    wanMode:           // 'tr069', 'internet', 'tr069_internet', 'multcast', 'voip', 'voip_internet', 'radius', 'radius_internet' or 'other'
+    wanConnType:       // 'router' or 'bridge'
+    wanVlan:           // <number> or false
+    wanCos:            // <number> or false
+    wanNat:            // true or false
+    ipMode:            // 'dhcp', 'static' or 'pppoe'
+    wanIp:             // 'x.y.w.z' or false
+    wanMask:           // 'x.y.w.z' or false
+    wanGateway:        // 'x.y.w.z' or false
+    wanMasterDNS:      // 'x.y.w.z' or false
+    wanSlaveDNS:       // 'x.y.w.z' or false
+    pppoeProxy:        // true or false
+    pppoeUsername:     // <string> or false
+    pppoePassword:     // <string> or false
+    pppoeName:         // <string> or false
+    pppoeMode:         // 'auto' or 'payload'
+    wanQoS:            // true or false
+    vlanMode:          // 'transparent' or 'tag'
+    translationValue:  // <number> or false
+    cos:               // <number> or false
+    QinQ:              // true or false
+    tpid: 33024,
+    svlan:             // <number> or false
+    svlanCos:          // <number> or false
+    lans: { 
+        lan1:          // true or false
+        lan2:          // true or false
+        lan3:          // true or false
+        lan4:          // true or false
+        },
+    ssids: { 
+        ssid1:         // true or false
+        ssid2:         // true or false
+        ssid3:         // true or false
+        ssid4:         // true or false
     }
+}
+```
 
 Example:
 
-    fh.setWan(options, 11, 1, 1, [
-        { wanMode: 'internet', wanConnType: 'router', wanVlan: 2000, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
-        { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2001, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
-    ]
-    ).then(onuIndex => {
-        console.log(onuIndex)
-    })
+```js
+fh.setWan(options, 11, 1, 1, [
+    { wanMode: 'internet', wanConnType: 'router', wanVlan: 2000, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
+    { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2001, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+]
+).then(onuIndex => {
+    console.log(onuIndex)
+})
+```
 
 Output:
 
-    369623296
-
+```js
+369623296
+```
