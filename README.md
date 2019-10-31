@@ -56,7 +56,6 @@ const options = {
 fh.function(options, ...)      // Call of functions
 ```
 
-
 **IMPORTANT!** For ONUs using GPON technology, the `macAddress` parameter in the following functions will receive the equipment SERIAL.
 
 The following functions are assigned the **slot**, **pon** and **onuId** parameters to specify a particular ONU. If you work with onuIndex, use the `parseOnuIndex()` function to convert onuIndex to an object containing the values of **slot**, **pon** and **onuId**.
@@ -122,7 +121,7 @@ Output:
 **Function signature:**
 
 ```js
-getOltModel(options: <object>) => Promise<string>
+getOltModel(options: <object>) => Promise <string>
 ```
 
 Example:
@@ -146,7 +145,7 @@ Output:
 **Function signature:**
 
 ```js
-getSubrackInformation(options <object>) => Promise<object>
+getSubrackInformation(options <object>) => Promise <object>
 ```
 
 Example:
@@ -175,7 +174,7 @@ Output:
 **Function signature:**
 
 ```js
-getPonPortList(options: <object>) => Promise<Array>
+getPonPortList(options: <object>) => Promise <Array>
 ```
 
 Example:

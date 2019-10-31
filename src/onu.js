@@ -280,7 +280,6 @@ function getOnuBandwidth(options, slot, pon, onuId) {
                     getBW[151] = getBW[161]
                     getBW[153] = getBW[163]
                     getBW = getBW.join(' ')
-
                     snmp_fh.sendSnmp(OID.getOnuBandwidth, getBW, options, true).then(ret => {
                         var hex = '' // Adicionando espeço em branco a cada 2 bytes
                         for (var i = 0; i < ret.length; i += 2)
@@ -288,8 +287,13 @@ function getOnuBandwidth(options, slot, pon, onuId) {
                         hex = hex.trim()
                         var value = hex.split('2b 06 01 04 01 ad 73 5b 01 06 01 01 01 28 01 ')[1]
                         value = value.split(' ')
-                        var upBw = value[188] + value[189] + value[190]
-                        var downBw = value[192] + value[193] + value[194]
+                        if (value[1] == '81')
+                            value = value.splice(3)
+                        else
+                            value = value.splice(4)
+
+                        var upBw = value[185] + value[186] + value[187]
+                        var downBw = value[189] + value[190] + value[191]
                         upBw = parseInt(upBw, 16)
                         downBw = parseInt(downBw, 16)
                         snmp_fh.sendSnmp(OID.confirmSetOnuBandwidth, getBW, options, true).then(retConfirm => {
@@ -460,7 +464,11 @@ function getOnuDistance(options, slot, pon, onuId) {
                             hex = hex.trim()
                             var value = hex.split('2b 06 01 04 01 ad 73 5b 01 06 03 01 01 07 01 ')[1]
                             value = value.split(' ')
-                            value = value.splice(parseInt(value[0]))
+                            if (value[1] == '81')
+                                value = value.splice(3)
+                            else
+                                value = value.splice(4)
+
                             var obj = {
                                 _onuIndex: convertToOnuIndex(slot, pon, onuId),
                                 value: (hexToInt(value.slice(-2).join('')) / 1000).toFixed(3),
@@ -500,7 +508,10 @@ function getOnuLastOffTime(options, slot, pon, onuId) {
 
                             var value = hex.split('2b 06 01 04 01 ad 73 5b 01 16 03 01 01 1c 01 ')[1]
                             value = value.split(' ')
-                            value = value.splice(parseInt(value[0]))
+                            if (value[1] == '81')
+                                value = value.splice(3)
+                            else
+                                value = value.splice(4)
 
                             var year = hexToInt(value.slice(184, 186).join('')).toString()
                             var mouth = hexToInt(value.slice(186, 187).join('')).toString().padStart(2, '0')
@@ -548,7 +559,10 @@ function getOnuOpticalPower(options, slot, pon, onuId, ignore) {
 
                             var value = hex.split('2b 06 01 04 01 ad 73 5b 01 16 03 01 01 06 01 ')[1]
                             value = value.split(' ')
-                            value = value.splice(parseInt(value[0]))
+                            if (value[1] == '81')
+                                value = value.splice(3)
+                            else
+                                value = value.splice(4)
 
                             var obj = {
                                 _onuIndex: convertToOnuIndex(slot, pon, onuId),
@@ -631,7 +645,10 @@ function getOnuListBySlot(options, slot) {
 
                     var value = hex.split('2b 06 01 04 01 ad 73 5b 01 0d 03 01 01 06 01 ')[1]
                     value = value.split(' ')
-                    value = value.splice(parseInt(value[0]))
+                    if (value[1] == '81')
+                        value = value.splice(3)
+                    else
+                        value = value.splice(4)
 
                     amount = value[163]
                     var aOnus = []
@@ -771,7 +788,10 @@ function getOnuWebAdmin(options, slot, pon, onuId) {
 
                     var value = hex.split('2b 06 01 04 01 ad 73 5b 01 16 01 01 01 25 01 ')[1]
                     value = value.split(' ')
-                    value = value.splice(parseInt(value[0]))
+                    if (value[1] == '81')
+                        value = value.splice(3)
+                    else
+                        value = value.splice(4)
 
                     amount = value[191]
                     var aProfiles = []
@@ -819,7 +839,11 @@ function getRxPowerListByPon(options, slot, pon) {
                         hex = hex.trim()
                         var value = hex.split('2b 06 01 04 01 ad 73 5b 01 15 03 01 01 04 01 ')[1]
                         value = value.split(' ')
-                        value = value.splice(parseInt(value[0]))
+                        if (value[1] == '81')
+                            value = value.splice(3)
+                        else
+                            value = value.splice(4)
+
                         pos = 233
                         aOnus = []
                         while (value[pos] != '00') {
@@ -1167,7 +1191,7 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
                                 headerLan[0] = headerLength.slice(0, 2)                 // Tamanho do sub-pacote 
                                 headerLan[1] = headerLength.slice(2, 4)
                                 headerLan[2] = l.lan.toHex(2)                           // numero da porta lan
-                                headerLan[3] = l.enable === false ? '02' : '01'        // '01' = habilita / '02' = desabilita a porta lan
+                                headerLan[3] = l.enable === false ? '02' : '01'         // '01' = habilita / '02' = desabilita a porta lan
                                 headerLan[9] = l.vlansHex.length.toHex(2)               // Quantidade de vlans na lan1
                                 headerLan = headerLan.join(' ')
                                 lans = headerLan + ' ' + lans.trim() + ' '
@@ -1333,14 +1357,14 @@ function setWan(options, slot, pon, onuId, profilesWan) {
                         str = str.split(' ')
 
                         str[67] = modeTab[obj.wanMode.toLowerCase()] ? modeTab[obj.wanMode.toLowerCase()] : '64'                        // WAN_Mode: 00 = TR069, 01 INTERNET, 02 = TR069_INTERNET, 03 = multcast, 04 = VOIP, 05 = VOIP_INTERNET, 07 = RADIUS, 08 = RADIUS_INTERNET, 64 = Other ; 
-                        str[69] = (obj.wanConnType.toLowerCase() == 'bridge' || obj.wanConnType.toString() == '2') ? '00' : '01'                                 // WAN_Conn_Type: 00 = Bridge, 01 = Router   
+                        str[69] = (obj.wanConnType.toLowerCase() == 'bridge' || obj.wanConnType.toString() == '2') ? '00' : '01'        // WAN_Conn_Type: 00 = Bridge, 01 = Router   
 
-                        str[70] = obj.wanVlan ? obj.wanVlan.toHex(4).slice(0, 2) : 'ff'                                                   // WAN_Vlan_Id (Obs.: ff ff  para vazio)   
+                        str[70] = obj.wanVlan ? obj.wanVlan.toHex(4).slice(0, 2) : 'ff'                                                 // WAN_Vlan_Id (Obs.: ff ff  para vazio)   
                         str[71] = obj.wanVlan ? obj.wanVlan.toHex(4).slice(2, 4) : 'ff'
 
                         str[73] = obj.wanCos ? obj.wanCos.toHex(2) : '00'                                                               // WAN_Cos (Obs.: 00   padrão)
 
-                        str[74] = obj.wanNat ? '01' : '00'                                                                                 // WAN_NAT_Enable: 00 = Disable, 01 = Enable 
+                        str[74] = obj.wanNat ? '01' : '00'                                                                              // WAN_NAT_Enable: 00 = Disable, 01 = Enable 
                         if (obj.wanMode.toLowerCase() == 'tr069')
                             str[74] = obj.wanNat = '00'    // Disable
 
@@ -1348,7 +1372,7 @@ function setWan(options, slot, pon, onuId, profilesWan) {
 
                         var ipAddress = obj.wanIp ? obj.wanIp : '0.0.0.0'
                         ipAddress = ipAddress.split('.')
-                        str[77] = parseInt(ipAddress[0]).toHex(2)               // Wan_Ip_Address: Ex.: c0 a8 02 03: 192.168.2.3   (default: 00)
+                        str[77] = parseInt(ipAddress[0]).toHex(2)                   // Wan_Ip_Address: Ex.: c0 a8 02 03: 192.168.2.3   (default: 00)
                         str[78] = parseInt(ipAddress[1]).toHex(2)
                         str[79] = parseInt(ipAddress[2]).toHex(2)
                         str[80] = parseInt(ipAddress[3]).toHex(2)
@@ -1359,30 +1383,30 @@ function setWan(options, slot, pon, onuId, profilesWan) {
 
                         var wanGateway = obj.wanGateway ? obj.wanGateway : '0.0.0.0'
                         wanGateway = wanGateway.split('.')
-                        str[85] = parseInt(wanGateway[0]).toHex(2)                 // Wan_Gateway: Ex.: c0 a8 00 01: 192.168.0.1 ;
+                        str[85] = parseInt(wanGateway[0]).toHex(2)                  // Wan_Gateway: Ex.: c0 a8 00 01: 192.168.0.1 ;
                         str[86] = parseInt(wanGateway[1]).toHex(2)
                         str[87] = parseInt(wanGateway[2]).toHex(2)
                         str[88] = parseInt(wanGateway[3]).toHex(2)
 
                         var wanMasterDNS = obj.wanMasterDNS ? obj.wanMasterDNS : '0.0.0.0'
                         wanMasterDNS = wanMasterDNS.split('.')
-                        str[89] = parseInt(wanMasterDNS[0]).toHex(2)               // Wan_Master_DNS: Ex.: 08 08 08 08: 8.8.8.8 ;
+                        str[89] = parseInt(wanMasterDNS[0]).toHex(2)                // Wan_Master_DNS: Ex.: 08 08 08 08: 8.8.8.8 ;
                         str[90] = parseInt(wanMasterDNS[1]).toHex(2)
                         str[91] = parseInt(wanMasterDNS[2]).toHex(2)
                         str[92] = parseInt(wanMasterDNS[3]).toHex(2)
 
                         var wanSlaveDNS = obj.wanSlaveDNS ? obj.wanSlaveDNS : '0.0.0.0'
                         wanSlaveDNS = wanSlaveDNS.split('.')
-                        str[93] = parseInt(wanSlaveDNS[0]).toHex(2)                // Wan_Slave_DNS: Ex.: 04 04 04 04: 4.4.4.4 ;
+                        str[93] = parseInt(wanSlaveDNS[0]).toHex(2)                 // Wan_Slave_DNS: Ex.: 04 04 04 04: 4.4.4.4 ;
                         str[94] = parseInt(wanSlaveDNS[1]).toHex(2)
                         str[95] = parseInt(wanSlaveDNS[2]).toHex(2)
                         str[96] = parseInt(wanSlaveDNS[3]).toHex(2)
 
                         str[97] = obj.pppoeProxy ? '01' : '00'
 
-                        str.formatField(98, obj.pppoeUsername, '00', 32)        // WAN_PPPOE_Username     (default: 00)
-                        str.formatField(130, obj.pppoePassword, '00', 32)       // WAN_PPPOE_Password     (default: 00)
-                        str.formatField(162, obj.pppoeName, '00', 32)           // WAN_PPPOE_NAME         (default: 00)
+                        str.formatField(98, obj.pppoeUsername, '00', 32)            // WAN_PPPOE_Username     (default: 00)
+                        str.formatField(130, obj.pppoePassword, '00', 32)           // WAN_PPPOE_Password     (default: 00)
+                        str.formatField(162, obj.pppoeName, '00', 32)               // WAN_PPPOE_NAME         (default: 00)
 
                         str[195] = obj.pppoeMode == 'auto' ? '00' : '01'
                         str[196] = obj.wanQoS ? '01' : '00'
@@ -1460,7 +1484,6 @@ module.exports = {
     getRxPowerListByPon,
     getUnauthorizedOnus,
     parseOnuIndex,
-    //sendHex,
     setLanPorts,
     setOnuBandwidth,
     setOnuWebAdmin,
