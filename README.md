@@ -50,7 +50,8 @@ const options = {
     community: 'default',
     port: 161,
     trapPort: 162,
-    enableWarnings: true
+    enableWarnings: true,
+    enableLogs: true
 }
 
 fh.function(options, ...)      // Call of functions

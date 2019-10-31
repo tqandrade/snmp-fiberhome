@@ -60,20 +60,20 @@ function addAllOnus(options, profilesWan, vlans) {
         try {
             getUnauthorizedOnus(options).then(result => {
                 if (result.length > 0) {
-                    if (options.enableWarnings)
-                        console.error(`ONUs found: ${result.length}`)
+                    if (options.enableLogs)
+                        console.log(`Unauthorized ONUs found: ${result.length} \nadd...`)
                     result.forEach(onu => {
                         queue.add(f => addOnu(options, onu, profilesWan, vlans)).then(onuAuth => {
                             aAuthOnus.push(onuAuth)
-                            if (options.enableWarnings)
-                                console.error('\t' + onuAuth.macAddress + ' OK')
+                            if (options.enableLogs)
+                                console.log('\t' + onuAuth.macAddress + ' - OK')
                             if (result.length == aAuthOnus.length)
                                 return resolve(aAuthOnus)
                         })
                     })
                 } else {
-                    if (options.enableWarnings)
-                        console.error(`ONUs found: 0`)
+                    if (options.enableLogs)
+                        console.log(`Unauthorized ONUs found: 0`)
                     return resolve([])
                 }
             })
