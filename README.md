@@ -2,6 +2,11 @@
 
 This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, pon ports and ONUs by performing read and write functions directly in OLT.
 
+This module is provided and sponsored by telecommunications company Valenet:
+![](http://valenet.com.br/wp-content/themes/valenet/assets/images/logo.png)
+
+[![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
+
 ## Summary
 - Installation
 - Tests
@@ -10,6 +15,8 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 - Slot functions
 - Card functions
 - ONU functions
+- Extra example
+- Help us!
 - License
 
 ## Installation
@@ -1527,6 +1534,84 @@ Output:
 369623296
 ```
 
-## License
+# Extra example
 
-  [MIT](LICENSE)
+If you need to assign different settings for some ONUs types according to the model, use the following example:
+
+```js
+const fh = require('snmp-fiberhome')
+
+const options = {
+    ip: '1.2.3.4',
+    community: 'default',
+    port: 161,
+    trapPort: 162
+}
+
+const Queue = require("promise-queue")
+Queue.configure(require('vow').Promise)
+
+const bridges = ['AN5506-01-A1', '...']    // Add your type ONUs. See the table at .\node_modules\snmp-fiberhome\src\tables.js
+
+function example(options) {
+    var queue = new Queue(1, 10000)
+    fh.getUnauthorizedOnus(options).then(result => {
+        if (result.length > 0) {
+            console.log(`Unauthorized ONUs found: ${result.length} \nadd...`)
+            result.forEach(onu => {
+                if (bridges.includes(onu.onuType.model))      // Bridge
+                    queue.add(f => fh.addOnu(options, onu,
+                        [
+                            { wanMode: 'tr069', wanConnType: 'router', wanVlan: 3002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+                        ],
+                        [
+                            { lan: 1, vlans: [{ transparent: 2001 }] },
+                        ]
+                    )).then(onuAuth => {
+                        console.log('\t' + onuAuth.macAddress + ' - OK (bridge)')
+                    })
+                else                                          // Router
+                    queue.add(f => fh.addOnu(options, onu,
+                        [
+                            { wanMode: 'internet', wanConnType: 'router', wanVlan: 2003, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
+                            { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2004, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+                        ],
+                        [
+                            { lan: 1, vlans: [{ transparent: 3010 }, { tag: 3011, cos: 3 }] },
+                            { lan: 2, enable: false }
+                        ]
+                    )).then(onuAuth => {
+                        console.log('\t' + onuAuth.macAddress + ' - OK')
+                    })
+            })
+        } else
+            console.log(`Unauthorized ONUs found: 0`)
+    })
+}
+
+example(options)
+```
+
+# Help us!
+
+**En-Us:**
+Help us improve this module. If you have any information that the module does not provide or provides incompletely or incorrectly, please use our Github repository or email.
+
+**Pt-Br:**
+Ajude-nos a melhorar este módulo. Se você tiver alguma informação que o módulo não forneça ou forneça de maneira incompleta ou incorreta, use nosso repositório do [Github](https://github.com/) ou email. Pode enviar em português Brasil também! :)
+
+repository: https://github.com/davibaltar/snmp-fiberhome
+
+email: davibaltar.npm@gmail.com
+
+# License
+
+  [MIT](LICENSE) License
+
+Copyright (c) 2019 davibaltar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

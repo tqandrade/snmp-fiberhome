@@ -20,7 +20,9 @@ const defaultOptions = {
     version: version.SNMPv2c,
     idBitsSize: 16,
     maxRepetitions: 200,
-    enableWarnings: false
+    enableWarnings: false,
+    enableLogs: false
+    
 }
 
 var dataType = {
