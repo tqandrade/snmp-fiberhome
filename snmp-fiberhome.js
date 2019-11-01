@@ -49,7 +49,7 @@ module.exports = {
     getOnuOpticalPowerList: onu.getOnuOpticalPowerList,
     getOnuUplinkInterface: onu.getOnuUplinkInterface,
     getOnuWebAdmin: onu.getOnuWebAdmin,
-    getRxPowerListByPon: onu.getRxPowerListByPon,
+    //getRxPowerListByPon: onu.getRxPowerListByPon,
     getUnauthorizedOnus: onu.getUnauthorizedOnus,
     parseOnuIndex: onu.parseOnuIndex,
     setLanPorts: onu.setLanPorts,

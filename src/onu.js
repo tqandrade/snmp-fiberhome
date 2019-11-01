@@ -608,18 +608,31 @@ function getOnuOpticalPower(options, slot, pon, onuId, ignore) {
 function getOnuListByPon(options, slot, pon) {
     return new Promise((resolve, reject) => {
         try {
-            var queue = new Queue(1, 10000)
-            var list = []
-            getRxPowerListByPon(options, slot, pon).then(aOnus => {
-                if (aOnus)
-                    aOnus.forEach((onu, idx) => {
-                        queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuOpticalPower', 'getOnuUplinkInterface']).then(o => {
-                            list.push({ ...onu, ...o })
-                            if (queue.queue.length == 0)
-                                return resolve(list)
-                        }))
+            gFunc.isValid(options, slot, pon).then(isValid => {
+                if (isValid) {
+                    var queue = new Queue(1, 10000)
+                    var aOnuOID = []
+                    var aResp = []
+                    var list = []
+                    for (var onuId = 1; onuId <= 128; ++onuId)
+                        aOnuOID.push(OID.getOnuMacAddress + '.' + convertToOnuIndex(slot, pon, onuId).toString())
+                    snmp_fh.get(options, aOnuOID).then(ret => {
+                        ret.forEach(e => {
+                            if (e.value && e.value.length > 0)
+                                aResp.push({ _onuIndex: e.oid.split('.')[13], ...parseOnuIndex(parseInt(e.oid.split('.')[13])), macAddress: e.value.toString() })
+                        })
+                        if (aResp.length > 0)
+                            aResp.forEach((onu, idx) => {
+                                queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface']).then(o => {
+                                    list.push({ ...onu, ...o })
+                                    if (queue.queue.length == 0)
+                                        return resolve(list)
+                                }))
+                            })
+                        else
+                            return resolve([])
                     })
-                else return resolve(false)
+                } else return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -822,6 +835,10 @@ function getOnuWebAdmin(options, slot, pon, onuId) {
     })
 }
 
+/*
+**WARNING!** This function presented inconsistency and flaws. 
+For this reason, it was removed in version 1.0.11. We hope to 
+correct the errors and return them in future releases. */
 function getRxPowerListByPon(options, slot, pon) {
     return new Promise((resolve, reject) => {
         try {
@@ -846,7 +863,7 @@ function getRxPowerListByPon(options, slot, pon) {
 
                         pos = 233
                         aOnus = []
-                        while (value[pos] != '00') {
+                        while (value[pos] != '00' && pos < value.length) {
                             aOnus.push({ _onuIndex: convertToOnuIndex(slot, pon, parseInt(value[pos])), slot, pon, onuId: parseInt(value[pos], 16), opticalRxPower: (hexToInt(value.slice(pos + 3, pos + 7).join('')) / 100).toFixed(2), opticalRxPowerUnit: 'dBm' })
                             pos += 8
                         }
@@ -862,13 +879,15 @@ function getRxPowerListByPon(options, slot, pon) {
     })
 }
 
+//getOnuListBypon
+
 function getMacAddressList(options) {
     return new Promise((resolve, reject) => {
         try {
             snmp_fh.subtree(options, OID.getSerials).then(serialList => {
                 var list = []
                 serialList.forEach(e => {
-                    list.push({ _onuIndex: parseInt(e.oid.split(OID.getSerials + '.')[1]), macOrSerial: e.value.toString() })
+                    list.push({ _onuIndex: parseInt(e.oid.split(OID.getSerials + '.')[1]), macAddress: e.value.toString() })
                 })
                 return resolve(list)
             })

@@ -171,6 +171,7 @@ Output:
 ## getPonPortList()
 
 **Description:** Returns an array with the relevant information from all PON ports in the OLT.
+NOTE: Depending on the number of connected ONUs on the OLT, the loading time may take time and cause a timeout. In this case, use the `getPonPort()` function in conjunction with a loop.
 
 **Function signature:**
 
@@ -333,13 +334,13 @@ Output:
 **Function signature:**
 
 ```js
-getCardsInformationList(options: <object>) => Promise <Array>
+getCardList(options: <object>) => Promise <Array>
 ```
 
 Example:
 
 ```js
-fh.getCardsInformationList(options).then(cards => {
+fh.getCardList(options).then(cards => {
     console.log(cards)
 })
 ```
@@ -1030,33 +1031,54 @@ Output:
         pon: 1,
         onuId: 1,
         macAddress: 'FHTT1231e796',
+        firmwareVersion: '',
+        hardwareVersion: 'GJ-2.134.285F4G',
         ip: '0.0.0.0',
-        opticalRxPower: '-10.30',
-        opticalRxPowerUnit: 'dBm',
+        onuLogicAuthId: '',
+        onuLogicAuthIdPass: '',
         onuStatus: 'online',
         onuStatusValue: 1,
         softwareVersion: 'RP2522',
-        systemName: ''
-        firmwareVersion: '',
-        hardwareVersion: 'GJ-2.134.285F4G',
-        onuLogicAuthId: '',
-        onuLogicAuthIdPass: '',
-        lastOffTime: {
-            _onuIndex: 369623296,
-            date: '2019-01-21',
-            time: '08:01:04'
-        },
+        systemName: '',
         distance: {
             _onuIndex: 369623296,
-            value: '1.282'
-            unit: 'km',
+            value: '1.283',
+            unit: 'km'
+        },
+        lastOffTime: {
+            _onuIndex: 369623296,
+            date: '2009-01-18',
+            time: '23:37:39'
         },
         onuType: {
             category: 'SFU',
             code: 765,
             mode: 'dual',
             model: 'AN5506-04-F1',
-            type: 'GPON'
+            type:'GPON'
+        },
+        opticalPower: {
+            _onuIndex: 369623296,
+            rxPower:{
+                value: '-19.25',
+                unit: 'dBm'
+            },
+            txPower: {
+                value: '3.03',
+                unit: 'dBm'
+            },
+            temperature: {
+                value: '45.10',
+                unit: '°C'
+            },
+            voltage: {
+                value: '3.21',
+                unit: 'V'
+            },
+            currTxBias: {
+                value: '9.70',
+                unit: 'mA'
+            }
         }
     },
     // { ... }
@@ -1101,11 +1123,11 @@ Output:
         unit: '°C'
     },
     voltage: {
-        value: '3.21'
+        value: '3.21',
         unit: 'V'
     },
     currTxBias: {
-        value: '9.70'
+        value: '9.70',
         unit: 'mA'
     }
 }
@@ -1240,39 +1262,9 @@ Output:
 ]
 ```
 
-## getRxPowerListByPon()
+## ~~getRxPowerListByPon()~~
 
-**Description:** Returns a list containing the Rx signal from all ONUs of a given PON port in OLT.
-
-**Function signature:**
-
-```js
-getRxPowerListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
-```
-
-Example:
-
-```js
-fh.getRxPowerListByPon(options, 11, 1).then(rxList => {
-    console.log(rxList)
-})
-```
-
-Output:
-
-```js
-[
-    {
-        _onuIndex: 369623296,
-        slot: 11,
-        pon: 1,
-        onuId: 1,
-        opticalRxPower: '-20.30',
-        opticalRxPowerUnit: 'dBm',
-    },
-    // { ... }
-]
-```
+**WARNING!** This function presented inconsistency and flaws. For this reason, it was removed in version 1.0.11. We hope to correct the errors and return them in future releases.
 
 ## getUnauthorizedOnus()
 
