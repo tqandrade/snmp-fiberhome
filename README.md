@@ -70,7 +70,7 @@ The following functions are assigned the **slot**, **pon** and **onuId** paramet
 
 The `onuIndex` parameter in the following functions is calculated as follows:
 
-    slot*(2^25) + pon*(2^19) + onuId*(2^8)
+    slot*(2^25) + pon*(2^19) + onuId*(2^8)  // for OLT AN5516
 
 See the function `convertToOnuIndex()`
 
@@ -285,7 +285,7 @@ Output:
 
 ## getSlotsInformationList()
 
-**Description:** Retorna uma array com informações relevantes de todos os slots na OLT.
+**Description:** Returns an array with relevant information from all slots in the OLT.
 
 **Function signature:**
 
@@ -377,7 +377,7 @@ Output:
 
 ## getCard()
 
-**Description:** Retorna informações relevantes de um determinado card. If not found, the return will be `false`.
+**Description:** Returns relevant information from a given card. If not found, the return will be `false`.
 
 **Function signature:**
 
@@ -1437,7 +1437,7 @@ Output:
 
 ## setOnuWebAdmin()
 
-**Description:** Set the ONU access settings via web. Returns `true` on success and `false` otherwise. Some ONUs only accept a single 'admin' group profile, such as AN5506-01-A1, mas caso mais de um perfil seja informado, o perfil do grupo 'admin' será configurado e os demais serão ignorados para esse tipo de ONU.
+**Description:** Set the ONU access settings via web. Returns `true` on success and `false` otherwise. Some ONUs only accept a single 'admin' group profile, such as AN5506-01-A1, but if more than one profile is entered, the group profile 'admin' will be set and the others will be ignored for this type of ONU.
 
 **Function signature:**
 
@@ -1594,15 +1594,14 @@ example(options)
 
 # Help us!
 
-**En-Us:**
 Help us improve this module. If you have any information that the module does not provide or provides incompletely or incorrectly, please use our Github repository or email.
 
 **Pt-Br:**
 Ajude-nos a melhorar este módulo. Se você tiver alguma informação que o módulo não forneça ou forneça de maneira incompleta ou incorreta, use nosso repositório do [Github](https://github.com/) ou email. Pode enviar em português Brasil também! :)
 
-repository: https://github.com/davibaltar/snmp-fiberhome
+Repository: https://github.com/davibaltar/snmp-fiberhome
 
-email: davibaltar.npm@gmail.com
+E-mail: davibaltar.npm@gmail.com
 
 # License
 
