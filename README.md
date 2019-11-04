@@ -2,9 +2,6 @@
 
 This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, pon ports and ONUs by performing read and write functions directly in OLT.
 
-This module is provided and sponsored by telecommunications company Valenet:
-![](http://valenet.com.br/wp-content/themes/valenet/assets/images/logo.png)
-
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
 ## Summary
@@ -16,6 +13,7 @@ This module is provided and sponsored by telecommunications company Valenet:
 - Card functions
 - ONU functions
 - Extra example
+- Contributions
 - Help us!
 - License
 
@@ -835,30 +833,30 @@ Output:
             unit: '°C'
         },
         voltage: {
-            value: '3.21'
+            value: '3.21',
             unit: 'V'
         },
         currTxBias: {
-            value: '9.70'
+            value: '9.70',
             unit: 'mA'
         }
     },
     onuType: {
-        category: 'SFU'
-        code: 765
-        mode: 'dual'
-        model: 'AN5506-04-F1'
+        category: 'SFU',
+        code: 765,
+        mode: 'dual',
+        model: 'AN5506-04-F1',
         type: 'GPON'
     }, 
     upLinkInterface: {
-        downlinkRate: 2500
-        downlinkRateUnit: 'Mbit/s'
-        portDescription: 'PON 11/1/1'
-        portName: 'PON 11/1/1'
-        portStatus: 'enable'
-        portStatusValue: 1
-        portType: 1
-        uplinkRate: 1250
+        downlinkRate: 2500,
+        downlinkRateUnit: 'Mbit/s',
+        portDescription: 'PON 11/1/1',
+        portName: 'PON 11/1/1',
+        portStatus: 'enable',
+        portStatusValue: 1,
+        portType: 1,
+        uplinkRate: 1250,
         uplinkRateUnit: 'Mbit/s'
     }
 }
@@ -1184,11 +1182,11 @@ Output:
                 unit: '°C'
             },
             voltage: {
-                value: '3.21'
+                value: '3.21',
                 unit: 'V'
             },
             currTxBias: {
-                value: '9.70'
+                value: '9.70',
                 unit: 'mA'
             }
         }
@@ -1268,10 +1266,6 @@ Output:
     // { ... }
 ]
 ```
-
-## ~~getRxPowerListByPon()~~
-
-**WARNING!** This function presented inconsistency and flaws. For this reason, it was removed in version 1.0.11. We hope to correct the errors and return them in future releases.
 
 ## getUnauthorizedOnus()
 
@@ -1591,6 +1585,11 @@ function example(options) {
 
 example(options)
 ```
+
+# Contributions
+
+This module is sponsored by telecommunications company Valenet:
+![](http://valenet.com.br/wp-content/themes/valenet/assets/images/logo.png)
 
 # Help us!
 
