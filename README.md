@@ -7,6 +7,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 ## Summary
 - Installation
 - Tests
+- Bug fixes and features
 - Initial settings
 - OLT functions
 - Slot functions
@@ -44,6 +45,17 @@ const fh = require('snmp-fiberhome')
 |--------------|------|--------|
 | AN5506-01-A1 | GPON | Tested |
 | AN5506-04-F1 | GPON | Tested |
+
+## Bug fixes and features
+
+Version 1.1.x of this module contains:
+
+- Correction of parameters name 'multcast' to 'multicast'
+- `setLanPorts()` and `getLanPorts()`: Added more features and changed some parameter names.
+- `addAllOnus()`: changed some parameter names.
+- `addOnu()`: changed some parameter names.
+- `enableLanPorts()`: changed some parameter names.
+
 
 ## Initial settings
 
@@ -416,12 +428,12 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 ## addAllOnus()
 
-**Description:** This function performs WAN and Vlans authorization and configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `vlans` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `vlans` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
+**Description:** This function performs WAN and Vlans authorization and configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `profileLanPorts` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
 
 **Function signature:**
 
 ```js
-addAllOnus(options: <object>, profilesWan: <Array>, vlans: <Array>) => Promise <Array>
+addAllOnus(options: <object>, profilesWan: <Array>, profileLanPorts: <Array>) => Promise <Array>
 ```
 
 Example:
@@ -433,8 +445,8 @@ fh.addAllOnus(options,
     { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
 ],
 [
-    { lan: 1, vlans: [{ transparent: 2001 }, { tag: 3011, cos: 3 }] },
-    { lan: 2, enable: false }
+    { lanPort: 1, vlans: [{ vlanMode: 'transparent', cvlanId: 2001 }, { vlanMode: 'tag', cvlanId: 3011, cos: 3 }] },
+    { lanPort: 2, enablePort: false }
 ]
 ).then(authOnuList => {
     console.log(authOnuList)
@@ -471,7 +483,7 @@ Output:
 **Function signature:**
 
 ```js
-addOnu(options: <object>, onu: <object>, profilesWan: <Array>, vlans: <Array>) => Promise <object>
+addOnu(options: <object>, onu: <object>, profilesWan: <Array>, profileLanPorts: <Array>) => Promise <object>
 ```
 
 `onu: <object>` parameter:
@@ -488,14 +500,14 @@ onu: {
 Example:
 
 ```js
-fh.addOnu(options, { slot: 11, pon: 1, onuTypeCode: 765, macAddress: 'FHTT1231e796' }, 
+fh.addOnu(options, { slot: 11, pon: 1, onuTypeCode: 765, macAddress: 'FHTT1231e796' },
 [
     { wanMode: 'internet', wanConnType: 'router', wanVlan: 2001, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
     { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
 ],
 [
-    { lan: 1, vlans: [{ transparent: 2001 }, { tag: 3011, cos: 3 }] },
-    { lan: 2, enable: false }
+    { lanPort: 1, vlans: [{ vlanMode: 'transparent', cvlanId: 2001 }, { vlanMode: 'tag', cvlanId: 3011, cos: 3 }] },
+    { lanPort: 2, enablePort: false }
 ]
 ).then(onu => {
     console.log(onu)
@@ -605,10 +617,10 @@ enableLanPorts(options: <objecy>, slot: <number>, pon: <number>, onuId: <number>
 Example:
 
 ```js
-fh.enableLanPorts(options, 11, 1, 1, 
+fh.enableLanPorts(options, 11, 1, 1,
 [
-    { lan: 2,  enable: false },
-    { lan: 3,  enable: true }
+    { lanPort: 2,  enablePort: false },
+    { lanPort: 3,  enablePort: true }
 ]
 ).then(onuIndex => {
     console.log(onuIndex)
@@ -713,30 +725,51 @@ Output:
 ```js
 [
     {
-        lan: 1,
-        enable: true,
+        lanPort: 1,
+        enablePort: true,
+        lanSettings: {
+            autoNegotiation: {
+                auto: false,
+                duplex: 'full',
+                portSpeed: '100M'
+            },
+            flowControl: true,
+            boardwidthSet: {
+                upstreamMin: 640,
+                upstreamMax: 1000000,
+                downstream: 1000000
+            },
+            igmpUpCvlan: {
+                cos: 6,
+                id: 2001,
+                tpId: 33024
+            },
+            igmpUpSvlan: {
+                cos: null,
+                id: null,
+                tpId: 33024
+            }
+        },
         vlans: [
-            { transparent: 3000 },
-            { tag: 3001, cos: 4 }
+            {vlanMode: 'transparent', cvlanId: 2001, cos: null, serviceType: 'multicast', tpId: 33024, tls: false, qInQ: false, translation: false},
+            {vlanMode: 'tag', cvlanId: 2002, cos: 3, serviceType: 'unicast', tpId: 33024, tls: false, qInQ: false, translation: false}
         ]
-    },
-    { 
-        lan: 2,
-        enable: true,
-        vlans: [ ]
-    },
-    { 
-        lan: 3,
-        enable: false,
-        vlans: [ ]
     },
     {
-        lan: 4,
-        enable: true,
+        lanPort: 2,
+        enablePort: true,
+        lanSettings: {
+            // { ... }
+        },
         vlans: [
-            { transparent: 2005 }
+            {
+                vlanMode: 'transparent', cvlanId: 2001, cos: null, serviceType: 'unicast', tpId: 33024
+                translation: {cos: 5, value: 4000},
+                qInQ: {serviceName: 'IPTV', vlanId: 404, cos: 7}
+            }
         ]
-    }
+    },
+    // { ... }
 ]
 ```
 
@@ -1242,7 +1275,7 @@ getOnuWebAdmin(options: <object>, slot: <number>, pon: <number>, onuId: <number>
 Example:
 
 ```js
-fh.getOnuWebAdmin(options, 11, 1, 2).then(profiles => { 
+fh.getOnuWebAdmin(options, 11, 1, 2).then(profiles => {
     console.log(profiles)
 })
 ```
@@ -1344,7 +1377,7 @@ Output:
 
 ## setLanPorts()
 
-**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `transparent` and `tag` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7
+**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `cvlanId`, `translation.value` and `vlanId` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7
 
 **Function signature:**
 
@@ -1352,17 +1385,72 @@ Output:
 setLanPorts(options: <object>, slot: <number>, pon: <number>, onuId: <number>, aLanPorts: <Array>) => Promise <number>
 ```
 
-`aLanPorts` parameter:
+`aLanPorts` parameter (basic):
 
 ```js
 aLanPorts = [
     {
-        lan: <number>,
-        anable: <boolean>,            // (optional)
+        lanPort: <number>,
         vlans: [
             {
-                transparent or tag: <number>,
-                cos: <number>         // (optional) Priority or COS
+                vlanMode: <string>,        // 'transparent' or 'tag'. By default is 'transparent'
+                cvlanId: <number>,
+                cos: <number>              // (optional) Priority or COS
+            },
+            // { ... }
+        ]
+    },
+    // { ... }
+]
+```
+
+`aLanPorts` parameter (with optionals):
+
+```js
+aLanPorts = [
+    {
+        lanPort: <number>,
+        enablePort: <boolean>,             // By default is true
+        autoNegotiation: {                 // By default is true
+            auto: <boolean>,
+            portSpeed: <string>,           // '10M', '100M' or '1000M'. By default is '100M'
+            duplex: <string>               // 'half' or 'full'. By default is 'full'
+        },
+        flowControl: <boolean>,            // By default is false
+        boardwidthSet: {
+            upstreamMin: <number>,
+            upstreamMax: <number>,
+            downstream: <number>
+        },
+        igmpUpCvlan: {
+            cos: <number>,
+            id: <number>,
+            tpId: <number>                 // By default is 33024
+        },
+        igmpUpSvlan: {
+            cos: <number>,
+            id: <number>,
+            tpId: <number>                 // By default is 33024
+        },
+        vlans: [
+            {
+                vlanMode: <string>,        // 'transparent' or 'tag'. By default is 'transparent'
+                cvlanId: <number>,
+                cos: <number>,             // Priority or COS
+                serviceType: <string>,     // 'unicast' or 'multicast'. By default is 'unicast'
+                tls: <boolean>,            // If true, use in conjunction with 'qInQ' only
+                tpId: <number>             // By default is 33024
+                translation: {             // By default is false
+                    value: <number>,
+                    cos: <number>,
+                    tpId: <number>         // By default is 33024
+                },
+                qInQ: {                    // If used, it will ignore all the above settings.
+                    serviceName: <string>, // 'igmp', 'igmp2', 'pppoe' or 'iptv'
+                    cos: <number>,
+                    vlanId: <number>,      // By default is set automatically
+                    tpId: <number>         // By default is 33024
+                }
             },
             // { ... }
         ]
@@ -1376,20 +1464,46 @@ Example:
 ```js
 fh.setLanPorts(options, 11, 1, 1, [
     {
-        lan: 1,
+        lanPort: 1,
         vlans: [
-            { transparent: 3000 },
-            { tag: 3001, cos: 4 }
+            { vlanMode: 'transparent', cvlanId: 3001, serviceType: 'multicast' },
+            { vlanMode: 'tag', cvlanId: 3002, cos: 3 },
         ]
-    }, 
-    { 
-        lan: 3,
-        enable: false
-    }, 
-    { 
-        lan: 4,
+    },
+    {
+        lanPort: 3,
+        enablePort: false
+    },
+    {
+        lanPort: 4,
+        autoNegotiation: {
+            auto: false,
+            duplex: 'half',
+            portSpeed: '1000M'
+        },
+        flowControl: true,
+        boardwidthSet: {
+            upstreamMin: 600,
+            upstreamMax: 500000,
+            downstream: 500000
+        },
+        igmpUpCvlan: {
+            cos: 1,
+            id: 3001
+        },
+        igmpUpSvlan: {
+            cos: 2,
+            id: 3002
+        },
         vlans: [
-            { transparent: 2005 }
+            { vlanMode: 'transparent', cvlanId: 3004, translation: { value: 3005, cos: 1 } },
+            {
+                tls: true,
+                qInQ: {
+                    serviceName: 'iptv',
+                    cos: 2
+                }
+            }
         ]
     }
 ]).then(onuIndex => {
@@ -1397,7 +1511,7 @@ fh.setLanPorts(options, 11, 1, 1, [
 })
 ```
 
-**NOTE:** LAN port 2 will not be changed in the example above.
+**NOTE:** LAN port 2 will not be changed in the example above and LAN port 1 settings that go beyond the VLAN will not be changed either.
 
 Output:
 
@@ -1471,7 +1585,7 @@ setWan(options: <object>, slot: <number>, pon: <number>, onuId: <number>, profil
 
 ```js
 var profile = {        // Values:
-    wanMode:           // 'tr069', 'internet', 'tr069_internet', 'multcast', 'voip', 'voip_internet', 'radius', 'radius_internet' or 'other'
+    wanMode:           // 'tr069', 'internet', 'tr069_internet', 'multicast', 'voip', 'voip_internet', 'radius', 'radius_internet' or 'other'
     wanConnType:       // 'router' or 'bridge'
     wanVlan:           // <number> or false
     wanCos:            // <number> or false
@@ -1559,7 +1673,7 @@ function example(options) {
                             { wanMode: 'tr069', wanConnType: 'router', wanVlan: 3002, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
                         ],
                         [
-                            { lan: 1, vlans: [{ transparent: 2001 }] },
+                            { lanPort: 1, vlans: [{ vlanMode: 'transparent', cvlanId: 2010 }] },
                         ]
                     )).then(onuAuth => {
                         console.log('\t' + onuAuth.macAddress + ' - OK (bridge)')
@@ -1568,11 +1682,11 @@ function example(options) {
                     queue.add(f => fh.addOnu(options, onu,
                         [
                             { wanMode: 'internet', wanConnType: 'router', wanVlan: 2003, ipMode: 'pppoe', translationValue: 2000, svlan: 2000 },
-                            { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2004, ipMode: 'dhcp', translationValue: 2000, svlan: 3000 }
+                            { wanMode: 'tr069', wanConnType: 'router', wanVlan: 2004, ipMode: 'dhcp', translationValue: 3000, svlan: 3000 }
                         ],
                         [
-                            { lan: 1, vlans: [{ transparent: 3010 }, { tag: 3011, cos: 3 }] },
-                            { lan: 2, enable: false }
+                            { lanPort: 1, vlans: [{ vlanMode: 'transparent', cvlanId: 3010 }, { vlanMode: 'tag', cvlanId: 3011, cos: 3 }] },
+                            { lanPort: 2, enablePort: false }
                         ]
                     )).then(onuAuth => {
                         console.log('\t' + onuAuth.macAddress + ' - OK')
