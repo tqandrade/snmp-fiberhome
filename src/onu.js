@@ -1038,8 +1038,10 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
                             // Convertendo dados para Hex
                             lanPortsMerged.forEach(lan => {
                                 // Convertendo VLANS para Hex
+                                var regTransparentCvlanId = []
                                 if (lan.vlans && lan.vlans.length > 0) {
-                                    lan.vlans.forEach(vlan => {
+                                    lan.vlans.forEach((vlan, index) => {
+
                                         var bodyLan = snmp_fh.bodyLan
                                         bodyLan = bodyLan.split(' ')
 
@@ -1047,6 +1049,11 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
                                             console.error("Error! setLanPorts(): Parameter 'tag' and 'transparent' were deprecated in version 1.1.0. See documentation at 'https://www.npmjs.com/package/snmp-fiberhome'")
                                             return
                                         }
+
+                                        if (vlan.vlanMode == 'tag' && regTransparentCvlanId.includes(vlan.cvlanId))
+                                            console.error("Error! 'Tag' CVLANID has been used by other 'Transparent' service!")
+
+                                        regTransparentCvlanId.push(vlan.cvlanId)
 
                                         /* ** TLS ** */
                                         bodyLan[74] = '00'
@@ -1123,6 +1130,7 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
                                         if (options.enableWarnings && (vlan.cos < 0 || vlan.cos > 7))
                                             console.error('Warning! setLanPorts(): Invalid values for "cos". Values must be in the range 0 to 7. The limit value has been set.')
 
+                                        //bodyLan[75] = (index + 1).toHex(2)
                                         bodyLan = bodyLan.join(' ')
 
                                         lan.vlansHex.push(bodyLan)
