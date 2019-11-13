@@ -45,6 +45,7 @@ const fh = require('snmp-fiberhome')
 |--------------|------|--------|
 | AN5506-01-A1 | GPON | Tested |
 | AN5506-04-F1 | GPON | Tested |
+|       -      | EPON | Developing |
 
 ## Bug fixes and features
 
