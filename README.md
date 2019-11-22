@@ -7,18 +7,18 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
 ## Summary
-- Installation
-- Tests
-- Bug fixes and features
-- Initial settings
-- OLT functions
-- Slot functions
-- Card functions
-- ONU functions
-- Extra example
-- Contributions
-- Help us!
-- License
+- [Installation](#Installation)
+- [Tests](#Tests)
+- [Bug fixes and features](#Bug fixes and features)
+- [Initial settings](#Initial settings)
+- [OLT functions](#OLT functions)
+- [Slot functions](#Slot functions)
+- [Card functions](#Card functions)
+- [ONU functions](#ONU functions)
+- [Extra example](#Extra example)
+- [Contributions](#Contributions)
+- [Help us!](#Help us!)
+- [License](#License)
 
 ## Installation
 
@@ -60,8 +60,8 @@ Version 1.1.x of this module contains:
 - `addOnu()`: changed some parameter names.
 - `enableLanPorts()`: changed some parameter names.
 - (version: 1.1.4)
- - `setLanPorts()` and `getLanPorts()` working with EPON and GPON.
- - Implementation of the `getOnuType()` function.
+  - `setLanPorts()` and `getLanPorts()` working with EPON and GPON.
+  - Implementation of the `getOnuType()` function.
 
 ## Initial settings
 
