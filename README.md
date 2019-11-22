@@ -7,18 +7,18 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
 ## Summary
-- [Installation](#Installation)
-- [Tests](#Tests)
-- [Bug fixes and features](#Bug fixes and features)
-- [Initial settings](#Initial settings)
-- [OLT functions](#OLT functions)
-- [Slot functions](#Slot functions)
-- [Card functions](#Card functions)
-- [ONU functions](#ONU functions)
-- [Extra example](#Extra example)
-- [Contributions](#Contributions)
-- [Help us!](#Help us!)
-- [License](#License)
+- [Installation](#installation)
+- [Tests](#tests)
+- [Bug fixes and features](#bug-fixes-and-features)
+- [Initial settings](#-nitial-settings)
+- [OLT functions](#olt-functions)
+- [Slot functions](#slot-functions)
+- [Card functions](#card-functions)
+- [ONU functions](#onu-functions)
+- [Extra example](#extra-example)
+- [Contributions](#contributions)
+- [Help us!](#help-us!)
+- [License](#license)
 
 ## Installation
 
