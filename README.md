@@ -39,7 +39,8 @@ const fh = require('snmp-fiberhome')
 | OLT       | Status     |
 |-----------|------------|
 | AN5516-01 | Tested     |
-| AN5116    | Not Tested |
+| AN5516-06 | Tested     |
+| AN5116    | Not implemented |
 
 ---
 
@@ -58,7 +59,9 @@ Version 1.1.x of this module contains:
 - `addAllOnus()`: changed some parameter names.
 - `addOnu()`: changed some parameter names.
 - `enableLanPorts()`: changed some parameter names.
-
+- (version: 1.1.4)
+ - `setLanPorts()` and `getLanPorts()` working with EPON and GPON.
+ - Implementation of the `getOnuType()` function.
 
 ## Initial settings
 
@@ -529,8 +532,8 @@ Output:
     onuType: {
             category: 'SFU',
             code: 765,
-            mode: 'dual'
-            model: 'AN5506-04-F1'
+            mode: 'dual',
+            model: 'AN5506-04-F1',
             type: 'GPON'
         }
 }
@@ -564,8 +567,8 @@ Output:
     onuType: {
         category: 'SFU',
         code: 765,
-        mode: 'dual'
-        model: 'AN5506-04-F1'
+        mode: 'dual',
+        model: 'AN5506-04-F1',
         type: 'GPON'
     }
 }
@@ -776,6 +779,10 @@ Output:
 ]
 ```
 
+**NOTE 1:** EPON ONUs will contain the `policing` and `dsPolicing` parameters within the `lanSettings` parameter, and `bandwidthSet` within `vlans`. The `boardwidthSet` parameter is returned for GPON only.
+
+**NOTE 2:** If the `getLanPorts()` function does not identify whether the UN is EPON or GPON, an error will be displayed and the `getLanPortsEPON()` or `getLanPortsGPON()` functions can be used by passing the same input parameters as the `getLanPorts()` function.
+
 ## getMacAddressList()
 
 **Description:** Returns a list containing the mac address of all authorized ONUs in a given OLT
@@ -810,7 +817,7 @@ Output:
 
 **Description:** Returns relevant information from a particular ONU, such as: opticalPowers (signals), distance, model, macAddress, enters others.
 
-**NOTE:** The `opticalPower` parameter is available for GPON technology only. EPON technology will return the parameters with zero value.
+**NOTE:** For EPON technology some (or all) values ​​may be returned as zero on `opticalPower`
 
 **Function signature:**
 
@@ -1130,7 +1137,7 @@ Output:
 
 **Description:** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. 
 
-**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
+**NOTE:** For EPON technology some (or all) values ​​may be returned as zero.
 
 **Function signature:**
 
@@ -1178,7 +1185,7 @@ Output:
 
 **Description:** Returns a signal list of all authorized ONUs in OLT.
 
-**NOTE:** This option is available for GPON technology only. EPON technology will return the parameters with zero value.
+**NOTE:** For EPON technology some (or all) values ​​may be returned as zero on `opticalPower`
 
 **Function signature:**
 
@@ -1230,6 +1237,43 @@ Output:
     // { ... }
 ]
 ```
+
+## getOnuType()
+
+**Description:** Returns ONU type information.
+
+**Function signature:**
+
+```js
+getOnuType(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <object>
+```
+
+Example:
+
+```js
+fh.getOnuType(options, 11, 1, 1).then(onuType => {
+    console.log(onuType)
+})
+```
+
+Output:
+
+```js
+{
+    category: 'SFU',
+    code: 765,
+    mode: 'dual',
+    model: 'AN5506-04-F1',
+    type: 'GPON'
+}
+```
+
+**NOTE:** The `mode` parameter in `onuType` is the reference to the ONU mode of operation, which can be:
+* **router**: operates as a router only
+* **bridge**: operates only as bridge
+* **dual**: operates as a router and/or bridge
+
+**IMPORTANT!** Not all ONUs will have the `mode` parameter on `onuType`
 
 ## getOnuUplinkInterface()
 
@@ -1333,8 +1377,8 @@ Output:
         onuType: {
             category: 'SFU',
             code: 765,
-            mode: 'dual'
-            model: 'AN5506-04-F1'
+            mode: 'dual',
+            model: 'AN5506-04-F1',
             type: 'GPON'
         }
     },
@@ -1347,7 +1391,7 @@ Output:
 * **bridge**: operates only as bridge
 * **dual**: operates as a router and/or bridge
 
-Not all ONUs will have the `mode` parameter on `onuType`
+**IMPORTANT!** Not all ONUs will have the `mode` parameter on `onuType`
 
 
 ## parseOnuIndex()
@@ -1414,16 +1458,33 @@ aLanPorts = [
     {
         lanPort: <number>,
         enablePort: <boolean>,             // By default is true
+        clear: <boolean>,                  // Remove all vlans and set default settings. By default is false
         autoNegotiation: {                 // By default is true
             auto: <boolean>,
             portSpeed: <string>,           // '10M', '100M' or '1000M'. By default is '100M'
             duplex: <string>               // 'half' or 'full'. By default is 'full'
         },
         flowControl: <boolean>,            // By default is false
-        boardwidthSet: {
+        boardwidthSet: {                   // Only GPON
             upstreamMin: <number>,
             upstreamMax: <number>,
             downstream: <number>
+        },
+        bandwidthSet:{                     // Only EPON
+            upMinGuaranteed: <number>,
+            upMaxAllowed: <number>,
+            downMinGuaranteed: <number>,
+            downMaxAllowed: <number>,
+            upstreamFixed: <number>
+        },
+        policing: {                        // Only EPON
+            cir: <number>,
+            cbs: <number>,
+            ebs: <number>
+        },
+        dsPolicing: {                      // Only EPON
+            cir: <number>,
+            pir: <number>
         },
         igmpUpCvlan: {
             cos: <number>,
@@ -1448,7 +1509,7 @@ aLanPorts = [
                     cos: <number>,
                     tpId: <number>         // By default is 33024
                 },
-                qInQ: {                    // If used, it will ignore all the above settings.
+                qInQ: {                    // Only GPON. If used, it will ignore all the above settings.
                     serviceName: <string>, // 'igmp', 'igmp2', 'pppoe' or 'iptv'
                     cos: <number>,
                     vlanId: <number>,      // By default is set automatically
@@ -1461,6 +1522,8 @@ aLanPorts = [
     // { ... }
 ]
 ```
+
+**NOTE:** If the `clear` parameter is set to true, all settings will be ignored for the specific port.
 
 Example:
 
@@ -1521,6 +1584,8 @@ Output:
 ```js
 369623296
 ```
+
+**NOTE:** If the `setLanPorts()` function does not identify whether the UN is EPON or GPON, an error will be displayed and the `setLanPortsEPON()` or `setLanPortsGPON()` functions can be used by passing the same input parameters as the `setLanPorts()` function.
 
 ## setOnuBandwidth()
 

@@ -53,6 +53,32 @@ var objStandart = {
     ssids: { ssid1: true, ssid2: true, ssid3: true, ssid4: true }
 }
 
+const lanPortDefault = {
+    lanPort: 0,
+    enablePort: true,
+    autoNegotiation: {
+        auto: true,
+        duplex: "full",
+        portSpeed: "100M"
+    },
+    boardwidthSet: {
+        downstream: 1000000,
+        upstreamMax: 1000000,
+        upstreamMin: 640
+    },
+    flowControl: false,
+    igmpUpCvlan: {
+        cos: null,
+        id: null,
+        tpId: 33024
+    },
+    igmpUpSvlan: {
+        cos: null,
+        id: null,
+        tpId: 33024
+    }
+}
+
 function addAllOnus(options, profilesWan, profileLanPorts) {
     var queue = new Queue(1, 10000)
     var aAuthOnus = []
@@ -743,6 +769,29 @@ function getOnuOpticalPowerList(options) {
     })
 }
 
+function getOnuType(options, slot, pon, onuId) {
+    return new Promise((resolve, reject) => {
+        try {
+            var onuIndex = convertToOnuIndex(slot, pon, onuId)
+            gFunc.isValid(options, slot, pon, onuId).then(isValid => {
+                if (isValid && onuIndex) {
+                    snmp_fh.get(options, [OID.getOnuType + '.' + onuIndex]).then(data => {
+                        if (data[0].oid.split('.')[12] == 5 && data[0].type == 2)
+                            return resolve(table.ONUType[data[0].value])
+                        return resolve(null)
+                    })
+                } else {
+                    if (options.enableWarnings)
+                        console.error('getOnuType(): Invalid input parameters.')
+                    return resolve(null)
+                }
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
 function getOnuUplinkInterface(options, slot, pon, onuId, ignore) {
     return new Promise((resolve, reject) => {
         try {
@@ -970,52 +1019,84 @@ function setOnuBandwidth(options, slot, pon, onuId, upBw, downBw) {
 
 function setOnuWebAdmin(options, slot, pon, onuId, aWebConfig) {
     return new Promise((resolve, reject) => {
-        gFunc.isValid(options, slot, pon, onuId).then(isValid => {
-            if (isValid && slot && pon && onuId) {
-                var oidValue = ''
-                aWebConfig.forEach(webConfig => {
-                    var bodySetOnuWebAdmin = snmp_fh.bodySetOnuWebAdmin
-                    bodySetOnuWebAdmin = bodySetOnuWebAdmin.split(' ')
+        try {
+            gFunc.isValid(options, slot, pon, onuId).then(isValid => {
+                if (isValid && slot && pon && onuId) {
+                    var oidValue = ''
+                    aWebConfig.forEach(webConfig => {
+                        var bodySetOnuWebAdmin = snmp_fh.bodySetOnuWebAdmin
+                        bodySetOnuWebAdmin = bodySetOnuWebAdmin.split(' ')
 
-                    for (var idx = 0; idx < 16 && webConfig.username.split('')[idx]; ++idx)
-                        bodySetOnuWebAdmin[idx] = (webConfig.username).charCodeAt(idx).toString(16)
+                        for (var idx = 0; idx < 16 && webConfig.username.split('')[idx]; ++idx)
+                            bodySetOnuWebAdmin[idx] = (webConfig.username).charCodeAt(idx).toString(16)
 
-                    for (var idx = 0; idx < 16 && webConfig.password.split('')[idx]; ++idx)
-                        bodySetOnuWebAdmin[idx + 16] = (webConfig.password).charCodeAt(idx).toString(16)
+                        for (var idx = 0; idx < 16 && webConfig.password.split('')[idx]; ++idx)
+                            bodySetOnuWebAdmin[idx + 16] = (webConfig.password).charCodeAt(idx).toString(16)
 
-                    bodySetOnuWebAdmin[51] = webConfig.group == 'admin' || webConfig.group == 2 ? '02' : '01'
-                    oidValue += bodySetOnuWebAdmin.join(' ') + ' '
-                })
-                oidValue = oidValue.trim()
-
-                var headerSetOnuWebAdmin = snmp_fh.headerSetOnuWebAdmin
-                headerSetOnuWebAdmin = headerSetOnuWebAdmin.split(' ')
-
-                headerSetOnuWebAdmin[161] = slot.toHex(2)
-                headerSetOnuWebAdmin[163] = pon.toHex(2)
-                headerSetOnuWebAdmin[165] = onuId.toHex(2)
-                headerSetOnuWebAdmin[187] = aWebConfig.length.toHex(2)
-
-                var packSize = oidValue.split(' ').length + 64
-                headerSetOnuWebAdmin[70] = packSize.toHex(4).slice(0, 2)
-                headerSetOnuWebAdmin[71] = packSize.toHex(4).slice(2, 4)
-                headerSetOnuWebAdmin[122] = headerSetOnuWebAdmin[70]
-                headerSetOnuWebAdmin[123] = headerSetOnuWebAdmin[71]
-                headerSetOnuWebAdmin = headerSetOnuWebAdmin.join(' ')
-                oidValue = headerSetOnuWebAdmin + ' ' + oidValue
-
-                snmp_fh.sendSnmp(OID.getOnuWebAdmin, oidValue, options, true).then(ret => {
-                    snmp_fh.sendSnmp(OID.confirmGetOnuWebAdmin, oidValue, options, true).then(retConfirm => {
-                        return resolve(true)
+                        bodySetOnuWebAdmin[51] = webConfig.group == 'admin' || webConfig.group == 2 ? '02' : '01'
+                        oidValue += bodySetOnuWebAdmin.join(' ') + ' '
                     })
-                })
-            } else
-                return resolve(false)
-        })
+                    oidValue = oidValue.trim()
+
+                    var headerSetOnuWebAdmin = snmp_fh.headerSetOnuWebAdmin
+                    headerSetOnuWebAdmin = headerSetOnuWebAdmin.split(' ')
+
+                    headerSetOnuWebAdmin[161] = slot.toHex(2)
+                    headerSetOnuWebAdmin[163] = pon.toHex(2)
+                    headerSetOnuWebAdmin[165] = onuId.toHex(2)
+                    headerSetOnuWebAdmin[187] = aWebConfig.length.toHex(2)
+
+                    var packSize = oidValue.split(' ').length + 64
+                    headerSetOnuWebAdmin[70] = packSize.toHex(4).slice(0, 2)
+                    headerSetOnuWebAdmin[71] = packSize.toHex(4).slice(2, 4)
+                    headerSetOnuWebAdmin[122] = headerSetOnuWebAdmin[70]
+                    headerSetOnuWebAdmin[123] = headerSetOnuWebAdmin[71]
+                    headerSetOnuWebAdmin = headerSetOnuWebAdmin.join(' ')
+                    oidValue = headerSetOnuWebAdmin + ' ' + oidValue
+
+                    snmp_fh.sendSnmp(OID.getOnuWebAdmin, oidValue, options, true).then(ret => {
+                        snmp_fh.sendSnmp(OID.confirmGetOnuWebAdmin, oidValue, options, true).then(retConfirm => {
+                            return resolve(true)
+                        })
+                    })
+                } else
+                    return resolve(false)
+            })
+        } catch (err) {
+            return reject(err)
+        }
     })
 }
 
 function setLanPorts(options, slot, pon, onuId, aLanPorts) {
+    return new Promise((resolve, reject) => {
+        try {
+            getOnuType(options, slot, pon, onuId).then(onuType => {
+                if (onuType && onuType.type == 'GPON')
+                    setLanPortsGPON(options, slot, pon, onuId, aLanPorts).then(resp => {
+                        return resolve(resp)
+                    }, errorEPON => {
+                        return reject(errorEPON)
+                    })
+                else if (onuType && onuType.type == 'EPON')
+                    setLanPortsEPON(options, slot, pon, onuId, aLanPorts).then(resp => {
+                        return resolve(resp)
+                    }, errorGPON => {
+                        return reject(errorGPON)
+                    })
+                else {
+                    console.error("setLanPorts(): The ONU type was not identified as GPON or EPON in 'src/tables.js' -> 'ONUType'. Use the setLanPortsGPON (options, slot, pon, onuId, aLanPorts) or setLanPortsEPON (options, slot, pon, onuId, aLanPorts) function.")
+                }
+            }, err => {
+                return reject(err)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
+function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
     return new Promise((resolve, reject) => {
         try {
             gFunc.isValid(options, slot, pon, onuId).then(isValid => {
@@ -1031,6 +1112,322 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
                                 var index = aLanPorts.findIndex(e => e.lanPort == c.lanPort)
                                 if (index < 0)
                                     lanPortsMerged.push({ ...c, lanSettingsHex: null, vlansHex: [] })
+                                else if (aLanPorts[index].clear === true)
+                                    lanPortsMerged.push({ ...lanPortDefault, lanPort: aLanPorts[index].lanPort, lanSettingsHex: null, vlansHex: [] })
+                                else
+                                    lanPortsMerged.push({ ...c, ...aLanPorts[index], lanSettingsHex: null, vlansHex: [] })
+                            })
+
+                            // Convertendo dados para Hex
+                            lanPortsMerged.forEach(lan => {
+                                // Convertendo VLANS para Hex
+                                var regTransparentCvlanId = []
+                                if (lan.vlans && lan.vlans.length > 0) {
+                                    lan.vlans.forEach((vlan, index) => {
+
+                                        var bodyLan = snmp_fh.bodyLanEPON
+                                        bodyLan = bodyLan.split(' ')
+
+                                        if (vlan.tag || vlan.transparent) {
+                                            console.error("Error! setLanPorts(): Parameter 'tag' and 'transparent' were deprecated in version 1.1.0. See documentation at 'https://www.npmjs.com/package/snmp-fiberhome'")
+                                            return
+                                        }
+
+                                        if (vlan.vlanMode == 'tag' && regTransparentCvlanId.includes(vlan.cvlanId))
+                                            console.error("Error! 'Tag' CVLANID has been used by other 'Transparent' service!")
+
+                                        regTransparentCvlanId.push(vlan.cvlanId)
+
+                                        bodyLan[3] = '00'   // unicast
+                                        if (vlan.serviceType && vlan.serviceType == 'multicast')
+                                            bodyLan[3] = '01'
+
+                                        var vlanNum = null
+                                        if (vlan.vlanMode == 'tag') {
+                                            bodyLan[4] = `01`
+                                            if ((vlan.cvlanId < 1 || vlan.cvlanId > 4085) && (options.enableWarnings))
+                                                console.error('Warning! setLanPorts(): Invalid values for vlan tag. Values must be in the range 1 to 4085. The limit value has been set.')
+                                            if (vlan.cvlanId < 1)
+                                                vlanNum = 1
+                                            if (vlan.cvlanId > 4085)
+                                                vlanNum = 4085
+                                            vlanNum = vlan.cvlanId.toHex(4)
+                                        } else if (vlan.vlanMode == 'transparent') {
+                                            bodyLan[4] = `03`
+                                            if ((vlan.cvlanId < 1 || vlan.cvlanId > 4085) && (options.enableWarnings))
+                                                console.error('Warning! setLanPorts(): Invalid values for vlan transparent. Values must be in the range 1 to 4085. The limit value has been set.')
+                                            if (vlan.cvlanId < 1)
+                                                vlanNum = 1
+                                            if (vlan.cvlanId > 4085)
+                                                vlanNum = 4085
+                                            vlanNum = vlan.cvlanId.toHex(4)
+                                        }
+
+                                        bodyLan[5] = vlan.tpId ? vlan.tpId.toHex(4).slice(0, 2) : '81'
+                                        bodyLan[6] = vlan.tpId ? vlan.tpId.toHex(4).slice(2, 4) : '00'
+                                        bodyLan[7] = vlanNum ? vlanNum.slice(0, 2) : 'ff'
+                                        bodyLan[8] = vlanNum ? vlanNum.slice(2, 4) : 'ff'
+                                        bodyLan[9] = vlan.cos && vlan.cos >= 0 && vlan.cos < 8 ? vlan.cos.toHex(2) : 'ff'
+
+                                        if (vlan.cos < 0)
+                                            bodyLan[9] = '00'
+                                        if (vlan.cos > 7)
+                                            bodyLan[9] = '07'
+                                        if (options.enableWarnings && (vlan.cos < 0 || vlan.cos > 7))
+                                            console.error('Warning! setLanPorts(): Invalid values for "cos". Values must be in the range 0 to 7. The limit value has been set.')
+
+                                        /* ** TLS ** */
+                                        bodyLan[74] = '00'
+                                        if (vlan.tls) {
+                                            bodyLan[74] = '01'
+                                            bodyLan[4] = `03`
+                                        }
+
+                                        /* ** Translation ** */
+                                        if (vlan.translation) {
+                                            bodyLan[10] = '01'
+                                            bodyLan[11] = vlan.translation.tpId ? vlan.translation.tpId.toHex(4).slice(0, 2) : '81'
+                                            bodyLan[12] = vlan.translation.tpId ? vlan.translation.tpId.toHex(4).slice(2, 4) : '00'
+                                            bodyLan[13] = vlan.translation.value ? vlan.translation.value.toHex(4).slice(0, 2) : 'ff'
+                                            bodyLan[14] = vlan.translation.value ? vlan.translation.value.toHex(4).slice(2, 4) : 'ff'
+                                            bodyLan[15] = vlan.translation.cos ? vlan.translation.cos.toHex(2) : 'ff'
+                                        }
+
+                                        /* ** QinQ ** */ // DISABLED (BUG)
+                                        if (vlan.qInQ && false) { 
+                                            bodyLan[16] = '01'  // QinQ State
+                                            var vlanId = vlan.qInQ.vlanId
+                                            for (var p = 0; p < 30; ++p) {
+                                                if (vlan.qInQ.serviceName.split('')[p])
+                                                    bodyLan[33 + p] = (vlan.qInQ.serviceName.split('')[p].charCodeAt(0)).toString(16)
+                                                else
+                                                    bodyLan[33 + p] = '00'
+                                            }
+
+                                            bodyLan[63] = vlan.qInQ.tpId ? vlan.qInQ.tpId.toHex(4).slice(0, 2) : '81'
+                                            bodyLan[64] = vlan.qInQ.tpId ? vlan.qInQ.tpId.toHex(4).slice(2, 4) : '00'
+                                            bodyLan[65] = vlanId ? vlanId.toHex(4).slice(0, 2) : 'ff'
+                                            bodyLan[66] = vlanId ? vlanId.toHex(4).slice(2, 4) : 'ff'
+                                            bodyLan[67] = vlan.qInQ.cos ? vlan.qInQ.cos.toHex(2) : 'ff'
+                                        }
+
+                                        if (vlan.bandwidthSet) {
+                                            bodyLan[85] = vlan.bandwidthSet.upMinGuaranteed ? vlan.bandwidthSet.upMinGuaranteed.toHex(6).slice(0, 2) : '00'
+                                            bodyLan[86] = vlan.bandwidthSet.upMinGuaranteed ? vlan.bandwidthSet.upMinGuaranteed.toHex(6).slice(2, 4) : '02'
+                                            bodyLan[87] = vlan.bandwidthSet.upMinGuaranteed ? vlan.bandwidthSet.upMinGuaranteed.toHex(6).slice(4, 6) : '80'
+
+                                            bodyLan[89] = vlan.bandwidthSet.upMaxAllowed ? vlan.bandwidthSet.upMaxAllowed.toHex(6).slice(0, 2) : '01'
+                                            bodyLan[90] = vlan.bandwidthSet.upMaxAllowed ? vlan.bandwidthSet.upMaxAllowed.toHex(6).slice(2, 4) : '86'
+                                            bodyLan[91] = vlan.bandwidthSet.upMaxAllowed ? vlan.bandwidthSet.upMaxAllowed.toHex(6).slice(4, 6) : 'a0'
+
+                                            bodyLan[93] = vlan.bandwidthSet.downMinGuaranteed ? vlan.bandwidthSet.downMinGuaranteed.toHex(6).slice(0, 2) : '00'
+                                            bodyLan[94] = vlan.bandwidthSet.downMinGuaranteed ? vlan.bandwidthSet.downMinGuaranteed.toHex(6).slice(2, 4) : '02'
+                                            bodyLan[95] = vlan.bandwidthSet.downMinGuaranteed ? vlan.bandwidthSet.downMinGuaranteed.toHex(6).slice(4, 6) : '80'
+
+                                            bodyLan[97] = vlan.bandwidthSet.downMaxAllowed ? vlan.bandwidthSet.downMaxAllowed.toHex(6).slice(0, 2) : '0f'
+                                            bodyLan[98] = vlan.bandwidthSet.downMaxAllowed ? vlan.bandwidthSet.downMaxAllowed.toHex(6).slice(2, 4) : '42'
+                                            bodyLan[99] = vlan.bandwidthSet.downMaxAllowed ? vlan.bandwidthSet.downMaxAllowed.toHex(6).slice(4, 6) : '40'
+
+                                            bodyLan[101] = vlan.bandwidthSet.upstreamFixed ? vlan.bandwidthSet.upstreamFixed.toHex(6).slice(0, 2) : '00'
+                                            bodyLan[102] = vlan.bandwidthSet.upstreamFixed ? vlan.bandwidthSet.upstreamFixed.toHex(6).slice(2, 4) : '00'
+                                            bodyLan[103] = vlan.bandwidthSet.upstreamFixed ? vlan.bandwidthSet.upstreamFixed.toHex(6).slice(4, 6) : '00'
+                                        } else {
+                                            bodyLan[85] = '00'; bodyLan[86] = '02'; bodyLan[87] = '80'
+                                            bodyLan[89] = '01'; bodyLan[90] = '86'; bodyLan[91] = 'a0'
+                                            bodyLan[93] = '00'; bodyLan[94] = '02'; bodyLan[95] = '80'
+                                            bodyLan[97] = '0f'; bodyLan[98] = '42'; bodyLan[99] = '40'
+                                            bodyLan[101] = '00'; bodyLan[102] = '00'; bodyLan[103] = '00'
+                                        }
+
+                                        //bodyLan[75] = (index + 1).toHex(2)
+                                        bodyLan = bodyLan.join(' ')
+
+                                        lan.vlansHex.push(bodyLan)
+                                    })
+                                }
+
+                                // Header LAN port
+                                var headerLan = snmp_fh.headerLanEPON
+                                var headerLength = ((snmp_fh.headerLanEPON.split(' ').length - 2) + (snmp_fh.bodyLanEPON.split(' ').length * lan.vlansHex.length) + snmp_fh.footerLanEPON.split(' ').length).toHex(4)
+                                headerLan = headerLan.split(' ')
+                                headerLan[0] = headerLength.slice(0, 2)                         // Tamanho do sub-pacote 
+                                headerLan[1] = headerLength.slice(2, 4)
+                                headerLan[2] = lan.lanPort.toHex(2)                                 // numero da porta lan
+                                headerLan[3] = lan.enablePort === false ? '02' : '01'               // '01' = habilita / '02' = desabilita a porta lan
+                                headerLan[4] = lan.autoNegotiation.auto === false ? '02' : '01'
+                                headerLan[5] = lan.autoNegotiation.portSpeed == '1000M' ? '02' : lan.autoNegotiation.portSpeed == '100M' ? '01' : '00'  // '00' = '10M'
+                                headerLan[6] = lan.autoNegotiation.duplex == 'half' ? '00' : '01'   // '01' = 'full'
+                                headerLan[7] = lan.flowControl === true ? '01' : '00'
+
+                                /* ** Policing State ** */
+                                if (lan.policing && lan.policing.state !== false) {
+                                    headerLan[8] = '01'
+
+                                    // CIR
+                                    var policingCir = 0
+                                    if (lan.policing.cir) {           // 0 - 100000
+                                        if (lan.policing.cir < 0)
+                                            policingCir = 0
+                                        else if (lan.policing.cir > 100000)
+                                            policingCir = 100000
+                                        else
+                                            policingCir = lan.policing.cir
+                                    }
+                                    headerLan[10] = policingCir.toHex(6).slice(0, 2)
+                                    headerLan[11] = policingCir.toHex(6).slice(2, 4)
+                                    headerLan[12] = policingCir.toHex(6).slice(4, 6)
+
+                                    // CBS
+                                    var policingCbs = 0
+                                    if (lan.policing.cbs) {           // 0 - 4294967294
+                                        if (lan.policing.cbs < 0)
+                                            policingCbs = 0
+                                        else if (lan.policing.cbs > 4294967294)
+                                            policingCbs = 4294967294
+                                        else
+                                            policingCbs = lan.policing.cbs
+                                    }
+                                    headerLan[13] = policingCbs.toHex(8).slice(0, 2)
+                                    headerLan[14] = policingCbs.toHex(8).slice(2, 4)
+                                    headerLan[15] = policingCbs.toHex(8).slice(4, 6)
+                                    headerLan[16] = policingCbs.toHex(8).slice(6, 8)
+
+                                    // EBS
+                                    var policingEbs = 0
+                                    if (lan.policing.ebs) {           // 0 - 4294967294
+                                        if (lan.policing.ebs < 0)
+                                            policingEbs = 0
+                                        else if (lan.policing.ebs > 4294967294)
+                                            policingEbs = 4294967294
+                                        else
+                                            policingEbs = lan.policing.ebs
+                                    }
+                                    headerLan[17] = policingEbs.toHex(8).slice(0, 2)
+                                    headerLan[18] = policingEbs.toHex(8).slice(2, 4)
+                                    headerLan[19] = policingEbs.toHex(8).slice(4, 6)
+                                    headerLan[20] = policingEbs.toHex(8).slice(6, 8)
+                                }
+
+                                /* ** DS Policing ** */
+                                if (lan.dsPolicing && lan.dsPolicing.state !== false) {
+                                    headerLan[21] = '01'
+
+                                    // CIR
+                                    var dsPolicingCir = 0
+                                    if (lan.dsPolicing.cir) {           // 0 - 16777215
+                                        if (lan.dsPolicing.cir < 0)
+                                            dsPolicingCir = 0
+                                        else if (lan.dsPolicing.cir > 16777215)
+                                            dsPolicingCir = 16777215
+                                        else
+                                            dsPolicingCir = lan.dsPolicing.cir
+                                    }
+                                    headerLan[23] = dsPolicingCir.toHex(6).slice(0, 2)
+                                    headerLan[24] = dsPolicingCir.toHex(6).slice(2, 4)
+                                    headerLan[25] = dsPolicingCir.toHex(6).slice(4, 6)
+
+                                    // PIR
+                                    var dsPolicingPir = 0
+                                    if (lan.dsPolicing.pir) {           // 0 - 16777215
+                                        if (lan.dsPolicing.pir < 0)
+                                            dsPolicingPir = 0
+                                        else if (lan.dsPolicing.pir > 16777215)
+                                            dsPolicingPir = 16777215
+                                        else
+                                            dsPolicingPir = lan.dsPolicing.pir
+                                    }
+                                    headerLan[27] = dsPolicingPir.toHex(6).slice(0, 2)
+                                    headerLan[28] = dsPolicingPir.toHex(6).slice(2, 4)
+                                    headerLan[29] = dsPolicingPir.toHex(6).slice(4, 6)
+                                }
+
+                                headerLan[31] = lan.vlansHex.length.toHex(2)                         // Quantidade de vlans na porta lan
+                                headerLan = headerLan.join(' ')
+                                hexTosend += headerLan + ' '
+
+                                // Body loop
+                                lan.vlansHex.forEach(profile => {
+                                    hexTosend += profile + ' '
+                                })
+
+                                // footer
+                                var footerLan = snmp_fh.footerLanEPON
+                                footerLan = footerLan.split(' ')
+
+                                var igmpUpCvlanId = lan.igmpUpCvlan.id ? lan.igmpUpCvlan.id : 65535   // 65535 == 'ffff'
+                                footerLan[2] = igmpUpCvlanId.toHex(4).slice(0, 2)
+                                footerLan[3] = igmpUpCvlanId.toHex(4).slice(2, 4)
+                                footerLan[4] = lan.igmpUpCvlan.cos ? lan.igmpUpCvlan.cos.toHex(2) : 'ff'
+
+                                var igmpUpCvlanTpId = lan.igmpUpCvlan.tpId ? lan.igmpUpCvlan.tpId : 33024
+                                footerLan[5] = igmpUpCvlanTpId.toHex(4).slice(0, 2)
+                                footerLan[6] = igmpUpCvlanTpId.toHex(4).slice(2, 4)
+
+                                var igmpUpSvlanId = lan.igmpUpSvlan.id ? lan.igmpUpSvlan.id : 65535   // 65535 == 'ffff'
+                                footerLan[7] = igmpUpSvlanId.toHex(4).slice(0, 2)
+                                footerLan[8] = igmpUpSvlanId.toHex(4).slice(2, 4)
+                                footerLan[9] = lan.igmpUpSvlan.cos ? lan.igmpUpSvlan.cos.toHex(2) : 'ff'
+
+                                var igmpUpSvlanTpId = lan.igmpUpSvlan.tpId ? lan.igmpUpSvlan.tpId : 33024
+                                footerLan[10] = igmpUpSvlanTpId.toHex(4).slice(0, 2)
+                                footerLan[11] = igmpUpSvlanTpId.toHex(4).slice(2, 4)
+
+                                footerLan = footerLan.join(' ')
+                                hexTosend += footerLan + ' '
+                            })
+
+                            hexTosend = hexTosend.trim()
+
+                            // Header package
+                            var headerLanPorts = snmp_fh.headerLanPorts
+                            headerLanPorts = headerLanPorts.split(' ')
+                            var packSize = hexTosend.split(' ').length + 39             // 39 = trecho que vai do tamanho do pacote (posições [122] e [123]) em headerLanPorts até o final
+                            headerLanPorts[70] = packSize.toHex(4).slice(0, 2)          // Tamanho do sub-pacote
+                            headerLanPorts[71] = packSize.toHex(4).slice(2, 4)          // Tamanho do sub-pacote
+                            headerLanPorts[122] = headerLanPorts[70]
+                            headerLanPorts[123] = headerLanPorts[71]
+                            headerLanPorts[156] = slot.toHex(2)
+                            headerLanPorts[158] = pon.toHex(2)
+                            headerLanPorts[160] = onuId.toHex(2)                        // ONU NUMBER / ONU Authorized No.  
+                            headerLanPorts[162] = respLanPorts.length.toHex(2)          // Quantidade de portas lan
+
+                            headerLanPorts = headerLanPorts.join(' ')
+                            hexTosend = headerLanPorts + ' ' + hexTosend
+
+                            snmp_fh.sendSnmp(OID.setLanPortsEPON, hexTosend, options, true).then(ret => {
+                                snmp_fh.sendSnmp(OID.confirmSetLanPortsEPON, hexTosend, options, true).then(retConfirm => {
+                                    return resolve(convertToOnuIndex(slot, pon, onuId))
+                                })
+                            })
+                        } else
+                            return resolve(false)
+                    })
+                } else return resolve(false)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
+function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
+    return new Promise((resolve, reject) => {
+        try {
+            gFunc.isValid(options, slot, pon, onuId).then(isValid => {
+                if (isValid && slot && pon && onuId && aLanPorts && aLanPorts.length > 0) {
+                    getLanPorts(options, slot, pon, onuId).then(respLanPorts => {
+                        if (respLanPorts.length > 0) {
+                            // Realizando merge entre os parametros de entrada e os já configurados na ONU 
+                            hexTosend = ''
+                            var lanPortsMerged = []
+                            respLanPorts.forEach(c => {
+                                c = { ...c, ...c.lanSettings }
+                                delete c.lanSettings
+                                var index = aLanPorts.findIndex(e => e.lanPort == c.lanPort)
+                                if (index < 0)
+                                    lanPortsMerged.push({ ...c, lanSettingsHex: null, vlansHex: [] })
+                                else if (aLanPorts[index].clear === true)
+                                    lanPortsMerged.push({ ...lanPortDefault, lanPort: aLanPorts[index].lanPort, lanSettingsHex: null, vlansHex: [] })
                                 else
                                     lanPortsMerged.push({ ...c, ...aLanPorts[index], lanSettingsHex: null, vlansHex: [] })
                             })
@@ -1235,6 +1632,225 @@ function setLanPorts(options, slot, pon, onuId, aLanPorts) {
 }
 
 function getLanPorts(options, slot, pon, onuId) {
+    return new Promise((resolve, reject) => {
+        try {
+            getOnuType(options, slot, pon, onuId).then(onuType => {
+                if (onuType && onuType.type == 'GPON')
+                    getLanPortsGPON(options, slot, pon, onuId).then(resp => {
+                        return resolve(resp)
+                    }, errorEPON => {
+                        return reject(errorEPON)
+                    })
+                else if (onuType && onuType.type == 'EPON')
+                    getLanPortsEPON(options, slot, pon, onuId).then(resp => {
+                        return resolve(resp)
+                    }, errorGPON => {
+                        return reject(errorGPON)
+                    })
+                else {
+                    console.error("getLanPorts(): The ONU type was not identified as GPON or EPON in 'src/tables.js' -> 'ONUType'. Use the getLanPortsGPON (options, slot, pon, onuId) or getLanPortsEPON (options, slot, pon, onuId) function.")
+                }
+            }, err => {
+                return reject(err)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
+function getLanPortsEPON(options, slot, pon, onuId) {
+    return new Promise((resolve, reject) => {
+        try {
+            gFunc.isValid(options, slot, pon, onuId).then(isValid => {
+                if (isValid && slot && pon && onuId) {
+                    var getLanPorts = snmp_fh.getLanPorts
+                    getLanPorts = getLanPorts.split(' ')
+
+                    getLanPorts[156] = slot.toHex(2)
+                    getLanPorts[158] = pon.toHex(2)
+                    getLanPorts[160] = onuId.toHex(2)            // ONU NUMBER / ONU Authorized No.
+                    getLanPorts = getLanPorts.join(' ')
+
+                    snmp_fh.sendSnmp(OID.setLanPortsEPON, getLanPorts, options, true).then(ret => {
+                        snmp_fh.sendSnmp(OID.confirmSetLanPortsEPON, getLanPorts, options, true).then(confirm => {
+                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            for (var i = 0; i < ret.length; i += 2)
+                                hex += ret.substring(i, i + 2) + ' '
+                            hex = hex.trim()
+                            var value = hex.split('2b 06 01 04 01 ad 73 5b 01 08 01 01 01 06 01 ')[1]
+                            value = value.split(' ')
+                            if (value[1] == '81')
+                                value = value.splice(3)
+                            else
+                                value = value.splice(4)
+
+                            var numLanPorts = parseInt(value[166])
+                            var bodyLans = value.slice(167) // obtem da posição 167 até o final
+                            var resp = []
+
+                            // LANS
+                            for (var idx = 0; idx < numLanPorts; ++idx) {
+                                var headerLan = bodyLans.slice(0, 32)       // Tamanho do headerLan 
+                                bodyLans = bodyLans.slice(32)
+                                var lan = null
+
+                                if (headerLan[3] == '01')   // '01' enable, '02' disabled
+                                    lan = { lanPort: parseInt(headerLan[2]), enablePort: true, vlans: [] }
+                                else
+                                    lan = { lanPort: parseInt(headerLan[2]), enablePort: false, vlans: [] }
+
+                                lan.lanSettings = {}
+                                lan.lanSettings.autoNegotiation = {}
+
+                                lan.lanSettings.autoNegotiation.auto = true
+                                if (headerLan[4] == '02')
+                                    lan.lanSettings.autoNegotiation.auto = false
+
+                                /* ** Port Auto Negotiation ** */
+                                var portSpeed = 'undefined'
+                                if (headerLan[5] == '00')
+                                    portSpeed = '10M'
+                                else if (headerLan[5] == '01')
+                                    portSpeed = '100M'
+                                else if (headerLan[5] == '02')
+                                    portSpeed = '1000M'
+
+                                var duplex = 'undefined'
+                                if (headerLan[6] == '00')
+                                    duplex = 'half'
+                                else if (headerLan[6] == '01')
+                                    duplex = 'full'
+
+                                lan.lanSettings.autoNegotiation.portSpeed = portSpeed
+                                lan.lanSettings.autoNegotiation.duplex = duplex
+
+                                lan.lanSettings.flowControl = false
+                                if (headerLan[7] == '01')
+                                    lan.lanSettings.flowControl = true
+
+                                /* ** Policing State ** */
+                                lan.lanSettings.policing = { state: false }
+                                if (headerLan[8] == '01')
+                                    lan.lanSettings.policing.state = true
+                                lan.lanSettings.policing.cir = parseInt(headerLan[10] + headerLan[11] + headerLan[12], 16)                    // 0 - 100000
+                                lan.lanSettings.policing.cbs = parseInt(headerLan[13] + headerLan[14] + headerLan[15] + headerLan[16], 16)      // 0 - 4294967294
+                                lan.lanSettings.policing.ebs = parseInt(headerLan[17] + headerLan[18] + headerLan[19] + headerLan[20], 16)      // 0 - 4294967294
+
+                                /* ** DS Policing ** */
+                                lan.lanSettings.dsPolicing = { state: false }
+                                if (headerLan[21] == '01')
+                                    lan.lanSettings.dsPolicing.state = true
+                                lan.lanSettings.dsPolicing.cir = parseInt(headerLan[23] + headerLan[24] + headerLan[25], 16)                  // 0 - 16777215
+                                lan.lanSettings.dsPolicing.pir = parseInt(headerLan[27] + headerLan[28] + headerLan[29], 16)                  // 0 - 16777215
+
+                                // Profiles
+                                for (var i = 0; i < parseInt(headerLan[31]); ++i) {
+                                    var profile = {}
+                                    var bodyLan = bodyLans.slice(0, 104)     // Tamanho de cada perfil
+
+                                    profile.serviceType = 'multicast'
+                                    if (bodyLan[3] == '00')
+                                        profile.serviceType = 'unicast'
+
+                                    profile.tpId = parseInt(bodyLan[5] + bodyLan[6], 16)
+                                    /* ** TLS ** */
+                                    profile.tls = false
+                                    if (bodyLan[74] == '01')    // Verificar. (75?)
+                                        profile.tls = true
+                                    else {
+                                        //profile.tls = false
+                                        var vLan = parseInt(bodyLan[7] + bodyLan[8], 16)
+                                        if (bodyLan[4] == '03') {
+                                            profile.vlanMode = 'transparent'
+                                            profile.cvlanId = vLan
+                                        } else if (bodyLan[4] == '01') {
+                                            profile.vlanMode = 'tag'
+                                            profile.cvlanId = vLan
+                                        }
+
+                                        profile.cos = null
+                                        if (bodyLan[9] != 'ff')
+                                            profile.cos = parseInt(bodyLan[9], 16)
+                                    }
+
+                                    /* ** Translation ** */
+                                    profile.translation = false
+                                    if (bodyLan[10] == '01') {
+                                        profile.translation = {}
+                                        profile.translation.tpId = parseInt(bodyLan[11] + bodyLan[12], 16)
+                                        profile.translation.value = parseInt(bodyLan[13] + bodyLan[14], 16)
+                                        profile.translation.cos = null
+                                        if (bodyLan[15] != 'ff')
+                                            profile.translation.cos = parseInt(bodyLan[15], 16)
+                                    }
+
+                                    /* ** QinQ ** */
+                                    profile.qInQ = false
+                                    if (bodyLan[16] == '01') {
+                                        profile.qInQ = {}
+                                        profile.qInQ.serviceName = ''
+                                        profile.qInQ.tpId = parseInt(bodyLan[63] + bodyLan[64], 16)
+                                        profile.qInQ.vlanId = parseInt(bodyLan[65] + bodyLan[66], 16)
+
+                                        profile.qInQ.cos = null
+                                        if (bodyLan[67] != 'ff')
+                                            profile.qInQ.cos = parseInt(bodyLan[67])
+
+                                        for (var i = 0; i < 30; ++i)
+                                            if (bodyLan[33 + i] != '00')
+                                                profile.qInQ.serviceName += String.fromCharCode(parseInt(bodyLan[33 + i], 16))
+                                    }
+
+                                    /* ** bandwidth ** */
+                                    profile.bandwidthSet = {}
+                                    profile.bandwidthSet.upMinGuaranteed = parseInt(bodyLan[85] + bodyLan[86] + bodyLan[87], 16)            // 0 - 1000000
+                                    profile.bandwidthSet.upMaxAllowed = parseInt(bodyLan[89] + bodyLan[90] + bodyLan[91], 16)               // 256 - 1000000
+                                    profile.bandwidthSet.downMinGuaranteed = parseInt(bodyLan[93] + bodyLan[94] + bodyLan[95], 16)          // 0 - 1000000
+                                    profile.bandwidthSet.downMaxAllowed = parseInt(bodyLan[97] + bodyLan[98] + bodyLan[99], 16)             // 0 - 1000000
+                                    profile.bandwidthSet.upstreamFixed = parseInt(bodyLan[101] + bodyLan[102] + bodyLan[103], 16)           // 0 - 1000000
+
+                                    lan.vlans.push(profile)
+                                    bodyLans = bodyLans.slice(104)          // Tamanho de cada perfil
+                                }
+
+                                var footerLans = bodyLans.slice(0, 18)      // tamanho do footer
+
+                                lan.lanSettings.igmpUpCvlan = { id: null }
+                                if (footerLans[2] != 'ff')
+                                    lan.lanSettings.igmpUpCvlan.id = parseInt(footerLans[2] + footerLans[3], 16)
+
+                                lan.lanSettings.igmpUpCvlan.cos = null
+                                if (footerLans[4] != 'ff')
+                                    lan.lanSettings.igmpUpCvlan.cos = parseInt(footerLans[4], 16)
+
+                                lan.lanSettings.igmpUpCvlan.tpId = parseInt(footerLans[5] + footerLans[6], 16)
+
+                                lan.lanSettings.igmpUpSvlan = { id: null }
+                                if (footerLans[7] != 'ff')
+                                    lan.lanSettings.igmpUpSvlan.id = parseInt(footerLans[7] + footerLans[8], 16)
+
+                                lan.lanSettings.igmpUpSvlan.cos = null
+                                if (footerLans[9] != 'ff')
+                                    lan.lanSettings.igmpUpSvlan.cos = parseInt(footerLans[9], 16)
+
+                                lan.lanSettings.igmpUpSvlan.tpId = parseInt(footerLans[10] + footerLans[11], 16)
+
+                                bodyLans = bodyLans.slice(18)               // tamanho do footer
+                                resp.push(lan)
+                            }
+                            return resolve(resp)
+                        })
+                    })
+                } else return resolve(false)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
+function getLanPortsGPON(options, slot, pon, onuId) {
     return new Promise((resolve, reject) => {
         try {
             gFunc.isValid(options, slot, pon, onuId).then(isValid => {
@@ -1577,6 +2193,8 @@ module.exports = {
     getAuthorizedOnus,
     getBasicOnuInfo,
     getLanPorts,
+    getLanPortsEPON,
+    getLanPortsGPON,
     getMacAddressList,
     getOnu,
     getOnuBandwidth,
@@ -1586,15 +2204,17 @@ module.exports = {
     getOnuIndexList,
     getOnuLastOffTime,
     getOnuListByPon,
-    //getOnuListBySlot,   // falied
     getOnuOpticalPower,
     getOnuOpticalPowerList,
+    getOnuType,
     getOnuUplinkInterface,
     getOnuWebAdmin,
     getRxPowerListByPon,
     getUnauthorizedOnus,
     parseOnuIndex,
     setLanPorts,
+    setLanPortsEPON,
+    setLanPortsGPON,
     setOnuBandwidth,
     setOnuWebAdmin,
     setWan,
