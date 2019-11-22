@@ -10,14 +10,14 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 - [Installation](#installation)
 - [Tests](#tests)
 - [Bug fixes and features](#bug-fixes-and-features)
-- [Initial settings](#-nitial-settings)
+- [Initial settings](#initial-settings)
 - [OLT functions](#olt-functions)
 - [Slot functions](#slot-functions)
 - [Card functions](#card-functions)
 - [ONU functions](#onu-functions)
 - [Extra example](#extra-example)
 - [Contributions](#contributions)
-- [Help us!](#help-us!)
+- [Help us!](#help-us)
 - [License](#license)
 
 ## Installation
