@@ -2,8 +2,6 @@
 
 This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, pon ports and ONUs by performing read and write functions directly in OLT.
 
-**IMPORTANT!** Not all features are compatible with EPON technology yet, but this is currently under development. For now, only GPON technology is compatible with all functions. But soon EPON technology will be available in this module.
-
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
 ## Summary
@@ -1487,13 +1485,13 @@ aLanPorts = [
             pir: <number>
         },
         igmpUpCvlan: {
-            cos: <number>,
             id: <number>,
+            cos: <number>,
             tpId: <number>                 // By default is 33024
         },
         igmpUpSvlan: {
-            cos: <number>,
             id: <number>,
+            cos: <number>,
             tpId: <number>                 // By default is 33024
         },
         vlans: [
