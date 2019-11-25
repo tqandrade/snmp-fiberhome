@@ -10,9 +10,45 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 - [Bug fixes and features](#bug-fixes-and-features)
 - [Initial settings](#initial-settings)
 - [OLT functions](#olt-functions)
+  - [getOltInformation()](#getoltinformation)
+  - [getOltModel()](#getoltmodel)
+  - [getSubrackInformation()](#getsubrackinformation)
+  - [getPonPortList()](#getponportlist)
+  - [getPonPort()](#getponport)
 - [Slot functions](#slot-functions)
+  - [getSlots()](#getslots)
+  - [getSlotsInformationList()](#getslotsinformationlist)
 - [Card functions](#card-functions)
+  - [getCardList()](#getcardlist)
+  - [getCard()](#getcard)
 - [ONU functions](#onu-functions)
+  - [addAllOnus()](#addallonus)
+  - [addOnu()](#addonu)
+  - [authenticateOnu()](#authenticateonu)
+  - [delOnu() and delOnuByMacAddress()](#delonu-and-delonubymacaddress)
+  - [enableLanPorts()](#enablelanports)
+  - [getAuthorizedOnus()](#getauthorizedonus)
+  - [getBasicOnuInfo()](#getbasiconuinfo)
+  - [getLanPorts()](#getlanports)
+  - [getMacAddressList()](#getmacaddresslist)
+  - [getOnu()](#getonu)
+  - [getOnuBandwidth()](#getonubandwidth)
+  - [getOnuDistance()](#getonudistance)
+  - [getOnuIdList()](#getonuidlist)
+  - [getOnuIndexList()](#getonuindexlist)
+  - [getOnuLastOffTime()](#getonulastofftime)
+  - [getOnuListByPon()](#getonulistbypon)
+  - [getOnuOpticalPower()](#getonuopticalpower)
+  - [getOnuOpticalPowerList()](#getonuopticalpowerlist)
+  - [getOnuType()](#getonutype)
+  - [getOnuUplinkInterface()](#getonuuplinkinterface)
+  - [getOnuWebAdmin()](#getonuwebadmin)
+  - [getUnauthorizedOnus()](#getunauthorizedonus)
+  - [parseOnuIndex()](#parseonuindex)
+  - [setLanPorts()](#setlanports)
+  - [setOnuBandwidth()](#setonubandwidth)
+  - [setOnuWebAdmin()](#setonuwebadmin)
+  - [setWan()](#setwan)
 - [Extra example](#extra-example)
 - [Contributions](#contributions)
 - [Help us!](#help-us)
@@ -432,7 +468,7 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 ## addAllOnus()
 
-**Description:** This function performs WAN and Vlans authorization and configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `profileLanPorts` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
+**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `profileLanPorts` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
 
 **Function signature:**
 
@@ -482,7 +518,7 @@ Output:
 
 ## addOnu()
 
-**Description:** Similar to the `addAllOnus()` function, but performs WAN and Vlans authorization and configuration for a particular ONU.
+**Description:** Similar to the `addAllOnus()` function, but performs ONU authorization and WAN and Vlans configuration for a particular ONU.
 
 **Function signature:**
 
@@ -779,7 +815,7 @@ Output:
 
 **NOTE 1:** EPON ONUs will contain the `policing` and `dsPolicing` parameters within the `lanSettings` parameter, and `bandwidthSet` within `vlans`. The `boardwidthSet` parameter is returned for GPON only.
 
-**NOTE 2:** If the `getLanPorts()` function does not identify whether the UN is EPON or GPON, an error will be displayed and the `getLanPortsEPON()` or `getLanPortsGPON()` functions can be used by passing the same input parameters as the `getLanPorts()` function.
+**NOTE 2:** If the `getLanPorts()` function does not identify whether the ONU is EPON or GPON, an error will be displayed and the `getLanPortsEPON()` or `getLanPortsGPON()` functions can be used by passing the same input parameters as the `getLanPorts()` function.
 
 ## getMacAddressList()
 
@@ -1422,7 +1458,7 @@ Output:
 
 ## setLanPorts()
 
-**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `cvlanId`, `translation.value` and `vlanId` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7
+**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `cvlanId`, `translation.value` and `vlanId` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7.
 
 **Function signature:**
 
