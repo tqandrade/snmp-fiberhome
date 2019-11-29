@@ -45,7 +45,7 @@ var objStandart = {
     vlanMode: 'transparent',
     translationValue: false,
     cos: false,
-    QinQ: false,
+    qInQ: false,
     tpid: 33024,
     svlan: false,
     svlanCos: false,
@@ -240,6 +240,46 @@ function delOnuByMacAddress(options, macAddress) {
         } catch (err) {
             return reject(err)
         }
+    })
+}
+
+function delWan(options, slot, pon, onuId) {
+    return new Promise((resolve, reject) => {
+        var delWan = snmp_fh.setWanHeader
+        delWan = delWan.split(' ')
+        // Tamanho do pacote
+        delWan[70] = '00'
+        delWan[71] = '3a'
+        delWan[122] = '00'
+        delWan[123] = '3a'
+
+        delWan[159] = '01'
+        delWan[161] = slot.toHex(2)
+        delWan[163] = pon.toHex(2)
+        delWan[165] = onuId.toHex(2)            // ONU NUMBER / ONU Authorized No.
+        delWan[181] = '00'                      // Quantidade de Wans
+        delWan = delWan.join(' ')
+
+        var confirmDelWan = delWan.slice(0, -6)
+        confirmDelWan = confirmDelWan.split(' ')
+        confirmDelWan[59] = '00'
+        confirmDelWan[70] = '00'
+        confirmDelWan[71] = '38'
+        confirmDelWan[122] = '00'
+        confirmDelWan[123] = '38'
+        confirmDelWan = confirmDelWan.join(' ')
+
+        getWan(options, slot, pon, onuId).then(wanProfilesBefore => {
+            snmp_fh.sendSnmp(OID.setWan, delWan, options, true).then(ret => {
+                snmp_fh.sendSnmp(OID.confirmSetWan, confirmDelWan, options, true).then(retConfirm => {
+                    getWan(options, slot, pon, onuId).then(wanProfilesAfter => {
+                        if (wanProfilesBefore.length == wanProfilesAfter.length)
+                            return resolve(false)
+                        return resolve(true)
+                    })
+                })
+            })
+        })
     })
 }
 
@@ -960,6 +1000,163 @@ function getUnauthorizedOnus(options) {
     })
 }
 
+function getWan(options, slot, pon, onuId) {
+    return new Promise((resolve, reject) => {
+        try {
+            gFunc.isValid(options, slot, pon, onuId).then(isValid => {
+                if (isValid && slot && pon && onuId) {
+                    var getWan = snmp_fh.setWanHeader.slice(0, -6)
+                    getWan = getWan.split(' ')
+                    // Tamanho do pacote
+                    getWan[59] = '00'
+                    getWan[70] = '00'
+                    getWan[71] = '38'
+                    getWan[122] = '00'
+                    getWan[123] = '38'
+
+                    getWan[159] = '01'
+                    getWan[161] = slot.toHex(2)
+                    getWan[163] = pon.toHex(2)
+                    getWan[165] = onuId.toHex(2)            // ONU NUMBER / ONU Authorized No.
+                    getWan = getWan.join(' ')
+                    snmp_fh.sendSnmp(OID.setWan, getWan, options, true).then(ret => {
+                        snmp_fh.sendSnmp(OID.confirmSetWan, getWan, options, true).then(confirm => {
+                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            for (var i = 0; i < ret.length; i += 2)
+                                hex += ret.substring(i, i + 2) + ' '
+                            hex = hex.trim()
+                            var value = hex.split('2b 06 01 04 01 ad 73 5b 01 08 01 01 01 0d 01 ')[1]
+                            value = value.split(' ')
+                            if (value[1] == '81')
+                                value = value.splice(3)
+                            else
+                                value = value.splice(4)
+
+                            var numProfiles = parseInt(value[185], 16)
+                            var aWans = []
+                            if (numProfiles == 0)           // quantidade de perfis WAN
+                                return resolve([])
+                            else {
+                                value = value.slice(186)    // eliminando somente o header
+                                for (var wanProfile = 0; wanProfile < numProfiles; ++wanProfile) {
+                                    var objWan = {}
+                                    objWan._wanIndex = parseInt(value[1], 16)
+                                    objWan.wanName = ''
+                                    for (var i = 0; i < 64; ++i)
+                                        if (value[2 + i] == '00')
+                                            objWan.wanName += ""
+                                        else
+                                            objWan.wanName += String.fromCharCode(parseInt(value[2 + i], 16))
+                                    objWan.wanName = objWan.wanName.trim()
+
+                                    objWan.wanMode = value[67] == '00' ? 'tr069' : value[67] == '01' ? 'internet' : value[67] == '02' ? 'tr069_internet' : value[67] == '03' ? 'multicast' : value[67] == '04' ? 'voip' : value[67] == '05' ? 'voip_internet' : value[67] == '07' ? 'radius' : value[67] == '08' ? 'radius_internet' : value[67] == '64' ? 'other' : 'other_' + value[67]
+                                    objWan.wanConnType = value[69] == '00' ? 'bridge' : value[69] == '01' ? 'router' : 'other_' + value[69]
+                                    objWan.wanVlan = parseInt(value[70] + value[71], 16)
+                                    if (objWan.wanVlan == 65535)
+                                        objWan.wanVlan = null
+                                    objWan.wanCos = parseInt(value[73], 16)
+                                    objWan.wanNat = value[74] == '01' ? true : false
+                                    objWan.ipMode = value[76] == '00' ? 'dhcp' : value[76] == '01' ? 'static' : value[76] == '02' ? 'pppoe' : 'other_' + value[76]
+                                    objWan.wanIp = `${parseInt(value[77], 16)}.${parseInt(value[78], 16)}.${parseInt(value[79], 16)}.${parseInt(value[80], 16)}`
+
+                                    if (value[84] == '00')
+                                        objWan.wanMask = '0.0.0.0'
+                                    else {
+                                        var maskInt = parseInt(value[84], 16)
+                                        var maskOne = Array(maskInt).fill('1')
+                                        maskOne = maskOne.join(',')
+                                        maskOne = maskOne.replaceAll(',', '')
+
+                                        var maskZeros = Array(32 - maskInt).fill('0')
+                                        maskZeros = maskZeros.join(',')
+                                        maskZeros = maskZeros.replaceAll(',', '')
+
+                                        var mask = maskOne + maskZeros
+                                        objWan.wanMask = `${parseInt(mask.slice(0, 8), 2)}.${parseInt(mask.slice(8, 16), 2)}.${parseInt(mask.slice(16, 24), 2)}.${parseInt(mask.slice(24, 32), 2)}`
+
+                                    }
+
+                                    objWan.wanGateway = `${parseInt(value[85], 16)}.${parseInt(value[86], 16)}.${parseInt(value[87], 16)}.${parseInt(value[88], 16)}`
+                                    objWan.wanMasterDNS = `${parseInt(value[89], 16)}.${parseInt(value[90], 16)}.${parseInt(value[91], 16)}.${parseInt(value[92], 16)}`
+                                    objWan.wanSlaveDNS = `${parseInt(value[93], 16)}.${parseInt(value[94], 16)}.${parseInt(value[95], 16)}.${parseInt(value[96], 16)}`
+                                    objWan.pppoeProxy = value[283] == '01' ? true : false
+
+                                    objWan.pppoeUsername = ''
+                                    for (var i = 0; i < 32; ++i)
+                                        if (value[98 + i] == '00')
+                                            objWan.pppoeUsername += ""
+                                        else
+                                            objWan.pppoeUsername += String.fromCharCode(parseInt(value[98 + i], 16))
+                                    objWan.pppoeUsername = objWan.pppoeUsername.trim()
+
+                                    objWan.pppoePassword = ''
+                                    for (var i = 0; i < 32; ++i)
+                                        if (value[130 + i] == '00')
+                                            objWan.pppoeUsername += ""
+                                        else
+                                            objWan.pppoePassword += String.fromCharCode(parseInt(value[130 + i], 16))
+                                    objWan.pppoePassword = objWan.pppoePassword.trim()
+
+                                    objWan.pppoeName = ''
+                                    for (var i = 0; i < 32; ++i)
+                                        if (value[162 + i] == '00')
+                                            objWan.pppoeUsername += ""
+                                        else
+                                            objWan.pppoeName += String.fromCharCode(parseInt(value[162 + i], 16))
+                                    objWan.pppoeName = objWan.pppoeName.trim()
+
+                                    objWan.pppoeMode = value[195] == '00' ? 'auto' : value[195] == '01' ? 'payload' : 'other_' + value[195]
+                                    objWan.wanQoS = value[196] == '01' ? true : value[196] == '00' ? false : 'other_' + value[196]
+
+                                    objWan.lan = {}
+                                    var lans = (parseInt(value[197], 16)).toString(2).padStart(4, '0')
+                                    lans = lans.split('')
+                                    objWan.lan.lan1 = lans[0] == '1' ? true : false
+                                    objWan.lan.lan2 = lans[1] == '1' ? true : false
+                                    objWan.lan.lan3 = lans[2] == '1' ? true : false
+                                    objWan.lan.lan4 = lans[3] == '1' ? true : false
+
+                                    objWan.ssid = {}
+                                    var ssids = (parseInt(value[198], 16)).toString(2).padStart(4, '0')
+                                    ssids = ssids.split('')
+                                    objWan.ssid.ssid1 = ssids[0] == '1' ? true : false
+                                    objWan.ssid.ssid2 = ssids[1] == '1' ? true : false
+                                    objWan.ssid.ssid3 = ssids[2] == '1' ? true : false
+                                    objWan.ssid.ssid4 = ssids[3] == '1' ? true : false
+
+                                    objWan.vlanMode = value[199] == '01' ? 'tag' : value[199] == '03' ? 'transparent' : 'other_' + value[199]
+
+                                    objWan.translationValue = parseInt(value[201] + value[202], 16)
+                                    if (objWan.translationValue == 65535)
+                                        objWan.translationValue = null
+
+                                    objWan.cos = value[204] == '00' ? null : parseInt(value[204], 16)
+                                    objWan.qInQ = value[205] == '01' ? true : false
+                                    objWan.tpid = parseInt(value[206] + value[207], 16)
+
+                                    objWan.svlan = parseInt(value[208] + value[209], 16)
+                                    if (objWan.svlan == 65535)
+                                        objWan.svlan = null
+
+                                    objWan.svlanCos = parseInt(value[210] + value[211], 16)
+                                    if (objWan.svlanCos == 65535)
+                                        objWan.svlanCos = null
+
+                                    aWans.push(objWan)
+                                    value = value.slice(229)        // Tamanho do perfil WAN
+                                }
+                            }
+                            return resolve(aWans)
+                        })
+                    })
+                }
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
 function hexToInt(hex) {
     if (hex.length % 2 != 0)
         hex = "0" + hex
@@ -1194,7 +1391,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                         }
 
                                         /* ** QinQ ** */ // DISABLED (BUG)
-                                        if (vlan.qInQ && false) { 
+                                        if (vlan.qInQ && false) {
                                             bodyLan[16] = '01'  // QinQ State
                                             var vlanId = vlan.qInQ.vlanId
                                             for (var p = 0; p < 30; ++p) {
@@ -2082,7 +2279,7 @@ function setWan(options, slot, pon, onuId, profilesWan) {
                         var str = [...body].join('')
                         str = str.split(' ')
 
-                        str[67] = modeTab[obj.wanMode.toLowerCase()] ? modeTab[obj.wanMode.toLowerCase()] : '64'                        // WAN_Mode: 00 = TR069, 01 INTERNET, 02 = TR069_INTERNET, 03 = multicast, 04 = VOIP, 05 = VOIP_INTERNET, 07 = RADIUS, 08 = RADIUS_INTERNET, 64 = Other ; 
+                        str[67] = modeTab[obj.wanMode.toLowerCase()] ? modeTab[obj.wanMode.toLowerCase()] : '64'                        // WAN_Mode: 00 = TR069, 01 = INTERNET, 02 = TR069_INTERNET, 03 = multicast, 04 = VOIP, 05 = VOIP_INTERNET, 07 = RADIUS, 08 = RADIUS_INTERNET, 64 = Other ; 
                         str[69] = (obj.wanConnType.toLowerCase() == 'bridge' || obj.wanConnType.toString() == '2') ? '00' : '01'        // WAN_Conn_Type: 00 = Bridge, 01 = Router   
 
                         str[70] = obj.wanVlan ? obj.wanVlan.toHex(4).slice(0, 2) : 'ff'                                                 // WAN_Vlan_Id (Obs.: ff ff  para vazio)   
@@ -2153,7 +2350,7 @@ function setWan(options, slot, pon, onuId, profilesWan) {
 
                         str[204] = obj.cos ? (parseInt(obj.cos)).toString(16).padStart(2, '0') : '00'
 
-                        str[205] = obj.QinQ ? '01' : '00'
+                        str[205] = obj.qInQ ? '01' : '00'
 
                         str[206] = obj.tpid.toHex(4).slice(0, 2)
                         str[207] = obj.tpid.toHex(4).slice(2, 4)
@@ -2189,6 +2386,7 @@ module.exports = {
     delOnu,
     delOnuByIndex,
     delOnuByMacAddress,
+    delWan,
     enableLanPorts,
     getAuthorizedOnus,
     getBasicOnuInfo,
@@ -2211,6 +2409,7 @@ module.exports = {
     getOnuWebAdmin,
     getRxPowerListByPon,
     getUnauthorizedOnus,
+    getWan,
     parseOnuIndex,
     setLanPorts,
     setLanPortsEPON,

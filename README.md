@@ -4,7 +4,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
-## Summary
+## Contents
 - [Installation](#installation)
 - [Tests](#tests)
 - [Bug fixes and features](#bug-fixes-and-features)
@@ -26,6 +26,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [addOnu()](#addonu)
   - [authenticateOnu()](#authenticateonu)
   - [delOnu() and delOnuByMacAddress()](#delonu-and-delonubymacaddress)
+  - [delWan()](#delwan)
   - [enableLanPorts()](#enablelanports)
   - [getAuthorizedOnus()](#getauthorizedonus)
   - [getBasicOnuInfo()](#getbasiconuinfo)
@@ -44,6 +45,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [getOnuUplinkInterface()](#getonuuplinkinterface)
   - [getOnuWebAdmin()](#getonuwebadmin)
   - [getUnauthorizedOnus()](#getunauthorizedonus)
+  - [getWan()](#getwan)
   - [parseOnuIndex()](#parseonuindex)
   - [setLanPorts()](#setlanports)
   - [setOnuBandwidth()](#setonubandwidth)
@@ -89,13 +91,15 @@ const fh = require('snmp-fiberhome')
 Version 1.1.x of this module contains:
 
 - Correction of parameters name 'multcast' to 'multicast'
-- `setLanPorts()` and `getLanPorts()`: Added more features and changed some parameter names.
-- `addAllOnus()`: changed some parameter names.
-- `addOnu()`: changed some parameter names.
-- `enableLanPorts()`: changed some parameter names.
+- [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports): Added more features and changed some parameter names. 
+- [addAllOnus()](#addallonus): changed some parameter names.
+- [addOnu()](#addonu): changed some parameter names.
+- [enableLanPorts()](#enablelanports): changed some parameter names.
 - (version: 1.1.4)
-  - `setLanPorts()` and `getLanPorts()` working with EPON and GPON.
-  - Implementation of the `getOnuType()` function.
+  - [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports) working with EPON and GPON.
+  - Implementation of the [getOnuType()](#getonutype)  function.
+- (version: 1.1.8)
+  - Implementation of the [delWan()](#delwan) and [getWan()](#getwan)  function.
 
 ## Initial settings
 
@@ -116,13 +120,13 @@ fh.function(options, ...)      // Call of functions
 
 **IMPORTANT!** For ONUs using GPON technology, the `macAddress` parameter in the following functions will receive the equipment SERIAL.
 
-The following functions are assigned the **slot**, **pon** and **onuId** parameters to specify a particular ONU. If you work with onuIndex, use the `parseOnuIndex()` function to convert onuIndex to an object containing the values of **slot**, **pon** and **onuId**.
+The following functions are assigned the `slot`, `pon` and `onuId` parameters to specify a particular ONU. If you work with onuIndex, use the [parseOnuIndex()](#parseonuIndex)  function to convert onuIndex to an object containing the values of **slot**, **pon** and **onuId**.
 
 The `onuIndex` parameter in the following functions is calculated as follows:
 
-    slot*(2^25) + pon*(2^19) + onuId*(2^8)  // for OLT AN5516
+    slot*(2^25) + pon*(2^19) + onuId*(2^8)    // for OLT AN5516
 
-See the function `convertToOnuIndex()`
+See the function [convertToOnuIndex()](#converttoonuIndex)
 
 # OLT functions
 
@@ -228,7 +232,7 @@ Output:
 ## getPonPortList()
 
 **Description:** Returns an array with the relevant information from all PON ports in the OLT.
-NOTE: Depending on the number of connected ONUs on the OLT, the loading time may take time and cause a timeout. In this case, use the `getPonPort()` function in conjunction with a loop.
+NOTE: Depending on the number of connected ONUs on the OLT, the loading time may take time and cause a timeout. In this case, use the [getPonPort()](#getponport) function in conjunction with a loop.
 
 **Function signature:**
 
@@ -468,7 +472,7 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 ## addAllOnus()
 
-**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the `setWan()` function. To learn more about the `profileLanPorts` input parameter, see the `setLanPorts()` function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
+**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the [setWan()](#setwan) function. To learn more about the `profileLanPorts` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
 
 **Function signature:**
 
@@ -518,7 +522,7 @@ Output:
 
 ## addOnu()
 
-**Description:** Similar to the `addAllOnus()` function, but performs ONU authorization and WAN and Vlans configuration for a particular ONU.
+**Description:** Similar to the [addAllOnus()](#addallonus) function, but performs ONU authorization and WAN and Vlans configuration for a particular ONU.
 
 **Function signature:**
 
@@ -575,7 +579,7 @@ Output:
 
 ## authenticateOnu()
 
-**Description:** Authenticates a particular ONU. WAN and Vlan settings can be made using the `setWan()` and `setLanPorts()` functions, respectively. All input parameters for `authenticateOnu()` can be obtained by the `getUnauthorizedOnus()` function.
+**Description:** Authenticates a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authenticateOnu()](#authenticateonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function.
 
 **Function signature:**
 
@@ -642,6 +646,30 @@ Output:
 
 ```js
 'FHTT1231e796'
+```
+
+## delWan()
+
+**Description:** Deletes all WAN profiles from a given ONU. If successful, returns `true`, otherwise `false`.
+
+**Function signature:**
+
+```js
+delWan(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <boolean>
+```
+
+Example:
+
+```js
+fh.delWan(options, 11, 1, 1).then(del => {
+    console.log(del)
+})
+```
+
+Output:
+
+```js
+true
 ```
 
 ## enableLanPorts()
@@ -815,7 +843,7 @@ Output:
 
 **NOTE 1:** EPON ONUs will contain the `policing` and `dsPolicing` parameters within the `lanSettings` parameter, and `bandwidthSet` within `vlans`. The `boardwidthSet` parameter is returned for GPON only.
 
-**NOTE 2:** If the `getLanPorts()` function does not identify whether the ONU is EPON or GPON, an error will be displayed and the `getLanPortsEPON()` or `getLanPortsGPON()` functions can be used by passing the same input parameters as the `getLanPorts()` function.
+**NOTE 2:** If the [getLanPorts()](#getlanports) function does not identify whether the ONU is EPON or GPON, an error will be displayed and the `getLanPortsEPON()` or `getLanPortsGPON()` functions can be used by passing the same input parameters as the [getLanPorts()](#getlanports) function.
 
 ## getMacAddressList()
 
@@ -1427,6 +1455,71 @@ Output:
 
 **IMPORTANT!** Not all ONUs will have the `mode` parameter on `onuType`
 
+## getWan()
+
+**Description:** Returns an array containing all wan profiles. To understand more about the returned parameters, see the [setWan()](#setwan) function.
+
+**Function signature:**
+
+```js
+getWan(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getWan(options, 11, 1, 1).then(wanProfiles => {
+    console.log(wanProfiles)
+})
+```
+
+Output:
+
+```js
+[
+    {
+        _wanIndex: 1,
+        wanName: '1_INTERNET_R_VID_2001',
+        wanMode: 'internet',
+        wanConnType: 'router',
+        wanVlan: 2001,
+        cos: null,
+        ipMode: 'pppoe',
+        pppoeMode: 'auto',
+        pppoeName: '',
+        pppoePassword: '',
+        pppoeProxy: false,
+        pppoeUsername: '',
+        qInQ: false,
+        wanIp: '0.0.0.0',
+        wanMask: '128.0.0.0',
+        wanGateway: '0.0.0.0',
+        wanMasterDNS: '0.0.0.0',
+        wanSlaveDNS: '0.0.0.0',
+        wanNat: true,
+        wanQoS: false,
+        lan: {
+            lan1: true,
+            lan2: true,
+            lan3: true,
+            lan4: true
+        },
+        ssid: {
+            ssid1: true,
+            ssid2: true,
+            ssid3: true,
+            ssid4: true
+        },
+        wanCos: 0,
+        svlan: 2000,
+        svlanCos: null,
+        tpid: 33024,
+        translationValue: 2000,
+        vlanMode: 'transparent'
+    },
+    // { ... }
+]
+```
 
 ## parseOnuIndex()
 
@@ -1619,7 +1712,7 @@ Output:
 369623296
 ```
 
-**NOTE:** If the `setLanPorts()` function does not identify whether the UN is EPON or GPON, an error will be displayed and the `setLanPortsEPON()` or `setLanPortsGPON()` functions can be used by passing the same input parameters as the `setLanPorts()` function.
+**NOTE:** If the [setLanPorts()](#setlanports) function does not identify whether the UN is EPON or GPON, an error will be displayed and the `setLanPortsEPON()` or `setLanPortsGPON()` functions can be used by passing the same input parameters as the [setLanPorts()](#setlanports) function.
 
 ## setOnuBandwidth()
 
