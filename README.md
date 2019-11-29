@@ -232,7 +232,8 @@ Output:
 ## getPonPortList()
 
 **Description:** Returns an array with the relevant information from all PON ports in the OLT.
-NOTE: Depending on the number of connected ONUs on the OLT, the loading time may take time and cause a timeout. In this case, use the [getPonPort()](#getponport) function in conjunction with a loop.
+
+**NOTE:** Depending on the number of connected ONUs to pon port, the loading time may take time and cause a timeout. In this case, use the [getPonPort()](#getponport) function in conjunction with a loop.
 
 **Function signature:**
 
@@ -1116,6 +1117,8 @@ Output:
 ## getOnuListByPon()
 
 **Description:** Returns a list of all connected ONUs on a given PON port.
+
+**NOTE:** Depending on the number of connected ONUs to pon port, the loading time may take time and cause a timeout. In this case, use the [getOnu()](#getonu) function in conjunction with a loop.
 
 **Function signature:**
 

@@ -255,20 +255,20 @@ const ONUType = {
 }
 
 const onuStatus_5116 = {
-    0: 'offline or fiber cut',
+    0: 'offline',   // or fiber cut
     1: 'online',
     2: 'power cut'
 }
 
 const onuStatus_5516 = {
-    0: 'offline / fiber cut / power cut',     //'fiber cut',
+    0: 'fiber cut',
     1: 'online',
     2: 'power cut',
     3: 'offline'
 }
 
 const onuStatus_5516_NGPON = {
-    0: 'offline / fiber cut / power cut',
+    0: 'offline',   //  or fiber cut or power cut
     1: 'online'
 }
 
