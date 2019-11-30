@@ -100,6 +100,8 @@ Version 1.1.x of this module contains:
   - Implementation of the [getOnuType()](#getonutype)  function.
 - (version: 1.1.8)
   - Implementation of the [delWan()](#delwan) and [getWan()](#getwan)  function.
+- (version: 1.1.10)
+  - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue
 
 ## Initial settings
 
@@ -1118,7 +1120,7 @@ Output:
 
 **Description:** Returns a list of all connected ONUs on a given PON port.
 
-**NOTE:** Depending on the number of connected ONUs to pon port, the loading time may take time and cause a timeout. In this case, use the [getOnu()](#getonu) function in conjunction with a loop.
+**NOTE:** Depending on the number of ONUs connected to the pon port, the return may take time. Approximately 0.5 seconds for each ONU connected to the port.
 
 **Function signature:**
 
@@ -1249,6 +1251,8 @@ Output:
 ## getOnuOpticalPowerList()
 
 **Description:** Returns a signal list of all authorized ONUs in OLT.
+
+**IMPORTANT:** Depending on the number of connected ONUs on the OLT, the return may take.
 
 **NOTE:** For EPON technology some (or all) values ​​may be returned as zero on `opticalPower`
 

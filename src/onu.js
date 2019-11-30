@@ -671,35 +671,59 @@ function getOnuOpticalPower(options, slot, pon, onuId, ignore) {
     })
 }
 
+function getOnuByPonWithOffset(options, slot, pon, offset) {
+    return new Promise((resolve, reject) => {
+        setTimeout(t => {
+            try {
+                gFunc.isValid(options, slot, pon).then(isValid => {
+                    if (isValid) {
+                        var queue = new Queue(1, 10000)
+                        var aOnuOID = []
+                        var aResp = []
+                        var list = []
+                        for (var onuId = 1 + (offset * 16); onuId <= 16 + (offset * 16); ++onuId)
+                            aOnuOID.push(OID.getOnuMacAddress + '.' + convertToOnuIndex(slot, pon, onuId).toString())
+                        snmp_fh.get(options, aOnuOID).then(ret => {
+                            ret.forEach(e => {
+                                if (e.value && e.value.length > 0)
+                                    aResp.push({ _onuIndex: e.oid.split('.')[13], ...parseOnuIndex(parseInt(e.oid.split('.')[13])), macAddress: e.value.toString() })
+                            })
+                            if (aResp.length > 0)
+                                aResp.forEach((onu, idx) => {
+                                    queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface']).then(o => {
+                                        list.push({ ...onu, ...o })
+                                        if (queue.queue.length == 0) {
+                                            return resolve(list)
+                                        }
+
+                                    }))
+                                })
+                            else
+                                return resolve([])
+                        })
+
+                    } else return resolve(false)
+                })
+            } catch (err) {
+                return reject(err)
+            }
+        }, 30)
+    })
+}
+
 function getOnuListByPon(options, slot, pon) {
     return new Promise((resolve, reject) => {
+        var list = []
         try {
-            gFunc.isValid(options, slot, pon).then(isValid => {
-                if (isValid) {
-                    var queue = new Queue(1, 10000)
-                    var aOnuOID = []
-                    var aResp = []
-                    var list = []
-                    for (var onuId = 1; onuId <= 128; ++onuId)
-                        aOnuOID.push(OID.getOnuMacAddress + '.' + convertToOnuIndex(slot, pon, onuId).toString())
-                    snmp_fh.get(options, aOnuOID).then(ret => {
-                        ret.forEach(e => {
-                            if (e.value && e.value.length > 0)
-                                aResp.push({ _onuIndex: e.oid.split('.')[13], ...parseOnuIndex(parseInt(e.oid.split('.')[13])), macAddress: e.value.toString() })
-                        })
-                        if (aResp.length > 0)
-                            aResp.forEach((onu, idx) => {
-                                queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface']).then(o => {
-                                    list.push({ ...onu, ...o })
-                                    if (queue.queue.length == 0)
-                                        return resolve(list)
-                                }))
-                            })
-                        else
-                            return resolve([])
-                    })
-                } else return resolve(false)
-            })
+            var queue = new Queue(1, 10)
+            for (var offset = 0; offset < 8; ++offset) {
+                const _offset = offset
+                queue.add(f => getOnuByPonWithOffset(options, slot, pon, _offset)).then(onus => {
+                    list.push(...onus)
+                    if (queue.queue.length == 0)
+                        return resolve(list)
+                })
+            }
         } catch (err) {
             return reject(err)
         }
