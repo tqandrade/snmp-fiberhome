@@ -88,7 +88,7 @@ const fh = require('snmp-fiberhome')
 
 ## Bug fixes and features
 
-Version 1.1.x of this module contains:
+Version 1.x.x of this module contains:
 
 - Correction of parameters name 'multcast' to 'multicast'
 - [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports): Added more features and changed some parameter names. 
@@ -102,6 +102,8 @@ Version 1.1.x of this module contains:
   - Implementation of the [delWan()](#delwan) and [getWan()](#getwan)  function.
 - (version: 1.1.10)
   - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue
+- (version: 1.2.0)
+  - [getPonPortList()](#getponportlist): Fixed timeout issue
 
 ## Initial settings
 
@@ -234,8 +236,6 @@ Output:
 ## getPonPortList()
 
 **Description:** Returns an array with the relevant information from all PON ports in the OLT.
-
-**NOTE:** Depending on the number of connected ONUs to pon port, the loading time may take time and cause a timeout. In this case, use the [getPonPort()](#getponport) function in conjunction with a loop.
 
 **Function signature:**
 

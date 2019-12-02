@@ -15,36 +15,60 @@ function getPonPortList(options) {
     return new Promise((resolve, reject) => {
         try {
             var aPon = []
-            snmp_fh.subtree(options, OID.getPonPortList).then(varbinds => {
-                varbinds.forEach((e, idx) => {
-                    if (e.oid.split('.')[13] == 1) {
-                        aPon.push({ portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] })
-                    } else {
-                        var index = aPon.findIndex(e => e.portIndex == varbinds[idx].oid.split('.')[14])
-                        if (index > -1) {
-                            if (e.oid.split('.')[13] == 2)
-                                aPon[index].portName = e.value.toString()
-                            else if (e.oid.split('.')[13] == 3)
-                                aPon[index].portDescription = e.value.toString()
-                            else if (e.oid.split('.')[13] == 4) {
-                                aPon[index].portEnableStatusValue = e.value
-                                aPon[index].portEnableStatus = e.value == 1 ? 'enable' : e.value == 0 ? 'disable' : 'undefined'
-                            } else if (e.oid.split('.')[13] == 5) {
-                                aPon[index].portOnlineStatusValue = e.value
-                                aPon[index].portOnlineStatus = e.value == 1 ? 'online' : e.value == 0 ? 'offline' : 'undefined'
-                            } else if (e.oid.split('.')[13] == 6) {
-                                aPon[index].portDownlinkRate = e.value
-                                aPon[index].portDownlinkRateUnit = 'Mbit/s'
-                            } else if (e.oid.split('.')[13] == 12)
-                                aPon[index].authorizedOnus = e.value
-                            else if (e.oid.split('.')[13] == 13) {
-                                aPon[index].portUplinkRate = e.value
-                                aPon[index].portUplinkRateUnit = 'Mbit/s'
-                            }
-                        }
-                    }
+            var varbinds = []
+            snmp_fh.subtree(options, OID.getPonPortList + '.1').then(varbinds1 => {
+                varbinds.push(...varbinds1)
+                snmp_fh.subtree(options, OID.getPonPortList + '.2').then(varbinds2 => {
+                    varbinds.push(...varbinds2)
+                    snmp_fh.subtree(options, OID.getPonPortList + '.3').then(varbinds3 => {
+                        varbinds.push(...varbinds3)
+                        snmp_fh.subtree(options, OID.getPonPortList + '.4').then(varbinds4 => {
+                            varbinds.push(...varbinds4)
+                            snmp_fh.subtree(options, OID.getPonPortList + '.5').then(varbinds5 => {
+                                varbinds.push(...varbinds5)
+                                snmp_fh.subtree(options, OID.getPonPortList + '.6').then(varbinds6 => {
+                                    varbinds.push(...varbinds6)
+                                    snmp_fh.subtree(options, OID.getPonPortList + '.12').then(varbinds12 => {
+                                        varbinds.push(...varbinds12)
+                                        snmp_fh.subtree(options, OID.getPonPortList + '.13').then(varbinds13 => {
+                                            varbinds.push(...varbinds13)
+                                            varbinds.forEach((e, idx) => {
+                                                if (e.oid.split('.')[13] == 1) {
+                                                    aPon.push({ portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] })
+                                                } else {
+                                                    var index = aPon.findIndex(e => e.portIndex == varbinds[idx].oid.split('.')[14])
+                                                    if (index > -1) {
+                                                        if (e.oid.split('.')[13] == 2)
+                                                            aPon[index].portName = e.value.toString()
+                                                        else if (e.oid.split('.')[13] == 3)
+                                                            aPon[index].portDescription = e.value.toString()
+                                                        else if (e.oid.split('.')[13] == 4) {
+                                                            aPon[index].portEnableStatusValue = e.value
+                                                            aPon[index].portEnableStatus = e.value == 1 ? 'enable' : e.value == 0 ? 'disable' : 'undefined'
+                                                        } else if (e.oid.split('.')[13] == 5) {
+                                                            aPon[index].portOnlineStatusValue = e.value
+                                                            aPon[index].portOnlineStatus = e.value == 1 ? 'online' : e.value == 0 ? 'offline' : 'undefined'
+                                                        } else if (e.oid.split('.')[13] == 6) {
+                                                            aPon[index].portDownlinkRate = e.value
+                                                            aPon[index].portDownlinkRateUnit = 'Mbit/s'
+                                                        } else if (e.oid.split('.')[13] == 12)
+                                                            aPon[index].authorizedOnus = e.value
+                                                        else if (e.oid.split('.')[13] == 13) {
+                                                            aPon[index].portUplinkRate = e.value
+                                                            aPon[index].portUplinkRateUnit = 'Mbit/s'
+                                                        }
+                                                    }
+                                                }
+                                                if (idx == varbinds.length - 1)
+                                                    return resolve(aPon)
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
                 })
-                return resolve(aPon)
             })
         } catch (err) {
             return reject(err)
