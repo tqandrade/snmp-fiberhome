@@ -23,7 +23,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 - [ONU functions](#onu-functions)
   - [addAllOnus()](#addallonus)
   - [addOnu()](#addonu)
-  - [authenticateOnu()](#authenticateonu)
+  - [authorizeOnu()](#authorizeonu)
   - [convertToOnuIndex()](#converttoonuindex)
   - [delOnu() and delOnuByMacAddress()](#delonu-and-delonubymacaddress)
   - [delWan()](#delwan)
@@ -91,7 +91,7 @@ fh.function(options, ...)      // Call of functions
 
 **IMPORTANT!** For ONUs using GPON technology, the `macAddress` parameter in the following functions will receive the equipment SERIAL.
 
-The following functions are assigned the `slot`, `pon` and `onuId` parameters to specify a particular ONU. If you work with onuIndex, use the [parseOnuIndex()](#parseonuIndex)  function to convert onuIndex to an object containing the values of **slot**, **pon** and **onuId**.
+The following functions are assigned the `slot`, `pon` and `onuId` parameters to specify a particular ONU. If you work with onuIndex, use the [parseOnuIndex()](#parseonuindex)  function to convert onuIndex to an object containing the values of `slot`, `pon` and `onuId`.
 
 The `onuIndex` parameter in the following functions is calculated as follows:
 
@@ -233,8 +233,8 @@ Output:
         portEnableStatusValue: 1,
         portIndex: 369623040,
         portName: 'PON 11/1',
-        portOnlineStatus: 'online',
-        portOnlineStatusValue: 1,
+        portOnlineStatus: 'online',                  // values: 'online' or 'offline'
+        portOnlineStatusValue: 1,                   // 1 = 'online',  2 = 'offline'
         portType: 'PON',
         portTypeValue: 1
     },
@@ -274,8 +274,8 @@ Output:
     portEnableStatusValue: 1,
     portIndex: 369623040,
     portName: 'PON 11/1',
-    portOnlineStatus: 'online',
-    portOnlineStatusValue: 1,
+    portOnlineStatus: 'online',                  // values: 'online' or 'offline'
+    portOnlineStatusValue: 1,                   // 1 = 'online',  2 = 'offline'
     portType: 'PON',
     portTypeValue: 1
 }
@@ -547,20 +547,20 @@ Output:
 }
 ```
 
-## authenticateOnu()
+## authorizeOnu()
 
-**Description:** Authenticates a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authenticateOnu()](#authenticateonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function.
+**Description:** Authenticates a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authorizeOnu()](#authorizeonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function.
 
 **Function signature:**
 
 ```js
-authenticateOnu(options: <object>, slot: <number>, pon: <number>, onuTypeCode: <number>, macAddress: <string>) => Promise <object>
+authorizeOnu(options: <object>, slot: <number>, pon: <number>, onuTypeCode: <number>, macAddress: <string>) => Promise <object>
 ```
 
 Example:
 
 ```js
-fh.authenticateOnu(options, 11, 1, 765, 'FHTT1231e796').then(authOnu => {
+fh.authorizeOnu(options, 11, 1, 765, 'FHTT1231e796').then(authOnu => {
     console.log(authOnu)
 })
 ```
@@ -729,7 +729,7 @@ Output:
 
 ## getBasicOnuInfo()
 
-**Description:** Searches for a ONU in OLT based on mac address. The ONU must be authorized. NOTE: The input parameters `slot` and `pon` are not required, but their use will make the search faster. On success, returns an object containing basic ONU information, otherwise returns `null`.
+**Description:** Searches for a ONU in OLT based on mac address. The ONU must be authorized. NOTE: The input parameters `slot` and `pon` are not required, but their use will make the search faster. On success, returns an object containing basic ONU information, otherwise returns `false`.
 
 **Function signature:**
 
@@ -899,8 +899,8 @@ Output:
     macAddress: 'FHTT1231e796',
     onuLogicAuthId: '',
     onuLogicAuthIdPass: '',
-    onuStatus: 'online',
-    onuStatusValue: 1,
+    onuStatus: 'online',              // values: 'fiber cut', 'online', 'power cut' or 'offline'
+    onuStatusValue: 1,              // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
     softwareVersion: 'RP2522',
     systemName: '',
     firmwareVersion: '',
@@ -1141,8 +1141,8 @@ Output:
         ip: '0.0.0.0',
         onuLogicAuthId: '',
         onuLogicAuthIdPass: '',
-        onuStatus: 'online',
-        onuStatusValue: 1,
+        onuStatus: 'online',              // values: 'fiber cut', 'online', 'power cut' or 'offline'
+        onuStatusValue: 1,              // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
         softwareVersion: 'RP2522',
         systemName: '',
         distance: {
@@ -1454,7 +1454,7 @@ Output:
 
 ## getWan()
 
-**Description:** Returns an array containing all wan profiles. To understand more about the returned parameters, see the [setWan()](#setwan) function.
+**Description:** Returns an array containing all wan profiles. To understand more about the returned parameters, see the [setWan()](#setwan) function. If the ONU is not authorized, the return will be `false`
 
 **Function signature:**
 
@@ -1931,6 +1931,10 @@ Version 1.x.x of this module contains:
   - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`
   - [convertToOnuIndex()](#converttoonuindex): Documented
   - Inclusion of unit tests
+- (version: 1.2.2)
+  - `authenticateOnu()`: Deprecated, but running for a while.
+  - [authorizeOnu()](#authorizeonu): Same functionality as `authenticateOnu()` function.
+  - Unit testing and integration testing
  
 # Contributions
 

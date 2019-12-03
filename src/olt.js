@@ -178,7 +178,7 @@ function getPonPort(options, slot, ponPort) {
                         })
                         return resolve(pon)
                     })
-                }
+                } else return resolve(false)
             })
         } catch (err) {
             return reject(err)

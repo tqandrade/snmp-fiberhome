@@ -115,7 +115,7 @@ function addOnu(options, onu, profilesWan, profileLanPorts) {
         setTimeout(t => {
             var onuForm = { slot: onu.slot, pon: onu.pon, macAddress: onu.macAddress }
             try {
-                authenticateOnu(options, onu.slot, onu.pon, (onu.onuType && onu.onuType.code) || onu.onuTypeCode, onu.macAddress).then(ret => {
+                authorizeOnu(options, onu.slot, onu.pon, (onu.onuType && onu.onuType.code) || onu.onuTypeCode, onu.macAddress).then(ret => {
                     getBasicOnuInfo(options, onu.macAddress, onu.slot, onu.pon).then(onuAuth => {
                         if (onuAuth) {
                             if (profilesWan && profilesWan.length > 0) {
@@ -146,6 +146,17 @@ function addOnu(options, onu, profilesWan, profileLanPorts) {
 }
 
 function authenticateOnu(options, slot, pon, onuTypeCode, macAddress) {
+    console.error("authenticateOnu(): Deprecated function. Use 'authorizeOnu()'. The 'authenticateOnu()' will be deprecated in later versions")
+    return new Promise((resolve, reject) => {
+        authorizeOnu(options, slot, pon, onuTypeCode, macAddress).then(ret => {
+            return resolve(ret)
+        }, err => {
+            return reject(err)
+        })
+    })
+}
+
+function authorizeOnu(options, slot, pon, onuTypeCode, macAddress) {
     return new Promise((resolve, reject) => {
         try {
             gFunc.isValid(options, slot, pon).then(isValid => {
@@ -778,7 +789,7 @@ function getOnuListBySlot(options, slot) {
                         return resolve(aOnus)
                     })
                 })
-            }
+            } else return resolve(false)
         })
     })
 }
@@ -850,7 +861,7 @@ function getOnuType(options, slot, pon, onuId) {
                 } else {
                     if (options.enableWarnings)
                         console.error('getOnuType(): Invalid input parameters.')
-                    return resolve(null)
+                    return resolve(false)
                 }
             })
         } catch (err) {
@@ -945,8 +956,7 @@ function getOnuWebAdmin(options, slot, pon, onuId) {
                         return resolve(aProfiles)
                     })
                 })
-            } else
-                return resolve([])
+            } else return resolve([])
         })
     })
 }
@@ -1176,7 +1186,7 @@ function getWan(options, slot, pon, onuId) {
                             return resolve(aWans)
                         })
                     })
-                }
+                } else return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1283,8 +1293,7 @@ function setOnuWebAdmin(options, slot, pon, onuId, aWebConfig) {
                             return resolve(true)
                         })
                     })
-                } else
-                    return resolve(false)
+                } else return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -2410,6 +2419,7 @@ module.exports = {
     addAllOnus,
     addOnu,
     authenticateOnu,
+    authorizeOnu,
     convertToOnuIndex,
     delOnu,
     delOnuByIndex,
