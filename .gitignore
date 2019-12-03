@@ -40,6 +40,8 @@ draft
 
 rascunho.js
 
-index.js
+/index.js
 
 package-lock.json
+
+test/env.js

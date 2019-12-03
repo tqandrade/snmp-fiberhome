@@ -29,6 +29,7 @@ module.exports = {
     addAllOnus: onu.addAllOnus,
     addOnu: onu.addOnu,
     authenticateOnu: onu.authenticateOnu,
+    convertToOnuIndex: onu.convertToOnuIndex,
     delOnu: onu.delOnu,
     delOnuByIndex: onu.delOnuByIndex,
     delOnuByMacAddress: onu.delOnuByMacAddress,

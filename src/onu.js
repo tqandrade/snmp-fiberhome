@@ -135,7 +135,7 @@ function addOnu(options, onu, profilesWan, profileLanPorts) {
                                 return resolve({ _onuIndex: onuAuth.onuIndex, ...ret, ...onuForm, ...parseOnuIndex(onuAuth._onuIndex) })
                             }
                         } else
-                            return reject('Erro: serial para a onu não foi encontrado na OLT: ' + JSON.stringify(onu))
+                            return reject('Erro: macAddress para a onu não foi encontrado na OLT: ' + JSON.stringify(onu))
                     })
                 })
             } catch (excp) {
@@ -226,7 +226,7 @@ function delOnuByMacAddress(options, macAddress) {
         try {
             var delOnu = snmp_fh.delOnuByMacAddress
             delOnu = delOnu.split(' ')
-            for (var i = 0; i < 12; i++)    // Serial
+            for (var i = 0; i < 12; i++)    // macAddress or serial
                 delOnu[158 + i] = macAddress.strToHex().split(' ')[i]
             delOnu = delOnu.join(' ')
 
@@ -475,35 +475,38 @@ function getOnuBySerial(options, serial) {
     })
 }
 
-function getBasicOnuInfo(options, serial, slot, pon) {
+function getBasicOnuInfo(options, macAddress, slot, pon) {
     return new Promise((resolve, reject) => {
         try {
-            if (slot && pon) {    // Busca otimizada
-                gFunc.isValid(options, slot, pon).then(isValid => {
-                    if (isValid) {
-                        var aOnuOID = []
-                        for (var onuId = 1; onuId <= 128; ++onuId)
-                            aOnuOID.push(OID.getOnuMacAddress + '.' + convertToOnuIndex(slot, pon, onuId).toString())
-                        snmp_fh.get(options, aOnuOID).then(ret => {
-                            var idx = ret.findIndex(e => (e.value && e.value.toString().toLowerCase()) == serial.toLowerCase())
-                            if (idx > -1) {
-                                var onuIndex = parseInt(ret[idx].oid.split(OID.getOnuMacAddress + '.')[1])
-                                return resolve({ _onuIndex: onuIndex, ...parseOnuIndex(onuIndex), serial: ret[idx].value.toString() })
-                            } else
-                                return resolve(false)
-                        })
-                    } else return resolve(false)
-                })
-            } else {
-                snmp_fh.subtree(options, OID.getOnuMacAddress).then(ret => {
-                    var idx = ret.findIndex(e => (e.value && e.value.toString().toLowerCase()) == serial.toLowerCase())
-                    if (idx > -1) {
-                        var onuIndex = parseInt(ret[idx].oid.split(OID.getOnuMacAddress + '.')[1])
-                        return resolve({ _onuIndex: onuIndex, ...parseOnuIndex(onuIndex), serial: ret[idx].value.toString() })
-                    } else
-                        return resolve(false)
-                })
-            }
+            if (macAddress && (!slot && !pon) || (macAddress && slot && pon)) {
+                if (slot && pon) {    // Busca otimizada
+                    gFunc.isValid(options, slot, pon).then(isValid => {
+                        if (isValid) {
+                            var aOnuOID = []
+                            for (var onuId = 1; onuId <= 128; ++onuId)
+                                aOnuOID.push(OID.getOnuMacAddress + '.' + convertToOnuIndex(slot, pon, onuId).toString())
+                            snmp_fh.get(options, aOnuOID).then(ret => {
+                                var idx = ret.findIndex(e => (e.value && e.value.toString().toLowerCase()) == macAddress.toLowerCase())
+                                if (idx > -1) {
+                                    var onuIndex = parseInt(ret[idx].oid.split(OID.getOnuMacAddress + '.')[1])
+                                    return resolve({ _onuIndex: onuIndex, ...parseOnuIndex(onuIndex), macAddress: ret[idx].value.toString() })
+                                } else
+                                    return resolve(false)
+                            })
+                        } else return resolve(false)
+                    })
+                } else {
+                    snmp_fh.subtree(options, OID.getOnuMacAddress).then(ret => {
+                        var idx = ret.findIndex(e => (e.value && e.value.toString().toLowerCase()) == macAddress.toLowerCase())
+                        if (idx > -1) {
+                            var onuIndex = parseInt(ret[idx].oid.split(OID.getOnuMacAddress + '.')[1])
+                            return resolve({ _onuIndex: onuIndex, ...parseOnuIndex(onuIndex), macAddress: ret[idx].value.toString() })
+                        } else
+                            return resolve(false)
+                    })
+                }
+            } else
+                return resolve(false)
         } catch (err) {
             return reject(err)
         }
@@ -2407,6 +2410,7 @@ module.exports = {
     addAllOnus,
     addOnu,
     authenticateOnu,
+    convertToOnuIndex,
     delOnu,
     delOnuByIndex,
     delOnuByMacAddress,

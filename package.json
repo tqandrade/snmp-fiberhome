@@ -1,8 +1,11 @@
 {
   "name": "snmp-fiberhome",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, pon ports and ONUs by performing read and write functions directly in OLT.",
   "main": "snmp-fiberhome.js",
+  "scripts": {
+    "test": "node test/index.js | tap-spec"
+  },
   "readmeFilename": "README.md",
   "private": false,
   "keywords": [
@@ -28,5 +31,10 @@
     "promise-queue": "^2.2.5",
     "string.prototype.padstart": "^3.0.0",
     "vow": "^0.4.20"
+  },
+  "devDependencies": {
+    "tap-spec": "^5.0.0",
+    "tape": "^4.11.0",
+    "tape-promise": "^4.0.0"
   }
 }

@@ -5,6 +5,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
 ## Contents
+
 - [Installation](#installation)
 - [Tests](#tests)
 - [Bug fixes and features](#bug-fixes-and-features)
@@ -26,6 +27,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [addOnu()](#addonu)
   - [authenticateOnu()](#authenticateonu)
   - [delOnu() and delOnuByMacAddress()](#delonu-and-delonubymacaddress)
+  - [convertToOnuIndex()](#converttoonuindex)
   - [delWan()](#delwan)
   - [enableLanPorts()](#enablelanports)
   - [getAuthorizedOnus()](#getauthorizedonus)
@@ -104,6 +106,10 @@ Version 1.x.x of this module contains:
   - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue
 - (version: 1.2.0)
   - [getPonPortList()](#getponportlist): Fixed timeout issue
+- (version: 1.2.1)
+  - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`
+  - [convertToOnuIndex()](#converttoonuindex): Documented
+  - Inclusion of unit tests
 
 ## Initial settings
 
@@ -130,7 +136,7 @@ The `onuIndex` parameter in the following functions is calculated as follows:
 
     slot*(2^25) + pon*(2^19) + onuId*(2^8)    // for OLT AN5516
 
-See the function [convertToOnuIndex()](#converttoonuIndex)
+See the function [convertToOnuIndex()](#converttoonuindex)
 
 # OLT functions
 
@@ -613,6 +619,29 @@ Output:
         type: 'GPON'
     }
 }
+```
+
+## convertToOnuIndex()
+
+**Description:** Convert `slot`, `pon` and `onuId` parameters to `onuIndex`.
+
+**Function signature:**
+
+```js
+convertToOnuIndex(slot: <number>, pon: <number>, onuId: <number>) => <number>
+```
+
+Example:
+
+```js
+var onuIndex = fh.convertToOnuIndex(11, 1, 1)
+console.log(onuIndex)
+```
+
+Output:
+
+```js
+369623296
 ```
 
 ## delOnu() and delOnuByMacAddress()
