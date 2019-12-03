@@ -7,9 +7,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
 ## Contents
 
 - [Installation](#installation)
-- [Tests](#tests)
-- [Bug fixes and features](#bug-fixes-and-features)
-- [Initial settings](#initial-settings)
+- [Usage](#usage)
 - [OLT functions](#olt-functions)
   - [getOltInformation()](#getoltinformation)
   - [getOltModel()](#getoltmodel)
@@ -26,8 +24,8 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [addAllOnus()](#addallonus)
   - [addOnu()](#addonu)
   - [authenticateOnu()](#authenticateonu)
-  - [delOnu() and delOnuByMacAddress()](#delonu-and-delonubymacaddress)
   - [convertToOnuIndex()](#converttoonuindex)
+  - [delOnu() and delOnuByMacAddress()](#delonu-and-delonubymacaddress)
   - [delWan()](#delwan)
   - [enableLanPorts()](#enablelanports)
   - [getAuthorizedOnus()](#getauthorizedonus)
@@ -54,6 +52,8 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [setOnuWebAdmin()](#setonuwebadmin)
   - [setWan()](#setwan)
 - [Extra example](#extra-example)
+- [Tests](#tests)
+- [Bug fixes and features](#bug-fixes-and-features)
 - [Contributions](#contributions)
 - [Help us!](#help-us)
 - [License](#license)
@@ -72,46 +72,7 @@ It is loaded using the require() function:
 const fh = require('snmp-fiberhome')
 ```
 
-## Tests
-
-| OLT       | Status     |
-|-----------|------------|
-| AN5516-01 | Tested     |
-| AN5516-06 | Tested     |
-| AN5116    | Not implemented |
-
----
-
-| ONU          | Tech | Status |
-|--------------|------|--------|
-| AN5506-01-A1 | GPON | Tested |
-| AN5506-04-F1 | GPON | Tested |
-|       -      | EPON | Developing |
-
-## Bug fixes and features
-
-Version 1.x.x of this module contains:
-
-- Correction of parameters name 'multcast' to 'multicast'
-- [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports): Added more features and changed some parameter names. 
-- [addAllOnus()](#addallonus): changed some parameter names.
-- [addOnu()](#addonu): changed some parameter names.
-- [enableLanPorts()](#enablelanports): changed some parameter names.
-- (version: 1.1.4)
-  - [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports) working with EPON and GPON.
-  - Implementation of the [getOnuType()](#getonutype)  function.
-- (version: 1.1.8)
-  - Implementation of the [delWan()](#delwan) and [getWan()](#getwan)  function.
-- (version: 1.1.10)
-  - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue
-- (version: 1.2.0)
-  - [getPonPortList()](#getponportlist): Fixed timeout issue
-- (version: 1.2.1)
-  - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`
-  - [convertToOnuIndex()](#converttoonuindex): Documented
-  - Inclusion of unit tests
-
-## Initial settings
+## Usage
 
 ```js
 const fh = require('snmp-fiberhome')
@@ -1931,6 +1892,46 @@ function example(options) {
 example(options)
 ```
 
+
+## Tests
+
+| OLT       | Status     |
+|-----------|------------|
+| AN5516-01 | Tested     |
+| AN5516-06 | Tested     |
+| AN5116    | Not implemented |
+
+---
+
+| ONU          | Tech | Status |
+|--------------|------|--------|
+| AN5506-01-A1 | GPON | Tested |
+| AN5506-04-F1 | GPON | Tested |
+|      -     | EPON | Testing |
+
+## Bug fixes and features
+
+Version 1.x.x of this module contains:
+
+- Correction of parameters name 'multcast' to 'multicast'
+- [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports): Added more features and changed some parameter names. 
+- [addAllOnus()](#addallonus): changed some parameter names.
+- [addOnu()](#addonu): changed some parameter names.
+- [enableLanPorts()](#enablelanports): changed some parameter names.
+- (version: 1.1.4)
+  - [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports) working with EPON and GPON.
+  - Implementation of the [getOnuType()](#getonutype)  function.
+- (version: 1.1.8)
+  - Implementation of the [delWan()](#delwan) and [getWan()](#getwan)  function.
+- (version: 1.1.10)
+  - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue
+- (version: 1.2.0)
+  - [getPonPortList()](#getponportlist): Fixed timeout issue
+- (version: 1.2.1)
+  - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`
+  - [convertToOnuIndex()](#converttoonuindex): Documented
+  - Inclusion of unit tests
+ 
 # Contributions
 
 This module is sponsored by telecommunications company Valenet:
@@ -1950,11 +1951,3 @@ E-mail: davibaltar.npm@gmail.com
 # License
 
   [MIT](LICENSE) License
-
-Copyright (c) 2019 davibaltar
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
