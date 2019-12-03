@@ -442,7 +442,7 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 ## addAllOnus()
 
-**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the [setWan()](#setwan) function. To learn more about the `profileLanPorts` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authenticated ONUs.
+**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the [setWan()](#setwan) function. To learn more about the `profileLanPorts` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authorized ONUs.
 
 **Function signature:**
 
@@ -549,7 +549,7 @@ Output:
 
 ## authorizeOnu()
 
-**Description:** Authenticates a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authorizeOnu()](#authorizeonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function.
+**Description:** Authorizes a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authorizeOnu()](#authorizeonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function.
 
 **Function signature:**
 
