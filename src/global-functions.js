@@ -17,6 +17,9 @@ function isValid(options, slot, pon, onuId) {
                     if (options.enableWarnings)
                         console.error('Warning! slot ' + slot + ' not found')
                     return resolve(false)
+                }, err => {
+                    console.error('Error: Unable to connect to OLT')
+                    return reject(err)
                 })
             } else if (slot && pon && !onuId) { // only slot and pon
                 var ponIndex = ((slot) * 2 ** 25) + ((pon) * 2 ** 19)
@@ -26,6 +29,9 @@ function isValid(options, slot, pon, onuId) {
                     if (options.enableWarnings)
                         console.error('Warning! slot ' + slot + ' or pon ' + pon + ' not found')
                     return resolve(false)
+                }, err => {
+                    console.error('Error: Unable to connect to OLT')
+                    return reject(err)
                 })
             } else if (slot && pon && onuId) {  // all
                 var ponIndex = ((slot) * 2 ** 25) + ((pon) * 2 ** 19) + ((onuId) * 2 ** 8)
@@ -35,6 +41,9 @@ function isValid(options, slot, pon, onuId) {
                     if (options.enableWarnings)
                         console.error('Warning! slot ' + slot + ', pon ' + pon + ' or onuId ' + onuId + ' not found')
                     return resolve(false)
+                }, err => {
+                    console.error('Error: Unable to connect to OLT')
+                    return reject(err)
                 })
             }
         } catch (err) {

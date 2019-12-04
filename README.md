@@ -1,6 +1,6 @@
 # snmp-fiberhome
 
-This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, pon ports and ONUs by performing read and write functions directly in OLT.
+This module communicates with Fiberhome OLTs using the SNMP protocol. The module is capable of managing the OLT, Slots, Cards, Pon ports and ONUs by performing read and write functions directly in OLT.
 
 [![NPM Version](http://img.shields.io/npm/v/snmp-fiberhome.svg?style=flat)](https://www.npmjs.org/package/commander) [![NPM Downloads](https://img.shields.io/npm/dm/snmp-fiberhome.svg?style=flat)](https://npmcharts.com/compare/snmp-fiberhome?minimal=true)
 
@@ -149,7 +149,7 @@ Output:
 
 ## getOltModel()
 
-**Description:** Returns the OLT model.
+**Description:** Returns the OLT model. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -173,7 +173,7 @@ Output:
 
 ## getSubrackInformation()
 
-**Description:** Returns information regarding the subrack.
+**Description:** Returns information regarding the subrack. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -202,7 +202,7 @@ Output:
 
 ## getPonPortList()
 
-**Description:** Returns an array with the relevant information from all PON ports in the OLT.
+**Description:** Returns an array with the relevant information from all PON ports in the OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -234,7 +234,7 @@ Output:
         portIndex: 369623040,
         portName: 'PON 11/1',
         portOnlineStatus: 'online',                  // values: 'online' or 'offline'
-        portOnlineStatusValue: 1,                   // 1 = 'online',  2 = 'offline'
+        portOnlineStatusValue: 1,                    // 1 = 'online',  2 = 'offline'
         portType: 'PON',
         portTypeValue: 1
     },
@@ -244,7 +244,7 @@ Output:
 
 ## getPonPort()
 
-**Description:** Returns the relevant information for a given PON port in OLT.
+**Description:** Returns the relevant information for a given PON port in OLT. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -275,7 +275,7 @@ Output:
     portIndex: 369623040,
     portName: 'PON 11/1',
     portOnlineStatus: 'online',                  // values: 'online' or 'offline'
-    portOnlineStatusValue: 1,                   // 1 = 'online',  2 = 'offline'
+    portOnlineStatusValue: 1,                    // 1 = 'online',  2 = 'offline'
     portType: 'PON',
     portTypeValue: 1
 }
@@ -285,7 +285,7 @@ Output:
 
 ## getSlots()
 
-**Description:** Returns an array with the number of each slot.
+**Description:** Returns an array with the number of each slot. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -309,7 +309,7 @@ Output:
 
 ## getSlotsInformationList()
 
-**Description:** Returns an array with relevant information from all slots in the OLT.
+**Description:** Returns an array with relevant information from all slots in the OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -360,7 +360,7 @@ Output:
 
 ## getCardList()
 
-**Description:** Returns an array with relevant information from all cards.
+**Description:** Returns an array with relevant information from all cards. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -401,7 +401,7 @@ Output:
 
 ## getCard()
 
-**Description:** Returns relevant information from a given card. If not found, the return will be `false`.
+**Description:** Returns relevant information from a given card. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -442,7 +442,7 @@ For all the following functions, if the ONU, pon port or slot is not found, the 
 
 ## addAllOnus()
 
-**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the [setWan()](#setwan) function. To learn more about the `profileLanPorts` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authorized ONUs.
+**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the [setWan()](#setwan) function. To learn more about the `profileLanPorts` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authorized ONUs. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -473,7 +473,6 @@ Output:
 [
     {
         _onuIndex: 369623296,
-        index: 0,
         slot: 11,
         pon: 1,
         onuId: 1,
@@ -492,7 +491,7 @@ Output:
 
 ## addOnu()
 
-**Description:** Similar to the [addAllOnus()](#addallonus) function, but performs ONU authorization and WAN and Vlans configuration for a particular ONU.
+**Description:** Similar to the [addAllOnus()](#addallonus) function, but performs ONU authorization and WAN and Vlans configuration for a particular ONU. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -549,7 +548,7 @@ Output:
 
 ## authorizeOnu()
 
-**Description:** Authorizes a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authorizeOnu()](#authorizeonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function.
+**Description:** Authorizes a particular ONU. WAN and Vlan settings can be made using the [setWan()](#setwan) and [setLanPorts()](#setlanports) functions, respectively. All input parameters for [authorizeOnu()](#authorizeonu) can be obtained by the [getUnauthorizedOnus()](#getunauthorizedonus) function. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -607,7 +606,7 @@ Output:
 
 ## delOnu() and delOnuByMacAddress()
 
-**Description:** Deletes a particular ONU. If the ONU is successfully deleted, the function returns the mac address of the respective ONU deleted, otherwise false.
+**Description:** Deletes a particular ONU. If the ONU is successfully deleted, the function returns the `macAddress` of the respective ONU deleted, otherwise `false`.
 
 **Function signature:**
 
@@ -696,7 +695,7 @@ Output:
 
 ## getAuthorizedOnus()
 
-**Description:** Returns a list of all authorized ONUs in OLT.
+**Description:** Returns a list of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -765,7 +764,7 @@ Output:
 
 ## getLanPorts()
 
-**Description:** Returns the LAN ports settings of a given ONU.
+**Description:** Returns the LAN ports settings of a given ONU. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -790,24 +789,24 @@ Output:
         enablePort: true,
         lanSettings: {
             autoNegotiation: {
-                auto: false,
+                auto: true,
                 duplex: 'full',
                 portSpeed: '100M'
             },
-            flowControl: true,
+            flowControl: false,
             boardwidthSet: {
                 upstreamMin: 640,
                 upstreamMax: 1000000,
                 downstream: 1000000
             },
             igmpUpCvlan: {
-                cos: 6,
                 id: 2001,
+                cos: 6,
                 tpId: 33024
             },
             igmpUpSvlan: {
-                cos: null,
                 id: null,
+                cos: null,
                 tpId: 33024
             }
         },
@@ -840,7 +839,7 @@ Output:
 
 ## getMacAddressList()
 
-**Description:** Returns a list containing the mac address of all authorized ONUs in a given OLT
+**Description:** Returns a list containing the mac address of all authorized ONUs in a given OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -870,7 +869,7 @@ Output:
 
 ## getOnu()
 
-**Description:** Returns relevant information from a particular ONU, such as: opticalPowers (signals), distance, model, macAddress, enters others.
+**Description:** Returns relevant information from a particular ONU, such as: opticalPowers (signals), distance, model, macAddress, enters others. If any of the input parameters is invalid, the return is `false`.
 
 **NOTE:** For EPON technology some (or all) values ​​may be returned as zero on `opticalPower`
 
@@ -900,7 +899,7 @@ Output:
     onuLogicAuthId: '',
     onuLogicAuthIdPass: '',
     onuStatus: 'online',              // values: 'fiber cut', 'online', 'power cut' or 'offline'
-    onuStatusValue: 1,              // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
+    onuStatusValue: 1,                // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
     softwareVersion: 'RP2522',
     systemName: '',
     firmwareVersion: '',
@@ -962,7 +961,7 @@ Output:
 
 ## getOnuBandwidth()
 
-**Description:** Returns the bandwidth of a given ONU.
+**Description:** Returns the bandwidth of a given ONU. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -994,7 +993,7 @@ Output:
 
 ## getOnuDistance()
 
-**Description:** Returns the distance traveled by the fiber to a particular ONU in the kilometer unit.
+**Description:** Returns the distance traveled by the fiber to a particular ONU in the kilometer unit. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1022,7 +1021,7 @@ Output:
 
 ## getOnuIdList()
 
-**Description:** Returns a list with the `onuId` of all authorized ONUs in OLT.
+**Description:** Returns a list with the `onuId` of all authorized ONUs in OLT. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1056,7 +1055,7 @@ Output:
 
 ## getOnuIndexList()
 
-**Description:** Returns a list with the index of all authorized ONUs in OLT.
+**Description:** Returns a list with the index of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -1080,7 +1079,7 @@ Output:
 
 ## getOnuLastOffTime()
 
-**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second).
+**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second). If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1108,7 +1107,7 @@ Output:
 
 ## getOnuListByPon()
 
-**Description:** Returns a list of all connected ONUs on a given PON port.
+**Description:** Returns a list of all connected ONUs on a given PON port. If any of the input parameters is invalid, the return is `false`.
 
 **NOTE:** Depending on the number of ONUs connected to the pon port, the return may take time. Approximately 0.5 seconds for each ONU connected to the port.
 
@@ -1142,7 +1141,7 @@ Output:
         onuLogicAuthId: '',
         onuLogicAuthIdPass: '',
         onuStatus: 'online',              // values: 'fiber cut', 'online', 'power cut' or 'offline'
-        onuStatusValue: 1,              // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
+        onuStatusValue: 1,                // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
         softwareVersion: 'RP2522',
         systemName: '',
         distance: {
@@ -1192,7 +1191,7 @@ Output:
 
 ## getOnuOpticalPower()
 
-**Description:** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. 
+**Description:** Returns information related to the signals, voltage, temperature and bias current of a particular ONU. If any of the input parameters is invalid, the return is `false`.
 
 **NOTE:** For EPON technology some (or all) values ​​may be returned as zero.
 
@@ -1240,7 +1239,7 @@ Output:
 
 ## getOnuOpticalPowerList()
 
-**Description:** Returns a signal list of all authorized ONUs in OLT.
+**Description:** Returns a signal list of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **IMPORTANT:** Depending on the number of connected ONUs on the OLT, the return may take.
 
@@ -1299,7 +1298,7 @@ Output:
 
 ## getOnuType()
 
-**Description:** Returns ONU type information.
+**Description:** Returns ONU type information. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1336,7 +1335,7 @@ Output:
 
 ## getOnuUplinkInterface()
 
-**Description:** Returns information regarding the uplink interface of a given ONU.
+**Description:** Returns information regarding the uplink interface of a given ONU. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1370,7 +1369,7 @@ Output:
 
 ## getOnuWebAdmin()
 
-**Description:** Returns an array of web access settings for a given ONU.
+**Description:** Returns an array of web access settings for a given ONU. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1408,7 +1407,7 @@ Output:
 
 ## getUnauthorizedOnus()
 
-**Description:** Returns an array containing all unauthorized ONUs in OLT.
+**Description:** Returns an array containing all unauthorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -1548,7 +1547,7 @@ Output:
 
 ## setLanPorts()
 
-**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `cvlanId`, `translation.value` and `vlanId` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7.
+**Description:** Configures the lan ports of a particular ONU, allowing you to add vlans as well as enable or disable the ports. Values for `cvlanId`, `translation.value` and `vlanId` parameters must be within the range 1 to 4085. The parameter `cos` must be within the range 0 to 7. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1709,11 +1708,11 @@ Output:
 369623296
 ```
 
-**NOTE:** If the [setLanPorts()](#setlanports) function does not identify whether the UN is EPON or GPON, an error will be displayed and the `setLanPortsEPON()` or `setLanPortsGPON()` functions can be used by passing the same input parameters as the [setLanPorts()](#setlanports) function.
+**NOTE:** If the [setLanPorts()](#setlanports) function does not identify whether the ONU is EPON or GPON, an error will be displayed and the `setLanPortsEPON()` or `setLanPortsGPON()` functions can be used by passing the same input parameters as the [setLanPorts()](#setlanports) function.
 
 ## setOnuBandwidth()
 
-**Description:** Sets the bandwidth of a given ONU. The input parameters `upBw` and `downBw` must be in the unit of Kbit/s and the values must be within the range 256 to 1000000.
+**Description:** Sets the bandwidth of a given ONU. The input parameters `upBw` and `downBw` must be in the unit of Kbit/s and the values must be within the range 256 to 1000000. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1737,7 +1736,7 @@ Output:
 
 ## setOnuWebAdmin()
 
-**Description:** Set the ONU access settings via web. Returns `true` on success and `false` otherwise. Some ONUs only accept a single 'admin' group profile, such as AN5506-01-A1, but if more than one profile is entered, the group profile 'admin' will be set and the others will be ignored for this type of ONU.
+**Description:** Set the ONU access settings via web. Returns `true` on success and `false` otherwise. Some ONUs only accept a single 'admin' group profile, such as AN5506-01-A1, but if more than one profile is entered, the group profile 'admin' will be set and the others will be ignored for this type of ONU. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1765,7 +1764,7 @@ true
 
 ## setWan()
 
-**Description:** Performs the WAN settings. Values not entered in `profiles` parameter will be set to `false`, except for the `lans` and `ssids` parameters, which are all set to true by default.
+**Description:** Performs the WAN settings. Values not entered in `profiles` parameter will be set to `false`, except for the `lans` and `ssids` parameters, which are all set to true by default. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1935,7 +1934,11 @@ Version 1.x.x of this module contains:
   - `authenticateOnu()`: Deprecated, but running for a while.
   - [authorizeOnu()](#authorizeonu): Same functionality as `authenticateOnu()` function.
   - Unit testing and integration testing
- 
+- (version: 1.2.4)
+  - Unit tests and integration tests
+  - Documentation improvements
+  - Identify errors
+
 # Contributions
 
 This module is sponsored by telecommunications company Valenet:

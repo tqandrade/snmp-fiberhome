@@ -69,6 +69,9 @@ function getPonPortList(options) {
                         })
                     })
                 })
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -137,6 +140,9 @@ function getOltModel(options) {
         try {
             snmp_fh.get(options, ['1.3.6.1.2.1.1.2.0']).then(data => {
                 return resolve(tables.oltModels[data[0].value])
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -179,6 +185,9 @@ function getPonPort(options, slot, ponPort) {
                         return resolve(pon)
                     })
                 } else return resolve(false)
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -202,6 +211,9 @@ function getSubrackInformation(options) {
                         obj.totalSlotNumber = e.value
                 })
                 return resolve(obj)
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)

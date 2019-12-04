@@ -85,6 +85,8 @@ function addAllOnus(options, profilesWan, profileLanPorts) {
     return new Promise((resolve, reject) => {
         try {
             getUnauthorizedOnus(options).then(result => {
+                if (result === false)
+                    return resolve(false)
                 if (result.length > 0) {
                     if (options.enableLogs)
                         console.log(`Unauthorized ONUs found: ${result.length} \nadd...`)
@@ -102,6 +104,8 @@ function addAllOnus(options, profilesWan, profileLanPorts) {
                         console.log(`Unauthorized ONUs found: 0`)
                     return resolve([])
                 }
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             console.error(err.toString())
@@ -116,6 +120,8 @@ function addOnu(options, onu, profilesWan, profileLanPorts) {
             var onuForm = { slot: onu.slot, pon: onu.pon, macAddress: onu.macAddress }
             try {
                 authorizeOnu(options, onu.slot, onu.pon, (onu.onuType && onu.onuType.code) || onu.onuTypeCode, onu.macAddress).then(ret => {
+                    if (ret === false)
+                        return resolve(false)
                     getBasicOnuInfo(options, onu.macAddress, onu.slot, onu.pon).then(onuAuth => {
                         if (onuAuth) {
                             if (profilesWan && profilesWan.length > 0) {
@@ -183,6 +189,8 @@ function authorizeOnu(options, slot, pon, onuTypeCode, macAddress) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -378,6 +386,8 @@ function getOnuBandwidth(options, slot, pon, onuId) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -468,6 +478,8 @@ function getOnuByIndex(options, onuIndex, toIgnore) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -505,6 +517,8 @@ function getBasicOnuInfo(options, macAddress, slot, pon) {
                                     return resolve(false)
                             })
                         } else return resolve(false)
+                    }, error => {
+                        return resolve(false)
                     })
                 } else {
                     snmp_fh.subtree(options, OID.getOnuMacAddress).then(ret => {
@@ -559,6 +573,8 @@ function getOnuDistance(options, slot, pon, onuId) {
                             })
                         })
                     } else return resolve(false)
+                }, error => {
+                    return resolve(false)
                 })
             }, queueTime)
         } catch (err) {
@@ -609,6 +625,8 @@ function getOnuLastOffTime(options, slot, pon, onuId) {
                             })
                         })
                     } else return resolve(false)
+                }, error => {
+                    return resolve(false)
                 })
             }, queueTime)
         } catch (err) {
@@ -677,6 +695,8 @@ function getOnuOpticalPower(options, slot, pon, onuId, ignore) {
                             })
                         })
                     } else return resolve(false)
+                }, error => {
+                    return resolve(false)
                 })
             }, queueTime)
         } catch (err) {
@@ -717,6 +737,8 @@ function getOnuByPonWithOffset(options, slot, pon, offset) {
                         })
 
                     } else return resolve(false)
+                }, error => {
+                    return resolve(false)
                 })
             } catch (err) {
                 return reject(err)
@@ -790,6 +812,8 @@ function getOnuListBySlot(options, slot) {
                     })
                 })
             } else return resolve(false)
+        }, error => {
+            return resolve(false)
         })
     })
 }
@@ -819,6 +843,9 @@ function getOnuIndexList(options) {
                     aONUs.push(onu.value)
                 })
                 return resolve(aONUs)
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -832,6 +859,8 @@ function getOnuOpticalPowerList(options) {
             aOpticalPower = []
             var queue = new Queue(1, 10000)
             getOnuIndexList(options).then(aONUs => {
+                if (aONUs === false)
+                    return resolve(false)
                 aONUs.forEach(onuIndex => {
                     var onu = parseOnuIndex(onuIndex)
                     queue.add(f => getOnuOpticalPower(options, onu.slot, onu.pon, onu.onuId).then(onuOpticalPower => {
@@ -863,6 +892,8 @@ function getOnuType(options, slot, pon, onuId) {
                         console.error('getOnuType(): Invalid input parameters.')
                     return resolve(false)
                 }
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -903,6 +934,8 @@ function getOnuUplinkInterface(options, slot, pon, onuId, ignore) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -957,6 +990,8 @@ function getOnuWebAdmin(options, slot, pon, onuId) {
                     })
                 })
             } else return resolve([])
+        }, error => {
+            return resolve(false)
         })
     })
 }
@@ -998,6 +1033,8 @@ function getRxPowerListByPon(options, slot, pon) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1016,6 +1053,9 @@ function getMacAddressList(options) {
                     list.push({ _onuIndex: parseInt(e.oid.split(OID.getSerials + '.')[1]), macAddress: e.value.toString() })
                 })
                 return resolve(list)
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1028,8 +1068,9 @@ function getUnauthorizedOnus(options) {
         try {
             snmp_fh.subtree(options, OID.getUnauth).then(varbindList => {
                 return resolve(formatVarbindList(varbindList, 'unauth'))
-            }).catch(error => {
-                return reject(JSON.stringify(error))
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1187,6 +1228,8 @@ function getWan(options, slot, pon, onuId) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1244,6 +1287,8 @@ function setOnuBandwidth(options, slot, pon, onuId, upBw, downBw) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1294,6 +1339,8 @@ function setOnuWebAdmin(options, slot, pon, onuId, aWebConfig) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1636,6 +1683,8 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                             return resolve(false)
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -1857,6 +1906,8 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
                             return resolve(false)
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -2076,6 +2127,8 @@ function getLanPortsEPON(options, slot, pon, onuId) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -2256,6 +2309,8 @@ function getLanPortsGPON(options, slot, pon, onuId) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -2407,6 +2462,8 @@ function setWan(options, slot, pon, onuId, profilesWan) {
                         })
                     })
                 } else return resolve(false)
+            }, error => {
+                return resolve(false)
             })
         } catch (err) {
             return reject(err)

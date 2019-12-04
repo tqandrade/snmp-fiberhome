@@ -38,6 +38,9 @@ function getCardList(options) {
                 }
             })
             return resolve(aCards)
+        }, error => {
+            console.error('Error: Unable to connect to OLT')
+            return resolve(false)
         })
     })
 }
@@ -45,11 +48,15 @@ function getCardList(options) {
 function getCard(options, slot) {
     return new Promise((resolve, reject) => {
         getCardList(options).then(cards => {
+            if (cards === false)
+                return resolve(false)
             var idx = cards.findIndex(e => e.slot == slot)
             if (idx > -1) {
                 return resolve(cards[idx])
             } else
                 return resolve(false)
+        }, error => {
+            return resolve(false)
         })
     })
 }

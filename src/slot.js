@@ -14,6 +14,9 @@ function getSlots(options) {
                 aSlots.push(onu.value)
             })
             return resolve(aSlots)
+        }, error => {
+            console.error('Error: Unable to connect to OLT')
+            return resolve(false)
         })
     })
 }
@@ -49,6 +52,9 @@ function getSlotsInformationList(options) {
                     })
                 }
             })
+        }, error => {
+            console.error('Error: Unable to connect to OLT')
+            return resolve(false)
         })
     })
 }
