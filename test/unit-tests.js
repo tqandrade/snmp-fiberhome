@@ -124,7 +124,7 @@ test('getOnuDistance():', async (t) => {
             _onuIndex: fh.convertToOnuIndex(env.onu.slot, env.onu.pon, env.onu.onuId),
             value: '0.229',
             unit: 'km'
-        })
+        }, "Retornou o esperado")
         t.end()
     })
 })

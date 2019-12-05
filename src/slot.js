@@ -27,7 +27,7 @@ function getSlotsInformationList(options) {
         snmp_fh.subtree(options, OID.getSlotsInformationList).then(varbinds => {
             varbinds.forEach((e, idx) => {
                 if (e.oid.split('.')[13] == 2) {
-                    aONUs.push({ slot: parseInt(e.oid.split('.')[14]), cardPresentStatus: e.value == 0 ? 'not present' : 'present' })
+                    aONUs.push({ slot: parseInt(e.oid.split('.')[14]), cardPresentStatus: e.value == 0 ? 'not present' : 'present', cardPresentStatusValue: e.value })
                 } else {
                     var index = aONUs.findIndex(e => e.slot == varbinds[idx].oid.split('.')[14])
                     if (index > -1) {

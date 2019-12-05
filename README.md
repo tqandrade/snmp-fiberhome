@@ -93,17 +93,17 @@ fh.function(options, ...)      // Call of functions
 
 The following functions are assigned the `slot`, `pon` and `onuId` parameters to specify a particular ONU. If you work with onuIndex, use the [parseOnuIndex()](#parseonuindex)  function to convert onuIndex to an object containing the values of `slot`, `pon` and `onuId`.
 
-The `onuIndex` parameter in the following functions is calculated as follows:
+The `onuIndex` parameter is calculated as follows:
 
     slot*(2^25) + pon*(2^19) + onuId*(2^8)    // for OLT AN5516
 
-See the function [convertToOnuIndex()](#converttoonuindex)
+See the function [convertToOnuIndex()](#converttoonuindex) to convert the `onuIndex` parameter to `slot`, `pon` and `onuId`
 
 # OLT functions
 
 ## getOltInformation()
 
-**Description:** Get relevant information from OLT.
+**Description:** Get relevant information from OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -229,12 +229,12 @@ Output:
         portUplinkRateUnit: 'Mbit/s',
         portDownlinkRate: 2500,
         portDownlinkRateUnit: 'Mbit/s',
-        portEnableStatus: 'enable',
-        portEnableStatusValue: 1,
+        portEnableStatus: 'enable',                  // possible values: 'enable' or 'disable'
+        portEnableStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
         portIndex: 369623040,
         portName: 'PON 11/1',
-        portOnlineStatus: 'online',                  // values: 'online' or 'offline'
-        portOnlineStatusValue: 1,                    // 1 = 'online',  2 = 'offline'
+        portOnlineStatus: 'online',                  // possible values: 'online' or 'offline'
+        portOnlineStatusValue: 1,                    // 1 = 'online', 0 = 'offline'
         portType: 'PON',
         portTypeValue: 1
     },
@@ -249,7 +249,7 @@ Output:
 **Function signature:**
 
 ```js
-getPonPort(options: <object>, slot: <number>, ponPort: <number>) => Promise <object>
+getPonPort(options: <object>, slot: <number>, pon: <number>) => Promise <object>
 ```
 
 Example:
@@ -270,12 +270,12 @@ Output:
     portUplinkRateUnit: 'Mbit/s',
     portDownlinkRate: 2500,
     portDownlinkRateUnit: 'Mbit/s',
-    portEnableStatus: 'enable',
-    portEnableStatusValue: 1,
+    portEnableStatus: 'enable',                  // possible values: 'enable' or 'disable'
+    portEnableStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
     portIndex: 369623040,
     portName: 'PON 11/1',
-    portOnlineStatus: 'online',                  // values: 'online' or 'offline'
-    portOnlineStatusValue: 1,                    // 1 = 'online',  2 = 'offline'
+    portOnlineStatus: 'online',                  // possible values: 'online' or 'offline'
+    portOnlineStatusValue: 1,                    // 1 = 'online', 0 = 'offline'
     portType: 'PON',
     portTypeValue: 1
 }
@@ -335,12 +335,13 @@ Output:
         actualCardTypeValue: 527,
         authorizedCardType: 'GC8B'
         authorizedCardTypeValue: 527,
-        cardPresentStatus: 'present',
+        cardPresentStatus: 'present',            // possible values: 'present' or 'not present'
+        cardPresentStatusValue: 1,               // 1 = 'present', 0 = 'not present'
         cardInformation: {
             availablePorts: 8,
             numberOfPorts: 8,
-            cardStatus: 'normal',
-            cardStatusValue: 1,
+            cardStatus: 'normal',                // possible values: 'normal' or 'interrupted'
+            cardStatusValue: 1,                  // 1 = 'normal', 0 = 'interrupted'
             cardType: 'GC8B',
             cardTypeValue: 527,
             cpu: 4.75,
@@ -383,8 +384,8 @@ Output:
     {
         availablePorts: 8,
         numberOfPorts: 8,
-        cardStatus: 'normal',
-        cardStatusValue: 1,
+        cardStatus: 'normal',                // possible values: 'normal' or 'interrupted'
+        cardStatusValue: 1,                  // 1 = 'normal', 0 = 'interrupted'
         cardType: 'GC8B',
         cardTypeValue: 527,
         cpu: 4.75,
@@ -423,8 +424,8 @@ Output:
 {
     availablePorts: 8,
     numberOfPorts: 8,
-    cardStatus: 'normal',
-    cardStatusValue: 1,
+    cardStatus: 'normal',                // possible values: 'normal' or 'interrupted'
+    cardStatusValue: 1,                  // 1 = 'normal', 0 = 'interrupted'
     cardType: 'GC8B',
     cardTypeValue: 527,
     cpu: 4.75,
@@ -438,16 +439,16 @@ Output:
 ```
 
 # ONU functions
-For all the following functions, if the ONU, pon port or slot is not found, the return is **false**.
+For all the following functions, if the ONU, Pon port or Slot is not found, the return is **false**.
 
 ## addAllOnus()
 
-**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `profilesWan` and `profileLanPorts` are not required. To learn more about the `profilesWan` input parameter see the [setWan()](#setwan) function. To learn more about the `profileLanPorts` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authorized ONUs. If any of the input parameters is invalid, the return is `false`.
+**Description:**  This function performs ONU authorization and WAN and Vlans configuration for all unauthorized ONUs in a OLT. The input parameters `wanProfiles` and `lanPortProfiles` are not required. To learn more about the `wanProfiles` input parameter see the [setWan()](#setwan) function. To learn more about the `lanPortProfiles` input parameter, see the [setLanPorts()](#setlanports) function. If the authorized ONU already contains any profiles configured for WAN or Vlan, the old settings will be replaced with the new ones. The return is an array that contains all authorized ONUs. If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
 ```js
-addAllOnus(options: <object>, profilesWan: <Array>, profileLanPorts: <Array>) => Promise <Array>
+addAllOnus(options: <object>, wanProfiles: <Array>, lanPortProfiles: <Array>) => Promise <Array>
 ```
 
 Example:
@@ -496,7 +497,7 @@ Output:
 **Function signature:**
 
 ```js
-addOnu(options: <object>, onu: <object>, profilesWan: <Array>, profileLanPorts: <Array>) => Promise <object>
+addOnu(options: <object>, onu: <object>, wanProfiles: <Array>, lanPortProfiles: <Array>) => Promise <object>
 ```
 
 `onu: <object>` parameter:
@@ -695,7 +696,7 @@ Output:
 
 ## getAuthorizedOnus()
 
-**Description:** Returns a list of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
+**Description:** Returns an array containing all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -728,7 +729,8 @@ Output:
 
 ## getBasicOnuInfo()
 
-**Description:** Searches for a ONU in OLT based on mac address. The ONU must be authorized. NOTE: The input parameters `slot` and `pon` are not required, but their use will make the search faster. On success, returns an object containing basic ONU information, otherwise returns `false`.
+**Description:** Retorns a ONU in OLT based on mac address. The ONU must be authorized.
+**NOTE:** The input parameters `slot` and `pon` are not required, but the use will make the return faster. On success, returns an object containing basic ONU information, otherwise returns `false`.
 
 **Function signature:**
 
@@ -823,7 +825,7 @@ Output:
         },
         vlans: [
             {
-                vlanMode: 'transparent', cvlanId: 2001, cos: null, serviceType: 'unicast', tpId: 33024
+                vlanMode: 'transparent', cvlanId: 2001, cos: null, serviceType: 'unicast', tpId: 33024,
                 translation: {cos: 5, value: 4000},
                 qInQ: {serviceName: 'IPTV', vlanId: 404, cos: 7}
             }
@@ -839,7 +841,7 @@ Output:
 
 ## getMacAddressList()
 
-**Description:** Returns a list containing the mac address of all authorized ONUs in a given OLT. If unable to connect to OLT, the return is `false`.
+**Description:** Returns an array containing the mac address of all authorized ONUs in a given OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -898,8 +900,8 @@ Output:
     macAddress: 'FHTT1231e796',
     onuLogicAuthId: '',
     onuLogicAuthIdPass: '',
-    onuStatus: 'online',              // values: 'fiber cut', 'online', 'power cut' or 'offline'
-    onuStatusValue: 1,                // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
+    onuStatus: 'online',              // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
+    onuStatusValue: 1,                // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
     softwareVersion: 'RP2522',
     systemName: '',
     firmwareVersion: '',
@@ -950,8 +952,8 @@ Output:
         downlinkRateUnit: 'Mbit/s',
         portDescription: 'PON 11/1/1',
         portName: 'PON 11/1/1',
-        portStatus: 'enable',
-        portStatusValue: 1,
+        portStatus: 'enable',                  // possible values: 'enable' or 'disable'
+        portStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
         portType: 1,
         uplinkRate: 1250,
         uplinkRateUnit: 'Mbit/s'
@@ -1021,7 +1023,7 @@ Output:
 
 ## getOnuIdList()
 
-**Description:** Returns a list with the `onuId` of all authorized ONUs in OLT. If any of the input parameters is invalid, the return is `false`.
+**Description:** Returns an array with the `onuId` of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -1055,7 +1057,7 @@ Output:
 
 ## getOnuIndexList()
 
-**Description:** Returns a list with the index of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
+**Description:** Returns an array with the index of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **Function signature:**
 
@@ -1079,7 +1081,7 @@ Output:
 
 ## getOnuLastOffTime()
 
-**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format:  (year)-(month)-(day). Time format: (hour):(minute):(second). If any of the input parameters is invalid, the return is `false`.
+**Description:** Returns the date and time of the last disconnection of a given ONU. Date Format: (year)-(month)-(day). Time format: (hour):(minute):(second). If any of the input parameters is invalid, the return is `false`.
 
 **Function signature:**
 
@@ -1109,7 +1111,7 @@ Output:
 
 **Description:** Returns a list of all connected ONUs on a given PON port. If any of the input parameters is invalid, the return is `false`.
 
-**NOTE:** Depending on the number of ONUs connected to the pon port, the return may take time. Approximately 0.5 seconds for each ONU connected to the port.
+**NOTE:** Depending on the number of ONUs connected to the Pon port, the return may take time. Approximately 0.5 seconds for each ONU connected to the port.
 
 **Function signature:**
 
@@ -1140,8 +1142,8 @@ Output:
         ip: '0.0.0.0',
         onuLogicAuthId: '',
         onuLogicAuthIdPass: '',
-        onuStatus: 'online',              // values: 'fiber cut', 'online', 'power cut' or 'offline'
-        onuStatusValue: 1,                // 0: 'fiber cut', 1: 'online', 2: 'power cut' or 3: 'offline'
+        onuStatus: 'online',              // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
+        onuStatusValue: 1,                // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
         softwareVersion: 'RP2522',
         systemName: '',
         distance: {
@@ -1239,7 +1241,7 @@ Output:
 
 ## getOnuOpticalPowerList()
 
-**Description:** Returns a signal list of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
+**Description:** Returns a signal array of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
 
 **IMPORTANT:** Depending on the number of connected ONUs on the OLT, the return may take.
 
@@ -1359,8 +1361,8 @@ Output:
     downlinkRateUnit: 'Mbit/s',
     portDescription: 'PON 11/1/1',
     portName: 'PON 11/1/1',
-    portStatus: 'enable',
-    portStatusValue: 1,
+    portStatus: 'enable',                  // possible values: 'enable' or 'disable'
+    portStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
     portType: 1,
     uplinkRate: 1250,
     uplinkRateUnit: 'Mbit/s'
@@ -1390,8 +1392,8 @@ Output:
 ```js
 [
     {
-        group: 'common',
-        groupValue: 1,
+        group: 'common',                   // possible values: 'common' or 'admin'
+        groupValue: 1,                     // 1 = 'common', 2 = 'admin'
         webUsername: 'user1',
         webPassword: '1111'
     },
@@ -1582,8 +1584,8 @@ aLanPorts = [
         lanPort: <number>,
         enablePort: <boolean>,             // By default is true
         clear: <boolean>,                  // Remove all vlans and set default settings. By default is false
-        autoNegotiation: {                 // By default is true
-            auto: <boolean>,
+        autoNegotiation: {
+            auto: <boolean>,               // By default is true
             portSpeed: <string>,           // '10M', '100M' or '1000M'. By default is '100M'
             duplex: <string>               // 'half' or 'full'. By default is 'full'
         },
@@ -1646,7 +1648,7 @@ aLanPorts = [
 ]
 ```
 
-**NOTE:** If the `clear` parameter is set to true, all settings will be ignored for the specific port.
+**NOTE:** If the `clear` parameter is set to true, all settings will be ignored if informed to a specific port. This option removes all vlans and sets the default settings. By default is `false`.
 
 Example:
 
@@ -1797,7 +1799,7 @@ var profile = {        // Values:
     translationValue:  // <number> or false
     cos:               // <number> or false
     QinQ:              // true or false
-    tpid: 33024,
+    tpid:              // <number> By default is 33024
     svlan:             // <number> or false
     svlanCos:          // <number> or false
     lans: { 
@@ -1938,6 +1940,9 @@ Version 1.x.x of this module contains:
   - Unit tests and integration tests
   - Documentation improvements
   - Identify errors
+- (version: 1.2.5)
+  - Documentation improvements
+  - Code improvements
 
 # Contributions
 

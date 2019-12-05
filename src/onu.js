@@ -79,7 +79,7 @@ const lanPortDefault = {
     }
 }
 
-function addAllOnus(options, profilesWan, profileLanPorts) {
+function addAllOnus(options, wanProfiles, lanPortProfiles) {
     var queue = new Queue(1, 10000)
     var aAuthOnus = []
     return new Promise((resolve, reject) => {
@@ -91,7 +91,7 @@ function addAllOnus(options, profilesWan, profileLanPorts) {
                     if (options.enableLogs)
                         console.log(`Unauthorized ONUs found: ${result.length} \nadd...`)
                     result.forEach(onu => {
-                        queue.add(f => addOnu(options, onu, profilesWan, profileLanPorts)).then(onuAuth => {
+                        queue.add(f => addOnu(options, onu, wanProfiles, lanPortProfiles)).then(onuAuth => {
                             aAuthOnus.push(onuAuth)
                             if (options.enableLogs)
                                 console.log('\t' + onuAuth.macAddress + ' - OK')
@@ -114,7 +114,7 @@ function addAllOnus(options, profilesWan, profileLanPorts) {
     })
 }
 
-function addOnu(options, onu, profilesWan, profileLanPorts) {
+function addOnu(options, onu, wanProfiles, lanPortProfiles) {
     return new Promise((resolve, reject) => {
         setTimeout(t => {
             var onuForm = { slot: onu.slot, pon: onu.pon, macAddress: onu.macAddress }
@@ -124,17 +124,17 @@ function addOnu(options, onu, profilesWan, profileLanPorts) {
                         return resolve(false)
                     getBasicOnuInfo(options, onu.macAddress, onu.slot, onu.pon).then(onuAuth => {
                         if (onuAuth) {
-                            if (profilesWan && profilesWan.length > 0) {
-                                setWan(options, onuAuth.slot, onuAuth.pon, onuAuth.onuId, profilesWan).then(onuIndex => {
-                                    if (profileLanPorts && profileLanPorts.length > 0)
-                                        setLanPorts(options, onuAuth.slot, onuAuth.pon, onuAuth.onuId, profileLanPorts).then(onuIndex => {
+                            if (wanProfiles && wanProfiles.length > 0) {
+                                setWan(options, onuAuth.slot, onuAuth.pon, onuAuth.onuId, wanProfiles).then(onuIndex => {
+                                    if (lanPortProfiles && lanPortProfiles.length > 0)
+                                        setLanPorts(options, onuAuth.slot, onuAuth.pon, onuAuth.onuId, lanPortProfiles).then(onuIndex => {
                                             return resolve({ ...ret, ...onuForm, ...parseOnuIndex(onuIndex) })
                                         })
                                     else
                                         return resolve({ ...ret, ...onuForm, ...parseOnuIndex(onuIndex) })
                                 })
-                            } else if (profileLanPorts && profileLanPorts.length > 0) {
-                                setLanPorts(options, onuAuth.slot, onuAuth.pon, onuAuth.onuId, profileLanPorts).then(onuIndex => {
+                            } else if (lanPortProfiles && lanPortProfiles.length > 0) {
+                                setLanPorts(options, onuAuth.slot, onuAuth.pon, onuAuth.onuId, lanPortProfiles).then(onuIndex => {
                                     return resolve({ ...ret, ...onuForm, ...parseOnuIndex(onuIndex) })
                                 })
                             } else {
@@ -922,7 +922,7 @@ function getOnuUplinkInterface(options, slot, pon, onuId, ignore) {
                             else if (o.oid.split('.')[13] == 3)
                                 obj.portDescription = o.value.toString()
                             else if (o.oid.split('.')[13] == 4) {
-                                obj.portStatus = o.value == 1 ? 'enable' : o.value == 0 ? 'disable' : '-'
+                                obj.portStatus = o.value == 1 ? 'enable' : o.value == 0 ? 'disable' : 'undefined'
                                 obj.portStatusValue = o.value
                             } else if (o.oid.split('.')[13] == 5)
                                 obj.downlinkRate = o.value
@@ -1419,11 +1419,11 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                         regTransparentCvlanId.push(vlan.cvlanId)
 
                                         bodyLan[3] = '00'   // unicast
-                                        if (vlan.serviceType && vlan.serviceType == 'multicast')
+                                        if (vlan.serviceType && vlan.serviceType.toLowerCase() == 'multicast')
                                             bodyLan[3] = '01'
 
                                         var vlanNum = null
-                                        if (vlan.vlanMode == 'tag') {
+                                        if (vlan.vlanMode && vlan.vlanMode.toLowerCase() == 'tag') {
                                             bodyLan[4] = `01`
                                             if ((vlan.cvlanId < 1 || vlan.cvlanId > 4085) && (options.enableWarnings))
                                                 console.error('Warning! setLanPorts(): Invalid values for vlan tag. Values must be in the range 1 to 4085. The limit value has been set.')
@@ -1432,7 +1432,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                             if (vlan.cvlanId > 4085)
                                                 vlanNum = 4085
                                             vlanNum = vlan.cvlanId.toHex(4)
-                                        } else if (vlan.vlanMode == 'transparent') {
+                                        } else if (vlan.vlanMode && vlan.vlanMode.toLowerCase() == 'transparent') {
                                             bodyLan[4] = `03`
                                             if ((vlan.cvlanId < 1 || vlan.cvlanId > 4085) && (options.enableWarnings))
                                                 console.error('Warning! setLanPorts(): Invalid values for vlan transparent. Values must be in the range 1 to 4085. The limit value has been set.')
@@ -1774,11 +1774,11 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
                                         }
 
                                         bodyLan[3] = '00'   // unicast
-                                        if (vlan.serviceType && vlan.serviceType == 'multicast')
+                                        if (vlan.serviceType && vlan.serviceType.toLowerCase() == 'multicast')
                                             bodyLan[3] = '01'
 
                                         var vlanNum = null
-                                        if (vlan.vlanMode == 'tag') {
+                                        if (vlan.vlanMode && vlan.vlanMode.toLowerCase() == 'tag') {
                                             bodyLan[4] = `01`
                                             if ((vlan.cvlanId < 1 || vlan.cvlanId > 4085) && (options.enableWarnings))
                                                 console.error('Warning! setLanPorts(): Invalid values for vlan tag. Values must be in the range 1 to 4085. The limit value has been set.')
@@ -1787,7 +1787,7 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
                                             if (vlan.cvlanId > 4085)
                                                 vlanNum = 4085
                                             vlanNum = vlan.cvlanId.toHex(4)
-                                        } else if (vlan.vlanMode == 'transparent') {
+                                        } else if (vlan.vlanMode && vlan.vlanMode.toLowerCase() == 'transparent') {
                                             bodyLan[4] = `03`
                                             if ((vlan.cvlanId < 1 || vlan.cvlanId > 4085) && (options.enableWarnings))
                                                 console.error('Warning! setLanPorts(): Invalid values for vlan transparent. Values must be in the range 1 to 4085. The limit value has been set.')
@@ -2340,11 +2340,11 @@ function enableLanPorts(options, slot, pon, onuId, aLanPorts) {
     })
 }
 
-function setWan(options, slot, pon, onuId, profilesWan) {
+function setWan(options, slot, pon, onuId, wanProfiles) {
     return new Promise((resolve, reject) => {
         try {
             gFunc.isValid(options, slot, pon, onuId).then(isValid => {
-                if (isValid && slot && pon && onuId && profilesWan && profilesWan.length > 0) {
+                if (isValid && slot && pon && onuId && wanProfiles && wanProfiles.length > 0) {
                     var header = snmp_fh.setWanHeader
                     var body = snmp_fh.setWanBody
                     header = header.split(' ')
@@ -2353,17 +2353,17 @@ function setWan(options, slot, pon, onuId, profilesWan) {
                     header[163] = pon.toHex(2)
                     header[165] = onuId.toHex(2)        // ONU NUMBER / ONU Authorized No.  
 
-                    var packSize = (body.split(' ').length * profilesWan.length) + 58         // 58 = trecho que vai do tamanho do pacote (posições [122] e [123]) em header até o final
+                    var packSize = (body.split(' ').length * wanProfiles.length) + 58         // 58 = trecho que vai do tamanho do pacote (posições [122] e [123]) em header até o final
                     header[70] = packSize.toHex(4).slice(0, 2)  // Tamanho do sub-pacote
                     header[71] = packSize.toHex(4).slice(2, 4)  // Tamanho do sub-pacote
                     header[122] = header[70]
                     header[123] = header[71]
 
-                    header[181] = profilesWan.length.toHex(2)
+                    header[181] = wanProfiles.length.toHex(2)
                     header = header.join(' ')
 
                     var resp = header
-                    profilesWan.forEach(profile => {
+                    wanProfiles.forEach(profile => {
                         var obj = { ...objStandart, ...profile }
                         obj.wanConnType = obj.wanConnType.toString()
 

@@ -150,39 +150,39 @@ function getOltModel(options) {
     })
 }
 
-function getPonPort(options, slot, ponPort) {
+function getPonPort(options, slot, pon) {
     return new Promise((resolve, reject) => {
         try {
-            gFunc.isValid(options, slot, ponPort).then(isValid => {
-                if (isValid && slot && ponPort) {
-                    var pon = null
-                    portIndex = convertToOnuIndex(slot, ponPort, 0)
+            gFunc.isValid(options, slot, pon).then(isValid => {
+                if (isValid && slot && pon) {
+                    var ponPort = null
+                    portIndex = convertToOnuIndex(slot, pon, 0)
                     var oid = OID.getPonPortList
                     snmp_fh.get(options, [oid + '.1.' + portIndex, oid + '.2.' + portIndex, oid + '.3.' + portIndex, oid + '.4.' + portIndex, oid + '.5.' + portIndex, oid + '.6.' + portIndex, oid + '.12.' + portIndex, oid + '.13.' + portIndex,]).then(data => {
                         data.forEach((e, idx) => {
                             if (e.oid.split('.')[13] == 1) {
-                                pon = { portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] }
+                                ponPort = { portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] }
                             } else if (e.oid.split('.')[13] == 2)
-                                pon.portName = e.value.toString()
+                                ponPort.portName = e.value.toString()
                             else if (e.oid.split('.')[13] == 3)
-                                pon.portDescription = e.value.toString()
+                                ponPort.portDescription = e.value.toString()
                             else if (e.oid.split('.')[13] == 4) {
-                                pon.portEnableStatusValue = e.value
-                                pon.portEnableStatus = e.value == 1 ? 'enable' : e.value == 0 ? 'disable' : 'undefined'
+                                ponPort.portEnableStatusValue = e.value
+                                ponPort.portEnableStatus = e.value == 1 ? 'enable' : e.value == 0 ? 'disable' : 'undefined'
                             } else if (e.oid.split('.')[13] == 5) {
-                                pon.portOnlineStatusValue = e.value
-                                pon.portOnlineStatus = e.value == 1 ? 'online' : e.value == 0 ? 'offline' : 'undefined'
+                                ponPort.portOnlineStatusValue = e.value
+                                ponPort.portOnlineStatus = e.value == 1 ? 'online' : e.value == 0 ? 'offline' : 'undefined'
                             } else if (e.oid.split('.')[13] == 6) {
-                                pon.portDownlinkRate = e.value
-                                pon.portDownlinkRateUnit = 'Mbit/s'
+                                ponPort.portDownlinkRate = e.value
+                                ponPort.portDownlinkRateUnit = 'Mbit/s'
                             } else if (e.oid.split('.')[13] == 12)
-                                pon.authorizedOnus = e.value
+                                ponPort.authorizedOnus = e.value
                             else if (e.oid.split('.')[13] == 13) {
-                                pon.portUplinkRate = e.value
-                                pon.portUplinkRateUnit = 'Mbit/s'
+                                ponPort.portUplinkRate = e.value
+                                ponPort.portUplinkRateUnit = 'Mbit/s'
                             }
                         })
-                        return resolve(pon)
+                        return resolve(ponPort)
                     })
                 } else return resolve(false)
             }, error => {
