@@ -1944,7 +1944,7 @@ Version 1.x.x of this module contains:
   - Documentation improvements
   - Code improvements
 - (version: 1.2.6)
-  - [setLanPorts()](#setLanPorts): Fixed bug for COS equal to zero
+  - Fixed bug for COS parameter equal to zero
 
 # Contributions
 
