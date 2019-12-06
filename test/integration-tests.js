@@ -128,8 +128,6 @@ function execTests() {
             ], "Retornou o esperado")
             t.end()
         })
-
-
     })
 
     test('enableLanPorts():', async (t) => {
@@ -141,7 +139,6 @@ function execTests() {
             t.assert(fh.convertToOnuIndex(env.onu.slot, env.onu.pon, env.onu.onuId) === onuIndex)
             t.end()
         })
-
     })
 
     test('getLanPorts():', async (t) => {
@@ -180,18 +177,14 @@ function execTests() {
             }], "Retornou o esperado")
             t.end()
         })
-
     })
 
     test('getOnu():', async (t) => {
-
         await fh.getOnu(env.options, env.onu.slot, env.onu.pon, env.onu.onuId).then(onu => {
             console.log(onu)
             t.true(true, "Verificar!")
             t.end()
         })
-
-
     })
 
     test('setOnuBandwidth():', async (t) => {
@@ -199,7 +192,6 @@ function execTests() {
             t.assert(fh.convertToOnuIndex(env.onu.slot, env.onu.pon, env.onu.onuId) === onuIndex, "Retornou o esperado")
             t.end()
         })
-
     })
 
     test('getOnuBandwidth():', async (t) => {
@@ -215,7 +207,6 @@ function execTests() {
             }, "Retornou o esperado")
             t.end()
         })
-
     })
 
     test('getOnuIndexList():', async (t) => {
@@ -223,7 +214,6 @@ function execTests() {
             t.true((onuList && onuList.length > 0 && onuList.includes(fh.convertToOnuIndex(env.onu.slot, env.onu.pon, env.onu.onuId))), "Retornou o esperado")
             t.end()
         })
-
     })
 
     test('getOnuType():', async (t) => {
@@ -237,7 +227,6 @@ function execTests() {
             }, "Retornou o esperado")
             t.end()
         })
-
     })
 
     test('getOnuUplinkInterface():', async (t) => {
@@ -255,7 +244,6 @@ function execTests() {
             }, "Retornou o esperado")
             t.end()
         })
-
     })
 
     // Deletando perfis WAN e desautorizando a ONU
@@ -278,9 +266,7 @@ function execTests() {
             t.end()
         })
     })
-
 }
-
 
 function delay(time) {
     return new Promise(function (resolve, reject) {

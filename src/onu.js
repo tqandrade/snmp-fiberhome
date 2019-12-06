@@ -1447,7 +1447,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                         bodyLan[6] = vlan.tpId ? vlan.tpId.toHex(4).slice(2, 4) : '00'
                                         bodyLan[7] = vlanNum ? vlanNum.slice(0, 2) : 'ff'
                                         bodyLan[8] = vlanNum ? vlanNum.slice(2, 4) : 'ff'
-                                        bodyLan[9] = vlan.cos && vlan.cos >= 0 && vlan.cos < 8 ? vlan.cos.toHex(2) : 'ff'
+                                        bodyLan[9] = (vlan.cos && vlan.cos >= 0 && vlan.cos < 8) || vlan.cos === 0 ? vlan.cos.toHex(2) : 'ff'
 
                                         if (vlan.cos < 0)
                                             bodyLan[9] = '00'
@@ -1470,7 +1470,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                             bodyLan[12] = vlan.translation.tpId ? vlan.translation.tpId.toHex(4).slice(2, 4) : '00'
                                             bodyLan[13] = vlan.translation.value ? vlan.translation.value.toHex(4).slice(0, 2) : 'ff'
                                             bodyLan[14] = vlan.translation.value ? vlan.translation.value.toHex(4).slice(2, 4) : 'ff'
-                                            bodyLan[15] = vlan.translation.cos ? vlan.translation.cos.toHex(2) : 'ff'
+                                            bodyLan[15] = vlan.translation.cos || vlan.translation.cos === 0 ? vlan.translation.cos.toHex(2) : 'ff'
                                         }
 
                                         /* ** QinQ ** */ // DISABLED (BUG)
@@ -1488,7 +1488,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                             bodyLan[64] = vlan.qInQ.tpId ? vlan.qInQ.tpId.toHex(4).slice(2, 4) : '00'
                                             bodyLan[65] = vlanId ? vlanId.toHex(4).slice(0, 2) : 'ff'
                                             bodyLan[66] = vlanId ? vlanId.toHex(4).slice(2, 4) : 'ff'
-                                            bodyLan[67] = vlan.qInQ.cos ? vlan.qInQ.cos.toHex(2) : 'ff'
+                                            bodyLan[67] = vlan.qInQ.cos || vlan.qInQ.cos === 0 ? vlan.qInQ.cos.toHex(2) : 'ff'
                                         }
 
                                         if (vlan.bandwidthSet) {
@@ -1637,7 +1637,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                 var igmpUpCvlanId = lan.igmpUpCvlan.id ? lan.igmpUpCvlan.id : 65535   // 65535 == 'ffff'
                                 footerLan[2] = igmpUpCvlanId.toHex(4).slice(0, 2)
                                 footerLan[3] = igmpUpCvlanId.toHex(4).slice(2, 4)
-                                footerLan[4] = lan.igmpUpCvlan.cos ? lan.igmpUpCvlan.cos.toHex(2) : 'ff'
+                                footerLan[4] = lan.igmpUpCvlan.cos || lan.igmpUpCvlan.cos === 0 ? lan.igmpUpCvlan.cos.toHex(2) : 'ff'
 
                                 var igmpUpCvlanTpId = lan.igmpUpCvlan.tpId ? lan.igmpUpCvlan.tpId : 33024
                                 footerLan[5] = igmpUpCvlanTpId.toHex(4).slice(0, 2)
@@ -1646,7 +1646,7 @@ function setLanPortsEPON(options, slot, pon, onuId, aLanPorts) {
                                 var igmpUpSvlanId = lan.igmpUpSvlan.id ? lan.igmpUpSvlan.id : 65535   // 65535 == 'ffff'
                                 footerLan[7] = igmpUpSvlanId.toHex(4).slice(0, 2)
                                 footerLan[8] = igmpUpSvlanId.toHex(4).slice(2, 4)
-                                footerLan[9] = lan.igmpUpSvlan.cos ? lan.igmpUpSvlan.cos.toHex(2) : 'ff'
+                                footerLan[9] = lan.igmpUpSvlan.cos || lan.igmpUpSvlan.cos === 0 ? lan.igmpUpSvlan.cos.toHex(2) : 'ff'
 
                                 var igmpUpSvlanTpId = lan.igmpUpSvlan.tpId ? lan.igmpUpSvlan.tpId : 33024
                                 footerLan[10] = igmpUpSvlanTpId.toHex(4).slice(0, 2)
@@ -1746,13 +1746,13 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
                                             bodyLan[10] = '01'
                                             bodyLan[13] = vlan.translation.value ? vlan.translation.value.toHex(4).slice(0, 2) : 'ff'
                                             bodyLan[14] = vlan.translation.value ? vlan.translation.value.toHex(4).slice(2, 4) : 'ff'
-                                            bodyLan[15] = vlan.translation.cos ? vlan.translation.cos.toHex(2) : 'ff'
+                                            bodyLan[15] = vlan.translation.cos || vlan.translation.cos === 0 ? vlan.translation.cos.toHex(2) : 'ff'
                                         }
 
                                         /* ** QinQ ** */
                                         if (vlan.qInQ) {
                                             bodyLan[16] = '01'  // QinQ State
-                                            bodyLan[67] = vlan.qInQ.cos ? vlan.qInQ.cos.toHex(2) : 'ff'
+                                            bodyLan[67] = vlan.qInQ.cos || vlan.qInQ.cos === 0 ? vlan.qInQ.cos.toHex(2) : 'ff'
                                             var vlanId = vlan.qInQ.vlanId
                                             if (vlan.qInQ.serviceName.toUpperCase() == 'IGMP') {         // IGMP: 49 47 4d 50
                                                 bodyLan[33] = '49'; bodyLan[34] = '47'; bodyLan[35] = '4d'; bodyLan[36] = '50'
@@ -1800,7 +1800,7 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
 
                                         bodyLan[7] = vlanNum ? vlanNum.slice(0, 2) : 'ff'
                                         bodyLan[8] = vlanNum ? vlanNum.slice(2, 4) : 'ff'
-                                        bodyLan[9] = vlan.cos && vlan.cos >= 0 && vlan.cos < 8 ? vlan.cos.toHex(2) : 'ff'
+                                        bodyLan[9] = (vlan.cos && vlan.cos >= 0 && vlan.cos < 8) || vlan.cos === 0 ? vlan.cos.toHex(2) : 'ff'
 
                                         if (vlan.cos < 0)
                                             bodyLan[9] = '00'
@@ -1860,7 +1860,7 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
                                 footerLan[14] = igmpUpCvlanId.toHex(4).slice(0, 2)
                                 footerLan[15] = igmpUpCvlanId.toHex(4).slice(2, 4)
 
-                                footerLan[16] = lan.igmpUpCvlan.cos ? lan.igmpUpCvlan.cos.toHex(2) : 'ff'
+                                footerLan[16] = lan.igmpUpCvlan.cos || lan.igmpUpCvlan.cos === 0 ? lan.igmpUpCvlan.cos.toHex(2) : 'ff'
 
                                 var igmpUpCvlanTpId = lan.igmpUpCvlan.tpId ? lan.igmpUpCvlan.tpId : 33024
                                 footerLan[17] = igmpUpCvlanTpId.toHex(4).slice(0, 2)
@@ -1870,7 +1870,7 @@ function setLanPortsGPON(options, slot, pon, onuId, aLanPorts) {
                                 footerLan[19] = igmpUpSvlanId.toHex(4).slice(0, 2)
                                 footerLan[20] = igmpUpSvlanId.toHex(4).slice(2, 4)
 
-                                footerLan[21] = lan.igmpUpSvlan.cos ? lan.igmpUpSvlan.cos.toHex(2) : 'ff'
+                                footerLan[21] = lan.igmpUpSvlan.cos || lan.igmpUpSvlan.cos === 0 ? lan.igmpUpSvlan.cos.toHex(2) : 'ff'
 
                                 var igmpUpSvlanTpId = lan.igmpUpSvlan.tpId ? lan.igmpUpSvlan.tpId : 33024
                                 footerLan[22] = igmpUpSvlanTpId.toHex(4).slice(0, 2)

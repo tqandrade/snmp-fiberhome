@@ -229,12 +229,12 @@ Output:
         portUplinkRateUnit: 'Mbit/s',
         portDownlinkRate: 2500,
         portDownlinkRateUnit: 'Mbit/s',
-        portEnableStatus: 'enable',                  // possible values: 'enable' or 'disable'
-        portEnableStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
+        portEnableStatus: 'enable',       // possible values: 'enable' or 'disable'
+        portEnableStatusValue: 1,         // 1 = 'enable', 0 = 'disable'
         portIndex: 369623040,
         portName: 'PON 11/1',
-        portOnlineStatus: 'online',                  // possible values: 'online' or 'offline'
-        portOnlineStatusValue: 1,                    // 1 = 'online', 0 = 'offline'
+        portOnlineStatus: 'online',       // possible values: 'online' or 'offline'
+        portOnlineStatusValue: 1,         // 1 = 'online', 0 = 'offline'
         portType: 'PON',
         portTypeValue: 1
     },
@@ -270,12 +270,12 @@ Output:
     portUplinkRateUnit: 'Mbit/s',
     portDownlinkRate: 2500,
     portDownlinkRateUnit: 'Mbit/s',
-    portEnableStatus: 'enable',                  // possible values: 'enable' or 'disable'
-    portEnableStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
+    portEnableStatus: 'enable',      // possible values: 'enable' or 'disable'
+    portEnableStatusValue: 1,        // 1 = 'enable', 0 = 'disable'
     portIndex: 369623040,
     portName: 'PON 11/1',
-    portOnlineStatus: 'online',                  // possible values: 'online' or 'offline'
-    portOnlineStatusValue: 1,                    // 1 = 'online', 0 = 'offline'
+    portOnlineStatus: 'online',      // possible values: 'online' or 'offline'
+    portOnlineStatusValue: 1,        // 1 = 'online', 0 = 'offline'
     portType: 'PON',
     portTypeValue: 1
 }
@@ -335,13 +335,13 @@ Output:
         actualCardTypeValue: 527,
         authorizedCardType: 'GC8B'
         authorizedCardTypeValue: 527,
-        cardPresentStatus: 'present',            // possible values: 'present' or 'not present'
-        cardPresentStatusValue: 1,               // 1 = 'present', 0 = 'not present'
+        cardPresentStatus: 'present',   // possible values: 'present' or 'not present'
+        cardPresentStatusValue: 1,      // 1 = 'present', 0 = 'not present'
         cardInformation: {
             availablePorts: 8,
             numberOfPorts: 8,
-            cardStatus: 'normal',                // possible values: 'normal' or 'interrupted'
-            cardStatusValue: 1,                  // 1 = 'normal', 0 = 'interrupted'
+            cardStatus: 'normal',       // possible values: 'normal' or 'interrupted'
+            cardStatusValue: 1,         // 1 = 'normal', 0 = 'interrupted'
             cardType: 'GC8B',
             cardTypeValue: 527,
             cpu: 4.75,
@@ -384,8 +384,8 @@ Output:
     {
         availablePorts: 8,
         numberOfPorts: 8,
-        cardStatus: 'normal',                // possible values: 'normal' or 'interrupted'
-        cardStatusValue: 1,                  // 1 = 'normal', 0 = 'interrupted'
+        cardStatus: 'normal',   // possible values: 'normal' or 'interrupted'
+        cardStatusValue: 1,     // 1 = 'normal', 0 = 'interrupted'
         cardType: 'GC8B',
         cardTypeValue: 527,
         cpu: 4.75,
@@ -424,8 +424,8 @@ Output:
 {
     availablePorts: 8,
     numberOfPorts: 8,
-    cardStatus: 'normal',                // possible values: 'normal' or 'interrupted'
-    cardStatusValue: 1,                  // 1 = 'normal', 0 = 'interrupted'
+    cardStatus: 'normal',    // possible values: 'normal' or 'interrupted'
+    cardStatusValue: 1,      // 1 = 'normal', 0 = 'interrupted'
     cardType: 'GC8B',
     cardTypeValue: 527,
     cpu: 4.75,
@@ -900,8 +900,8 @@ Output:
     macAddress: 'FHTT1231e796',
     onuLogicAuthId: '',
     onuLogicAuthIdPass: '',
-    onuStatus: 'online',              // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
-    onuStatusValue: 1,                // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
+    onuStatus: 'online',          // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
+    onuStatusValue: 1,            // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
     softwareVersion: 'RP2522',
     systemName: '',
     firmwareVersion: '',
@@ -952,8 +952,8 @@ Output:
         downlinkRateUnit: 'Mbit/s',
         portDescription: 'PON 11/1/1',
         portName: 'PON 11/1/1',
-        portStatus: 'enable',                  // possible values: 'enable' or 'disable'
-        portStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
+        portStatus: 'enable',       // possible values: 'enable' or 'disable'
+        portStatusValue: 1,         // 1 = 'enable', 0 = 'disable'
         portType: 1,
         uplinkRate: 1250,
         uplinkRateUnit: 'Mbit/s'
@@ -1142,8 +1142,8 @@ Output:
         ip: '0.0.0.0',
         onuLogicAuthId: '',
         onuLogicAuthIdPass: '',
-        onuStatus: 'online',              // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
-        onuStatusValue: 1,                // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
+        onuStatus: 'online',         // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
+        onuStatusValue: 1,           // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
         softwareVersion: 'RP2522',
         systemName: '',
         distance: {
@@ -1361,8 +1361,8 @@ Output:
     downlinkRateUnit: 'Mbit/s',
     portDescription: 'PON 11/1/1',
     portName: 'PON 11/1/1',
-    portStatus: 'enable',                  // possible values: 'enable' or 'disable'
-    portStatusValue: 1,                    // 1 = 'enable', 0 = 'disable'
+    portStatus: 'enable',    // possible values: 'enable' or 'disable'
+    portStatusValue: 1,      // 1 = 'enable', 0 = 'disable'
     portType: 1,
     uplinkRate: 1250,
     uplinkRateUnit: 'Mbit/s'
@@ -1392,8 +1392,8 @@ Output:
 ```js
 [
     {
-        group: 'common',                   // possible values: 'common' or 'admin'
-        groupValue: 1,                     // 1 = 'common', 2 = 'admin'
+        group: 'common',        // possible values: 'common' or 'admin'
+        groupValue: 1,          // 1 = 'common', 2 = 'admin'
         webUsername: 'user1',
         webPassword: '1111'
     },
@@ -1943,6 +1943,8 @@ Version 1.x.x of this module contains:
 - (version: 1.2.5)
   - Documentation improvements
   - Code improvements
+- (version: 1.2.6)
+  - [setLanPorts()](#setLanPorts): Fixed bug for COS equal to zero
 
 # Contributions
 
