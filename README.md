@@ -225,6 +225,8 @@ Output:
     {
         authorizedOnus: 2,
         portDescription: 'PON 11/1',
+        slot: 11,
+        pon: 1,
         portUplinkRate: 1250,
         portUplinkRateUnit: 'Mbit/s',
         portDownlinkRate: 2500,
@@ -266,6 +268,8 @@ Output:
 {
     authorizedOnus: 2,
     portDescription: 'PON 11/1',
+    slot: 11,
+    pon: 1,
     portUplinkRate: 1250,
     portUplinkRateUnit: 'Mbit/s',
     portDownlinkRate: 2500,
