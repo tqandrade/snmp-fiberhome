@@ -11,6 +11,16 @@ function convertToOnuIndex(slot, pon, onuId) {
     return (slot) * 2 ** 25 + (pon) * 2 ** 19 + (onuId) * 2 ** 8
 }
 
+function parsePonIndex(ponIndex) {
+    var indexBin = (parseInt(ponIndex)).toString(2)
+    var obj = {
+        _ponIndex: ponIndex,
+        slot: parseInt(indexBin.slice(-33, -25), 2),
+        pon: parseInt(indexBin.slice(-25, -19), 2),
+    }
+    return obj
+}
+
 function getPonPortList(options) {
     return new Promise((resolve, reject) => {
         try {
@@ -34,7 +44,8 @@ function getPonPortList(options) {
                                             varbinds.push(...varbinds13)
                                             varbinds.forEach((e, idx) => {
                                                 if (e.oid.split('.')[13] == 1) {
-                                                    aPon.push({ portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] })
+                                                    var objPortIndex = parsePonIndex(parseInt(e.oid.split('.')[14]))
+                                                    aPon.push({ portIndex: objPortIndex._ponIndex, slot: objPortIndex.slot, pon: objPortIndex.pon, portTypeValue: e.value, portType: tables.portTypeCode[e.value] })
                                                 } else {
                                                     var index = aPon.findIndex(e => e.portIndex == varbinds[idx].oid.split('.')[14])
                                                     if (index > -1) {
@@ -161,7 +172,8 @@ function getPonPort(options, slot, pon) {
                     snmp_fh.get(options, [oid + '.1.' + portIndex, oid + '.2.' + portIndex, oid + '.3.' + portIndex, oid + '.4.' + portIndex, oid + '.5.' + portIndex, oid + '.6.' + portIndex, oid + '.12.' + portIndex, oid + '.13.' + portIndex,]).then(data => {
                         data.forEach((e, idx) => {
                             if (e.oid.split('.')[13] == 1) {
-                                ponPort = { portIndex: parseInt(e.oid.split('.')[14]), portTypeValue: e.value, portType: tables.portTypeCode[e.value] }
+                                var objPortIndex = parsePonIndex(parseInt(e.oid.split('.')[14]))
+                                ponPort = { portIndex: objPortIndex._ponIndex, slot: objPortIndex.slot, pon: objPortIndex.pon, portTypeValue: e.value, portType: tables.portTypeCode[e.value] }
                             } else if (e.oid.split('.')[13] == 2)
                                 ponPort.portName = e.value.toString()
                             else if (e.oid.split('.')[13] == 3)

@@ -212,7 +212,7 @@ function sendSnmp(oid, value, opt, waitResponse = false) {
         client.once("close", function () {
             //console.log("closed.")
         })
-        client.send(packageFormated, 0, packageFormated.length, options.port, options.ip, function (err, bytes) {
+        client.send(packageFormated, 0, packageFormated.length, options.port, options.ip || options.host, function (err, bytes) {
             if (!waitResponse)
                 return resolve(true)
         })
@@ -223,7 +223,7 @@ function subtree(opt, oid) {
     return new Promise((resolve, reject) => {
         var options = { ...defaultOptions, ...opt }
         var aVarbinds = []
-        var session = snmp.createSession(options.ip, options.community, options)
+        var session = snmp.createSession(options.ip || options.host, options.community, options)
         session.subtree(oid, options.maxRepetitions, function feedCb(varbinds) {
             aVarbinds.push(...varbinds)
         }, function doneCb(error) {
@@ -238,7 +238,7 @@ function subtree(opt, oid) {
 function get(opt, oids) {
     return new Promise((resolve, reject) => {
         var options = { ...defaultOptions, ...opt }
-        var session = snmp.createSession(options.ip, options.community, options)
+        var session = snmp.createSession(options.ip || options.host, options.community, options)
         session.get(oids, function (error, varbinds) {
             if (error) {
                 return reject(error)

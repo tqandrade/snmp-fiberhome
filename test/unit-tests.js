@@ -71,6 +71,8 @@ test('OLT functions:', async (t) => {
         t.deepEqual(ponPort, {
             authorizedOnus: null,
             portDescription: "PON 11/1",
+            slot: 11,
+            pon: 1,
             portDownlinkRate: 2500,
             portDownlinkRateUnit: "Mbit/s",
             portEnableStatus: "enable",

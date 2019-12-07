@@ -1,3 +1,3 @@
 
-if (false) require('./integration-tests')   // #1
-if (true) require('./unit-tests')           // #2
+if (true) require('./integration-tests')    // #1
+else require('./unit-tests')                // #2

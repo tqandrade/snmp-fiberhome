@@ -229,12 +229,12 @@ Output:
         portUplinkRateUnit: 'Mbit/s',
         portDownlinkRate: 2500,
         portDownlinkRateUnit: 'Mbit/s',
-        portEnableStatus: 'enable',       // possible values: 'enable' or 'disable'
-        portEnableStatusValue: 1,         // 1 = 'enable', 0 = 'disable'
+        portEnableStatus: 'enable',    // possible values: 'enable' or 'disable'
+        portEnableStatusValue: 1,      // 1 = 'enable', 0 = 'disable'
         portIndex: 369623040,
         portName: 'PON 11/1',
-        portOnlineStatus: 'online',       // possible values: 'online' or 'offline'
-        portOnlineStatusValue: 1,         // 1 = 'online', 0 = 'offline'
+        portOnlineStatus: 'online',    // possible values: 'online' or 'offline'
+        portOnlineStatusValue: 1,      // 1 = 'online', 0 = 'offline'
         portType: 'PON',
         portTypeValue: 1
     },
@@ -1945,6 +1945,8 @@ Version 1.x.x of this module contains:
   - Code improvements
 - (version: 1.2.6)
   - Fixed bug for COS parameter equal to zero
+- (version: 1.2.7)
+  - getPonPort() and getPonPortList(): Added output parameters: 'slot' and 'pon'
 
 # Contributions
 
