@@ -609,7 +609,7 @@ function getOnuLastOffTime(options, slot, pon, onuId) {
                             else
                                 value = value.splice(4)
 
-                            var year = hexToInt(value.slice(184, 186).join('')).toString()
+                            var year = hexToInt(value.slice(184, 186).join('')).toString().padStart(4, '0')
                             var mouth = hexToInt(value.slice(186, 187).join('')).toString().padStart(2, '0')
                             var day = hexToInt(value.slice(187, 188).join('')).toString().padStart(2, '0')
                             var hours = hexToInt(value.slice(188, 189).join('')).toString().padStart(2, '0')
@@ -1257,6 +1257,43 @@ function parseOnuIndex(onuIndex) {
 
     }
     return obj
+}
+
+function rebootOnu(options, slot, pon, onuId) {
+    return new Promise((resolve, reject) => {
+        try {
+            gFunc.isValid(options, slot, pon, onuId).then(isValid => {
+                if (isValid && slot && pon && onuId) {
+                    var bgmp = snmp_fh.rebootOnu
+                    bgmp = bgmp.split(' ')
+                    bgmp[157] = slot.toHex(2)
+                    bgmp[159] = pon.toHex(2)
+                    bgmp[161] = onuId.toHex(2)
+                    bgmp = bgmp.join(' ')
+                    snmp_fh.sendSnmp(OID.rebootOnu, bgmp, options, true).then(ret => {
+                        var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                        for (var i = 0; i < ret.length; i += 2)
+                            hex += ret.substring(i, i + 2) + ' '
+                        hex = hex.trim()
+                        var value = hex.split('2b 06 01 04 01 ad 73 5b 01 06 02 01 01 06 01 ')[1]
+                        value = value.split(' ')
+                        if (value[1] == '81')
+                            value = value.splice(3)
+                        else
+                            value = value.splice(4)
+
+                        if (value.length == 130)
+                            return resolve(true)
+                        return resolve(false)
+                    })
+                } else return resolve(false)
+            }, error => {
+                return resolve(false)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
 }
 
 function setOnuBandwidth(options, slot, pon, onuId, upBw, downBw) {
@@ -2506,6 +2543,7 @@ module.exports = {
     getUnauthorizedOnus,
     getWan,
     parseOnuIndex,
+    rebootOnu,
     setLanPorts,
     setLanPortsEPON,
     setLanPortsGPON,

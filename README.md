@@ -48,6 +48,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [getWan()](#getwan)
   - [parseOnuIndex()](#parseonuindex)
   - [setLanPorts()](#setlanports)
+  - [rebootOnu()](#rebootonu)
   - [setOnuBandwidth()](#setonubandwidth)
   - [setOnuWebAdmin()](#setonuwebadmin)
   - [setWan()](#setwan)
@@ -1716,6 +1717,30 @@ Output:
 
 **NOTE:** If the [setLanPorts()](#setlanports) function does not identify whether the ONU is EPON or GPON, an error will be displayed and the `setLanPortsEPON()` or `setLanPortsGPON()` functions can be used by passing the same input parameters as the [setLanPorts()](#setlanports) function.
 
+## rebootOnu()
+
+**Description:** Restart a particular ONU. If any of the input parameters is invalid or it is not possible to restart the UN, the return is `false`, otherwise `true`.
+
+**Function signature:**
+
+```js
+rebootOnu(options: <object>, slot: <number>, pon: <number>, onuId: <number>) => Promise <boolean>
+```
+
+Example:
+
+```js
+fh.rebootOnu(options, 11, 1, 1).then(onu => {
+    console.log(onu)
+})
+```
+
+Output:
+
+```js
+true
+```
+
 ## setOnuBandwidth()
 
 **Description:** Sets the bandwidth of a given ONU. The input parameters `upBw` and `downBw` must be in the unit of Kbit/s and the values must be within the range 256 to 1000000. If any of the input parameters is invalid, the return is `false`.
@@ -1927,30 +1952,32 @@ Version 1.x.x of this module contains:
   - [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports) working with EPON and GPON.
   - Implementation of the [getOnuType()](#getonutype)  function.
 - (version: 1.1.8)
-  - Implementation of the [delWan()](#delwan) and [getWan()](#getwan)  function.
+  - Implementation of the [delWan()](#delwan) and [getWan()](#getwan) function.
 - (version: 1.1.10)
-  - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue
+  - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue.
 - (version: 1.2.0)
-  - [getPonPortList()](#getponportlist): Fixed timeout issue
+  - [getPonPortList()](#getponportlist): Fixed timeout issue.
 - (version: 1.2.1)
-  - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`
-  - [convertToOnuIndex()](#converttoonuindex): Documented
-  - Inclusion of unit tests
+  - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`.
+  - [convertToOnuIndex()](#converttoonuindex): Documented.
+  - Inclusion of unit tests.
 - (version: 1.2.2)
   - `authenticateOnu()`: Deprecated, but running for a while.
   - [authorizeOnu()](#authorizeonu): Same functionality as `authenticateOnu()` function.
-  - Unit testing and integration testing
+  - Unit testing and integration testing.
 - (version: 1.2.4)
-  - Unit tests and integration tests
-  - Documentation improvements
-  - Identify errors
+  - Unit tests and integration tests.
+  - Documentation improvements.
+  - Identify errors.
 - (version: 1.2.5)
-  - Documentation improvements
-  - Code improvements
+  - Documentation improvements.
+  - Code improvements.
 - (version: 1.2.6)
-  - Fixed bug for COS parameter equal to zero
+  - Fixed bug for COS parameter equal to zero.
 - (version: 1.2.7)
-  - getPonPort() and getPonPortList(): Added output parameters: 'slot' and 'pon'
+  - [getPonPort()](#getponport) and [getPonPortList()](#getponportlist): Added output parameters: `slot` and `pon`.
+- (version: 1.2.8)
+  - Implementation of the [rebootOnu()](#rebootonu) function.
 
 # Contributions
 

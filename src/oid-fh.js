@@ -34,7 +34,7 @@ const OIDs = {
     getOnuMacAddress: "1.3.6.1.4.1.5875.800.3.10.1.1.10",
     getOnuPon: "1.3.6.1.4.1.5875.800.3.10.1.1.3",
     getOnuRemoteRestart: "1.3.6.1.4.1.5875.800.3.10.1.1.15",
-    getOnuListBySlot: '1.3.6.1.4.1.5875.91.1.13.3.1.1.6.1',
+    getOnuListBySlot: '1.3.6.1.4.1.5875.91.1.13.3.1.1.6.1', // todo
     getOnuIdList: "1.3.6.1.4.1.5875.800.3.10.1.1.4",
     getOnuIndexList: "1.3.6.1.4.1.5875.800.3.101.2.1.1",
     getOnuSlot: "1.3.6.1.4.1.5875.800.3.10.1.1.2",
@@ -65,7 +65,8 @@ const OIDs = {
     setOnuBandwidth: '1.3.6.1.4.1.5875.91.1.6.1.1.1.40.1',
     confirmSetOnuBandwidth: '1.3.6.1.4.1.5875.91.1.6.1.1.1.40.2',
     setWan: '1.3.6.1.4.1.5875.91.1.8.1.1.1.13.1',
-    confirmSetWan: '1.3.6.1.4.1.5875.91.1.8.1.1.1.13.2'
+    confirmSetWan: '1.3.6.1.4.1.5875.91.1.8.1.1.1.13.2',
+    rebootOnu: '1.3.6.1.4.1.5875.91.1.6.2.1.1.6.1'
 }
 
 /* Válido para números de tamanho máx. == 16383 em decimal */

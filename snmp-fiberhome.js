@@ -58,6 +58,7 @@ module.exports = {
     getUnauthorizedOnus: onu.getUnauthorizedOnus,
     getWan: onu.getWan,
     parseOnuIndex: onu.parseOnuIndex,
+    rebootOnu: onu.rebootOnu,
     setLanPorts: onu.setLanPorts,
     setLanPortsEPON: onu.setLanPortsEPON,
     setLanPortsGPON: onu.setLanPortsGPON,
