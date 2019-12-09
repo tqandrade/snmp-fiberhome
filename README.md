@@ -1719,7 +1719,7 @@ Output:
 
 ## rebootOnu()
 
-**Description:** Restart a particular ONU. If any of the input parameters is invalid or it is not possible to restart the UN, the return is `false`, otherwise `true`.
+**Description:** Restart a particular ONU. If any of the input parameters is invalid or it is not possible to restart the ONU, the return is `false`, otherwise `true`.
 
 **Function signature:**
 
