@@ -512,13 +512,17 @@ function getBasicOnuByIndex(options, onuIndex, toIgnore) {
                         if (idx == data.length - 1) {
                             if (!onu.slot)
                                 return resolve(onu)
-                            getOnuDistance(options, onu.slot, onu.pon, onu.onuId, true).then(distance => {
-                                onu.distance = distance
-                                getOnuLastOffTime(options, onu.slot, onu.pon, onu.onuId, true).then(lastOffTime => {
-                                    onu.lastOffTime = lastOffTime
-                                    return resolve(onu)
+                            if (toIgnore.includes('getOnuDistance') && toIgnore.includes('getOnuLastOffTime'))
+                                return resolve(onu)
+                            else {
+                                getOnuDistance(options, onu.slot, onu.pon, onu.onuId, true).then(distance => {
+                                    onu.distance = distance
+                                    getOnuLastOffTime(options, onu.slot, onu.pon, onu.onuId, true).then(lastOffTime => {
+                                        onu.lastOffTime = lastOffTime
+                                        return resolve(onu)
+                                    })
                                 })
-                            })
+                            }
                         }
                     })
 
@@ -594,7 +598,7 @@ function getOnuDistance(options, slot, pon, onuId, ignoreValid) {
                         bgmp[158] = pon.toHex(2)
                         bgmp[160] = onuId.toHex(2)  // ONU NUMBER / ONU Authorized No.  
                         bgmp = bgmp.join(' ')
-    
+
                         snmp_fh.sendSnmp(OID.getOnuDistance, bgmp, options, true).then(ret => {
                             var hex = '' // Adicionando espeço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
@@ -840,13 +844,35 @@ function getBasicOnuListByPon(options, slot, pon) {
             getOnuIdListByPon(options, slot, pon).then(portList => {
                 cont = portList.length
                 portList.forEach(onu => {
+                    queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface', 'getOnuDistance', 'getOnuLastOffTime'], true).then(o => {
+                        list.push({ ...onu, ...o })
+                        if (queue.queue.length == 0)
+                            return resolve(list)
+                    }))
+                })
+            }, err => { return resolve(false) })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
+// Versão customizada para a Valenet
+function getBasicOnuListByPonValenet(options, slot, pon) {
+    return new Promise((resolve, reject) => {
+        var list = []
+        try {
+            var queue = new Queue(1, 1000)
+            getOnuIdListByPon(options, slot, pon).then(portList => {
+                cont = portList.length
+                portList.forEach(onu => {
                     queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface'], true).then(o => {
                         list.push({ ...onu, ...o })
                         if (queue.queue.length == 0)
                             return resolve(list)
                     }))
                 })
-            }, err => {return resolve(false)})
+            }, err => { return resolve(false) })
         } catch (err) {
             return reject(err)
         }
@@ -2662,6 +2688,7 @@ module.exports = {
     getAuthorizedOnus,
     getBasicOnuInfo,
     getBasicOnuListByPon,
+    getBasicOnuListByPonValenet,
     getLanPorts,
     getLanPortsEPON,
     getLanPortsGPON,

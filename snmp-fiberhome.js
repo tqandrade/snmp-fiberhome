@@ -40,6 +40,7 @@ module.exports = {
     getAuthorizedOnus: onu.getAuthorizedOnus,
     getBasicOnuInfo: onu.getBasicOnuInfo,
     getBasicOnuListByPon: onu.getBasicOnuListByPon,
+    getBasicOnuListByPonValenet: onu.getBasicOnuListByPonValenet,
     getLanPorts: onu.getLanPorts,
     getLanPortsEPON: onu.getLanPortsEPON,
     getLanPortsGPON: onu.getLanPortsGPON,

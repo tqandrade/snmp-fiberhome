@@ -775,6 +775,8 @@ Output:
 
 **Description:** Returns an array containing the basic ONU information pertaining to a particular PON port. This function has a better performance than the [getOnuListByPon()](#getonulistbypon) function.
 
+**NOTE:** If you want more ONU information, see the [getOnuListByPon()](#getonulistbypon) function.
+
 **Function signature:**
 
 ```js
@@ -799,20 +801,10 @@ Output:
         pon: 1,
         onuId: 1,
         macAddress: "FHTT0914d048",
-        distance: {
-            _onuIndex: 369623296,
-            value: "1.229",
-            unit: "km"
-        },
-        lastOffTime: {
-            _onuIndex: 369623296,
-            date: "2019-02-27",
-            time: "06:15:07"
-        },
         onuStatus: "online",         // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
         onuStatusValue: 1,           // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
         onuType: {
-           category:"SFU"
+            category:"SFU",
             code: 785,
             mode: "bridge",
             model: "AN5506-01-A1",
@@ -1202,7 +1194,7 @@ Output:
 
 **Description:** Returns a list of all connected ONUs on a given PON port. If any of the input parameters is invalid, the return is `false`.
 
-**NOTE:** Depending on the number of ONUs connected to the Pon port, the return may take time. Approximately 0.5 seconds for each ONU connected to the port.
+**NOTE:** Depending on the number of ONUs connected to the Pon port, the return may take time. Approximately 0.5 seconds for each ONU connected to the port. If you want little ONU information and a faster return, see the [getBasicOnuListByPon()](#getbasiconulistbypon) function.
 
 **Function signature:**
 
