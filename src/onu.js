@@ -923,7 +923,7 @@ function getOnuIdListByPon(options, slot, pon) {
                             })
                         })
                     })
-                } else return reject(false)
+                } else return resolve(false)
             })
         } catch (err) {
             return reject(err)
