@@ -21,6 +21,49 @@ function parsePonIndex(ponIndex) {
     return obj
 }
 
+function getBasicPonPortList(options) {
+    return new Promise((resolve, reject) => {
+        try {
+            var aPon = []
+            var varbinds = []
+            snmp_fh.subtree(options, OID.getPonPortList + '.4').then(varbinds4 => {
+                varbinds.push(...varbinds4)
+                snmp_fh.subtree(options, OID.getPonPortList + '.5').then(varbinds5 => {
+                    varbinds.push(...varbinds5)
+                    snmp_fh.subtree(options, OID.getPonPortList + '.12').then(varbinds12 => {
+                        varbinds.push(...varbinds12)
+                        varbinds.forEach((e, idx) => {
+                            if (e.oid.split('.')[13] == 4) {
+                                var objPortIndex = parsePonIndex(parseInt(e.oid.split('.')[14]))
+                                aPon.push({ portIndex: objPortIndex._ponIndex, slot: objPortIndex.slot, pon: objPortIndex.pon, portEnableStatusValue: e.value, portEnableStatus: e.value == 1 ? 'enable' : e.value == 0 ? 'disable' : 'undefined' })
+                            } else {
+                                var index = aPon.findIndex(e => e.portIndex == varbinds[idx].oid.split('.')[14])
+                                if (index > -1) {
+                                    if (e.oid.split('.')[13] == 4) {
+                                        aPon[index].portEnableStatusValue = e.value
+                                        aPon[index].portEnableStatus = e.value == 1 ? 'enable' : e.value == 0 ? 'disable' : 'undefined'
+                                    } else if (e.oid.split('.')[13] == 5) {
+                                        aPon[index].portOnlineStatusValue = e.value
+                                        aPon[index].portOnlineStatus = e.value == 1 ? 'online' : e.value == 0 ? 'offline' : 'undefined'
+                                    } else if (e.oid.split('.')[13] == 12)
+                                        aPon[index].authorizedOnus = e.value
+                                }
+                                if (idx == varbinds.length - 1)
+                                    return resolve(aPon)
+                            }
+                        })
+                    })
+                })
+            }, error => {
+                console.error('Error: Unable to connect to OLT')
+                return resolve(false)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
 function getPonPortList(options) {
     return new Promise((resolve, reject) => {
         try {
@@ -235,9 +278,10 @@ function getSubrackInformation(options) {
 
 
 module.exports = {
+    getBasicPonPortList,
     getPonPortList,
     getOltInformation,
     getOltModel,
     getPonPort,
-    getSubrackInformation,
+    getSubrackInformation
 }

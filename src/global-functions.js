@@ -3,8 +3,10 @@ const snmp_fh = require('./pack-fiberhome')
 
 const OID = oid_fh.OIDs
 
-function isValid(options, slot, pon, onuId) {
+function isValid(options, slot, pon, onuId, ignore) {
     return new Promise((resolve, reject) => {
+        if(ignore)
+            return resolve(true)
         try {
             if ((!slot && !pon && !onuId) || slot > 128 || pon > 128 || onuId > 128 || slot <= 0 || pon <= 0 || onuId <= 0) {
                 if (options.enableWarnings)

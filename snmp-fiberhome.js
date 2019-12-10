@@ -11,6 +11,7 @@ module.exports = {
     version: { SNMPv1: 0, SNMPv2c: 1, SNMPv3: 3 },
 
     // OLT
+    getBasicPonPortList: olt.getBasicPonPortList,
     getOltInformation: olt.getOltInformation,
     getOltModel: olt.getOltModel,
     getPonPort: olt.getPonPort,
@@ -38,6 +39,7 @@ module.exports = {
     enableLanPorts: onu.enableLanPorts,
     getAuthorizedOnus: onu.getAuthorizedOnus,
     getBasicOnuInfo: onu.getBasicOnuInfo,
+    getBasicOnuListByPon: onu.getBasicOnuListByPon,
     getLanPorts: onu.getLanPorts,
     getLanPortsEPON: onu.getLanPortsEPON,
     getLanPortsGPON: onu.getLanPortsGPON,
@@ -47,6 +49,7 @@ module.exports = {
     getOnuByIndex: onu.getOnuByIndex,
     getOnuDistance: onu.getOnuDistance,
     getOnuIdList: onu.getOnuIdList,
+    getOnuIdListByPon: onu.getOnuIdListByPon,
     getOnuIndexList: onu.getOnuIndexList,
     getOnuLastOffTime: onu.getOnuLastOffTime,
     getOnuListByPon: onu.getOnuListByPon,

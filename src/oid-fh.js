@@ -23,6 +23,8 @@ const OIDs = {
     delOnuByMacAddress: '1.3.6.1.4.1.5875.91.1.13.1.1.1.4.1',
     confirmDelOnuByMacAddress: '1.3.6.1.4.1.5875.91.1.13.1.1.1.4.2',
     getAuth: "1.3.6.1.4.1.5875.800.3.10.1.1",
+    getOnuIdListByPon: '1.3.6.1.4.1.5875.91.1.1.1.1.1.23.1',
+    confirmGetOnuIdListByPon: '1.3.6.1.4.1.5875.91.1.1.1.1.1.23.2',
     getOnuBandwidth: '1.3.6.1.4.1.5875.91.1.6.1.1.1.40.1',
     getOnuFirmwareVersion: "1.3.6.1.4.1.5875.800.3.10.1.1.14",
     getOnuHardwareVersion: "1.3.6.1.4.1.5875.800.3.10.1.1.13",

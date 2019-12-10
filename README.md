@@ -30,12 +30,14 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [enableLanPorts()](#enablelanports)
   - [getAuthorizedOnus()](#getauthorizedonus)
   - [getBasicOnuInfo()](#getbasiconuinfo)
+  - [getBasicOnuListByPon()](#getbasiconulistbypon)
   - [getLanPorts()](#getlanports)
   - [getMacAddressList()](#getmacaddresslist)
   - [getOnu()](#getonu)
   - [getOnuBandwidth()](#getonubandwidth)
   - [getOnuDistance()](#getonudistance)
   - [getOnuIdList()](#getonuidlist)
+  - [getOnuIdListByPon()](#getonuidlistbypon)
   - [getOnuIndexList()](#getonuindexlist)
   - [getOnuLastOffTime()](#getonulastofftime)
   - [getOnuListByPon()](#getonulistbypon)
@@ -769,6 +771,58 @@ Output:
 }
 ```
 
+## getBasicOnuListByPon()
+
+**Description:** Returns an array containing the basic ONU information pertaining to a particular PON port. This function has a better performance than the [getOnuListByPon()](#getonulistbypon) function.
+
+**Function signature:**
+
+```js
+getBasicOnuListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getBasicOnuListByPon(options, 11, 1).then(onuList => {
+    console.log(onuList)
+})
+```
+
+Output:
+
+```js
+[
+    {
+        _onuIndex: 369623296,
+        slot: 11,
+        pon: 1,
+        onuId: 1,
+        macAddress: "FHTT0914d048",
+        distance: {
+            _onuIndex: 369623296,
+            value: "1.229",
+            unit: "km"
+        },
+        lastOffTime: {
+            _onuIndex: 369623296,
+            date: "2019-02-27",
+            time: "06:15:07"
+        },
+        onuStatus: "online",         // possible values: 'fiber cut', 'online', 'power cut' or 'offline'
+        onuStatusValue: 1,           // 0 = 'fiber cut', 1 = 'online', 2 = 'power cut' or 3 = 'offline'
+        onuType: {
+           category:"SFU"
+            code: 785,
+            mode: "bridge",
+            model: "AN5506-01-A1",
+            type: "GPON"
+        }
+    },
+    // { ... }
+]
+```
+
 ## getLanPorts()
 
 **Description:** Returns the LAN ports settings of a given ONU. If any of the input parameters is invalid, the return is `false`.
@@ -1055,6 +1109,38 @@ Output:
     {
         _onuIndex: 369623552,
         onuId: 2
+    },
+    // { ... }
+]
+```
+
+## getOnuIdListByPon()
+
+**Description:** Returns an array containing the `onuIndex`, `slot`, `pon` and `onuId` parameters of each ONU belonging to a given PON port.
+
+**Function signature:**
+
+```js
+getOnuIdListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
+```
+
+Example:
+
+```js
+fh.getOnuIdListByPon(options, 11, 1).then(onuList => {
+    console.log(onuList)
+})
+```
+
+Output:
+
+```js
+[
+    {
+        _onuIndex:369623296,
+        slot: 11,
+        pon: 1,
+        onuId: 1
     },
     // { ... }
 ]
@@ -1941,20 +2027,8 @@ example(options)
 
 ## Bug fixes and features
 
-Version 1.x.x of this module contains:
+Version 1.2.x of this module contains:
 
-- Correction of parameters name 'multcast' to 'multicast'
-- [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports): Added more features and changed some parameter names. 
-- [addAllOnus()](#addallonus): changed some parameter names.
-- [addOnu()](#addonu): changed some parameter names.
-- [enableLanPorts()](#enablelanports): changed some parameter names.
-- (version: 1.1.4)
-  - [setLanPorts()](#setlanports) and [getLanPorts()](#getlanports) working with EPON and GPON.
-  - Implementation of the [getOnuType()](#getonutype)  function.
-- (version: 1.1.8)
-  - Implementation of the [delWan()](#delwan) and [getWan()](#getwan) function.
-- (version: 1.1.10)
-  - [getOnuListByPon()](#getonulistbypon): Fixed timeout issue.
 - (version: 1.2.0)
   - [getPonPortList()](#getponportlist): Fixed timeout issue.
 - (version: 1.2.1)
@@ -1978,6 +2052,9 @@ Version 1.x.x of this module contains:
   - [getPonPort()](#getponport) and [getPonPortList()](#getponportlist): Added output parameters: `slot` and `pon`.
 - (version: 1.2.8)
   - Implementation of the [rebootOnu()](#rebootonu) function.
+- (version: 1.2.9)
+  - Implementation of the [getBasicOnuListByPon()](#getbasiconulistbypon) and [getOnuIdListByPon()](#getonuidlistbypon) function.
+  - Performance Improvements.
 
 # Contributions
 
