@@ -599,7 +599,7 @@ function getOnuDistance(options, slot, pon, onuId, ignoreValid) {
                         bgmp[160] = onuId.toHex(2)  // ONU NUMBER / ONU Authorized No.  
                         bgmp = bgmp.join(' ')
 
-                        snmp_fh.sendSnmp(OID.getOnuDistance, bgmp, options, true).then(ret => {
+snmp_fh.sendSnmp(OID.getOnuDistance, bgmp, options, true).then(ret => {
                             var hex = '' // Adicionando espeço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
@@ -842,6 +842,8 @@ function getBasicOnuListByPon(options, slot, pon) {
         try {
             var queue = new Queue(1, 1000)
             getOnuIdListByPon(options, slot, pon).then(portList => {
+                if (portList === false)
+                    return resolve(false)
                 cont = portList.length
                 portList.forEach(onu => {
                     queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface', 'getOnuDistance', 'getOnuLastOffTime'], true).then(o => {
@@ -864,6 +866,8 @@ function getBasicOnuListByPonValenet(options, slot, pon) {
         try {
             var queue = new Queue(1, 1000)
             getOnuIdListByPon(options, slot, pon).then(portList => {
+                if (portList === false)
+                    return resolve(portList)
                 cont = portList.length
                 portList.forEach(onu => {
                     queue.add(f => getOnu(options, onu.slot, onu.pon, onu.onuId, ['getOnuUplinkInterface'], true).then(o => {
@@ -1011,6 +1015,68 @@ function getOnuIndexList(options) {
             }, error => {
                 console.error('Error: Unable to connect to OLT')
                 return resolve(false)
+            })
+        } catch (err) {
+            return reject(err)
+        }
+    })
+}
+
+function getOnuRxPowerListByPon(options, slot, pon, ignoreValid) {
+    return new Promise((resolve, reject) => {
+        try {
+            gFunc.isValid(options, slot, pon, ignoreValid).then(isValid => {
+                if (isValid && slot && pon) {
+                    var bgmp = snmp_fh.getOnuRxPowerListByPon
+                    bgmp = bgmp.split(' ')
+                    bgmp[157] = slot.toHex(2)
+                    bgmp[159] = pon.toHex(2)
+                    bgmp = bgmp.join(' ')
+                    snmp_fh.sendSnmp(OID.getOnuRxPowerListByPon, bgmp, options, true).then(ret => {
+                        snmp_fh.sendSnmp(OID.confirmGetOnuRxPowerListByPon, bgmp, options, true).then(confirm => {
+                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            for (var i = 0; i < ret.length; i += 2)
+                                hex += ret.substring(i, i + 2) + ' '
+                            hex = hex.trim()
+
+                            var value = hex.split('2b 06 01 04 01 ad 73 5b 01 15 03 01 01 04 01 ')[1]
+                            value = value.split(' ')
+                            if (value[1] == '81')
+                                value = value.splice(3)
+                            else
+                                value = value.splice(4)
+
+                            var numOnus = parseInt((value[230] + value[231]), 16)
+                            value = value.slice(232)
+                            var list = []
+                            for (var i = 0; i < numOnus; ++i) {
+                                var obj = {}
+
+                                obj.onuId = parseInt((value[0] + value[1]), 16)
+                                obj._onuIndex = convertToOnuIndex(slot, pon, obj.onuId)
+                                obj.slot = slot
+                                obj.pon = pon
+                                obj.rxPower = (gFunc.hexToDec(value[4] + value[5] + value[6] + value[7]) / 100).toFixed(2).toString()
+                                obj.unit = 'dBm'
+                                list.push(obj)
+                                value = value.slice(8)
+                            }
+
+                            getOnuIdListByPon(options, slot, pon).then(onuList => {
+                                onuList.map(e => {
+                                    var idx = list.findIndex(o => o.onuId == e.onuId)
+                                    if (idx > -1) {
+                                        e.rxPower = list[idx].rxPower
+                                    } else {
+                                        e.rxPower = "--"
+                                    }
+                                    e.unit = 'dBm'
+                                })
+                                return resolve(onuList)
+                            })
+                        })
+                    })
+                } else return resolve(false)
             })
         } catch (err) {
             return reject(err)
@@ -2703,6 +2769,7 @@ module.exports = {
     getOnuLastOffTime,
     getOnuListByPon,
     getOnuOpticalPower,
+    getOnuRxPowerListByPon,
     getOnuOpticalPowerList,
     getOnuType,
     getOnuUplinkInterface,

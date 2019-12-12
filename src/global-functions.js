@@ -5,7 +5,7 @@ const OID = oid_fh.OIDs
 
 function isValid(options, slot, pon, onuId, ignore) {
     return new Promise((resolve, reject) => {
-        if(ignore)
+        if (ignore)
             return resolve(true)
         try {
             if ((!slot && !pon && !onuId) || slot > 128 || pon > 128 || onuId > 128 || slot <= 0 || pon <= 0 || onuId <= 0) {
@@ -76,9 +76,16 @@ function diffTime(timeStart, timeEnd) {
     return hh.toString().padStart(2, 0) + ':' + mm.toString().padStart(2, 0) + ':' + ss.toString().padStart(2, 0) + '.' + msec.toString().padStart(3, 0)
 }
 
+function hexToDec(hexString) {   // Converter negativo/positivo hex para decimal
+    hexString = ((hexString.charAt(1) != 'X' && hexString.charAt(1) != 'x') ? hexString = '0X' + hexString : hexString);
+    hexString = (hexString.charAt(2) < 8 ? hexString = hexString - 0x00000000 : hexString = hexString - 0xFFFFFFFF - 1);
+    return parseInt(hexString, 10);
+}
+
 
 module.exports = {
     isValid,
     timeNow,
-    diffTime
+    diffTime,
+    hexToDec
 }

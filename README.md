@@ -42,7 +42,7 @@ This module communicates with Fiberhome OLTs using the SNMP protocol. The module
   - [getOnuLastOffTime()](#getonulastofftime)
   - [getOnuListByPon()](#getonulistbypon)
   - [getOnuOpticalPower()](#getonuopticalpower)
-  - [getOnuOpticalPowerList()](#getonuopticalpowerlist)
+  - [getOnuRxPowerListByPon()](#getonurxpowerlistbypon)
   - [getOnuType()](#getonutype)
   - [getOnuUplinkInterface()](#getonuuplinkinterface)
   - [getOnuWebAdmin()](#getonuwebadmin)
@@ -1322,25 +1322,23 @@ Output:
 }
 ```
 
-## getOnuOpticalPowerList()
+## getOnuRxPowerListByPon()
 
-**Description:** Returns a signal array of all authorized ONUs in OLT. If unable to connect to OLT, the return is `false`.
+**Description:** Returns an array containing the rx signal of all ONUs belonging to a given PON port. If the ONU is offline, the `rxPower` parameter will be equal to "--". If any of the input parameters is invalid, the return is `false`.
 
-**IMPORTANT:** Depending on the number of connected ONUs on the OLT, the return may take.
-
-**NOTE:** For EPON technology some (or all) values ​​may be returned as zero on `opticalPower`
+**NOTE:** For EPON technology some (or all) values ​​may be returned as zero.
 
 **Function signature:**
 
 ```js
-getOnuOpticalPowerList(options: <object>) => Promise <Array>
+getOnuRxPowerListByPon(options: <object>, slot: <number>, pon: <number>) => Promise <Array>
 ```
 
 Example:
 
 ```js
-fh.getOnuOpticalPowerList(options).then(onuList => {
-    console.log(onuList)
+fh.getOnuRxPowerListByPon(options, 3, 2).then(list => {
+    console.log(list)
 })
 ```
 
@@ -1349,33 +1347,20 @@ Output:
 ```js
 [
     {
-        _onuIndex: 369623296
-        slot: 11,
-        pon: 1,
+        _onuIndex: 101712128,
+        slot: 3,
+        pon: 2,
         onuId: 1,
-        opticalPower: {
-            _onuIndex: 369623296,
-            rxPower:{
-                value: '-19.25',
-                unit: 'dBm'
-            },
-            txPower: {
-                value: '3.03',
-                unit: 'dBm'
-            },
-            temperature: {
-                value: '45.10',
-                unit: '°C'
-            },
-            voltage: {
-                value: '3.21',
-                unit: 'V'
-            },
-            currTxBias: {
-                value: '9.70',
-                unit: 'mA'
-            }
-        }
+        rxPower: "-21.49",
+        unit: "dBm"
+    },
+    {
+        _onuIndex: 101712384,
+        slot: 3,
+        pon: 2,
+        onuId: 2,
+        rxPower: "--",
+        unit: "dBm"
     },
     // { ... }
 ]
@@ -2019,34 +2004,11 @@ example(options)
 
 ## Bug fixes and features
 
-Version 1.2.x of this module contains:
+Version 1.3.x will focus on the performance of functions.
 
-- (version: 1.2.0)
-  - [getPonPortList()](#getponportlist): Fixed timeout issue.
-- (version: 1.2.1)
-  - [getBasicOnuInfo()](#getbasiconuinfo): Changed parameter name `serial` to `macAddress`.
-  - [convertToOnuIndex()](#converttoonuindex): Documented.
-  - Inclusion of unit tests.
-- (version: 1.2.2)
-  - `authenticateOnu()`: Deprecated, but running for a while.
-  - [authorizeOnu()](#authorizeonu): Same functionality as `authenticateOnu()` function.
-  - Unit testing and integration testing.
-- (version: 1.2.4)
-  - Unit tests and integration tests.
-  - Documentation improvements.
-  - Identify errors.
-- (version: 1.2.5)
-  - Documentation improvements.
-  - Code improvements.
-- (version: 1.2.6)
-  - Fixed bug for COS parameter equal to zero.
-- (version: 1.2.7)
-  - [getPonPort()](#getponport) and [getPonPortList()](#getponportlist): Added output parameters: `slot` and `pon`.
-- (version: 1.2.8)
-  - Implementation of the [rebootOnu()](#rebootonu) function.
-- (version: 1.2.9)
-  - Implementation of the [getBasicOnuListByPon()](#getbasiconulistbypon) and [getOnuIdListByPon()](#getonuidlistbypon) function.
-  - Performance Improvements.
+- (version: 1.3.0)
+  - getOnuOpticalPowerList(): discontinued.
+  - Function implementation: [getOnuRxPowerListByPon()](#getonurxpowerlistbypon)
 
 # Contributions
 

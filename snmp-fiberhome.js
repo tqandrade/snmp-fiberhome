@@ -55,6 +55,7 @@ module.exports = {
     getOnuLastOffTime: onu.getOnuLastOffTime,
     getOnuListByPon: onu.getOnuListByPon,
     getOnuOpticalPower: onu.getOnuOpticalPower,
+    getOnuRxPowerListByPon: onu.getOnuRxPowerListByPon,
     getOnuOpticalPowerList: onu.getOnuOpticalPowerList,
     getOnuType: onu.getOnuType,
     getOnuUplinkInterface: onu.getOnuUplinkInterface,

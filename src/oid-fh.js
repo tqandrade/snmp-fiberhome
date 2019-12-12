@@ -48,6 +48,8 @@ const OIDs = {
     getRxPowerListByPon: "1.3.6.1.4.1.5875.91.1.21.3.1.1.4.1",
     getSerials: "1.3.6.1.4.1.5875.800.3.10.1.1.10",
     getOnuOpticalPower: "1.3.6.1.4.1.5875.91.1.22.3.1.1.6.1",
+    getOnuRxPowerListByPon: "1.3.6.1.4.1.5875.91.1.21.3.1.1.4.1",
+    confirmGetOnuRxPowerListByPon: "1.3.6.1.4.1.5875.91.1.21.3.1.1.4.2",
     getUnauth: "1.3.6.1.4.1.5875.800.3.11.1.1",
     confirmGetOnuDistance: "1.3.6.1.4.1.5875.91.1.6.3.1.1.7.2",
     confirmGetOnuLastOffTime: "1.3.6.1.4.1.5875.91.1.22.3.1.1.28.2",
