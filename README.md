@@ -2012,7 +2012,7 @@ Version 1.3.x will focus on the performance of functions.
 
 # Contributions
 
-This module is sponsored by telecommunications company Valenet:
+This module was sponsored by telecommunications company Valenet:
 ![](http://valenet.com.br/wp-content/themes/valenet/assets/images/logo.png)
 
 # Help us!
