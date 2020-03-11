@@ -366,7 +366,7 @@ function getOnuBandwidth(options, slot, pon, onuId) {
                     getBW[153] = getBW[163]
                     getBW = getBW.join(' ')
                     snmp_fh.sendSnmp(OID.getOnuBandwidth, getBW, options, true).then(ret => {
-                        var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                        var hex = '' // Adicionando espaço em branco a cada 2 bytes
                         for (var i = 0; i < ret.length; i += 2)
                             hex += ret.substring(i, i + 2) + ' '
                         hex = hex.trim()
@@ -600,7 +600,7 @@ function getOnuDistance(options, slot, pon, onuId, ignoreValid) {
                         bgmp = bgmp.join(' ')
 
 snmp_fh.sendSnmp(OID.getOnuDistance, bgmp, options, true).then(ret => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
@@ -645,7 +645,7 @@ function getOnuLastOffTime(options, slot, pon, onuId, ignoreValid) {
                         bgmp[165] = onuId.toHex(2)
                         bgmp = bgmp.join(' ')
                         snmp_fh.sendSnmp(OID.getOnuLastOffTime, bgmp, options, true).then(ret => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
@@ -698,7 +698,7 @@ function getOnuOpticalPower(options, slot, pon, onuId, ignore, ignoreValid) {
                         bgmp[161] = onuId.toHex(2)  // ONU NUMBER / ONU Authorized No.  
                         bgmp = bgmp.join(' ')
                         snmp_fh.sendSnmp(OID.getOnuOpticalPower, bgmp, options, true).then(ret => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
@@ -901,7 +901,7 @@ function getOnuIdListByPon(options, slot, pon) {
                             snmp_fh.sendSnmp(OID.getOnuIdListByPon, bgmp, options, true).then(portList => {
                                 snmp_fh.sendSnmp(OID.confirmGetOnuIdListByPon, bgmp, options, true).then(confirm2 => {
                                     var respPortList = []
-                                    var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                                    var hex = '' // Adicionando espaço em branco a cada 2 bytes
                                     for (var i = 0; i < portList.length; i += 2)
                                         hex += portList.substring(i, i + 2) + ' '
                                     hex = hex.trim()
@@ -946,7 +946,7 @@ function getOnuListBySlot(options, slot) {
                 oidValue = oidValue.join(' ')
 
                 snmp_fh.sendSnmp(OID.getOnuListBySlot, oidValue, options, true).then(ret => {
-                    var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                    var hex = '' // Adicionando espaço em branco a cada 2 bytes
                     for (var i = 0; i < ret.length; i += 2)
                         hex += ret.substring(i, i + 2) + ' '
                     hex = hex.trim()
@@ -1034,7 +1034,7 @@ function getOnuRxPowerListByPon(options, slot, pon, ignoreValid) {
                     bgmp = bgmp.join(' ')
                     snmp_fh.sendSnmp(OID.getOnuRxPowerListByPon, bgmp, options, true).then(ret => {
                         snmp_fh.sendSnmp(OID.confirmGetOnuRxPowerListByPon, bgmp, options, true).then(confirm => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
@@ -1185,7 +1185,7 @@ function getOnuWebAdmin(options, slot, pon, onuId) {
                 oidValue[165] = onuId.toHex(2)
                 oidValue = oidValue.join(' ')
                 snmp_fh.sendSnmp(OID.getOnuWebAdmin, oidValue, options, true).then(ret => {
-                    var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                    var hex = '' // Adicionando espaço em branco a cada 2 bytes
                     for (var i = 0; i < ret.length; i += 2)
                         hex += ret.substring(i, i + 2) + ' '
                     hex = hex.trim()
@@ -1242,7 +1242,7 @@ function getRxPowerListByPon(options, slot, pon) {
                     bgmp[159] = pon.toHex(2)
                     bgmp = bgmp.join(' ')
                     snmp_fh.sendSnmp(OID.getRxPowerListByPon, bgmp, options, true).then(ret => {
-                        var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                        var hex = '' // Adicionando espaço em branco a cada 2 bytes
                         for (var i = 0; i < ret.length; i += 2)
                             hex += ret.substring(i, i + 2) + ' '
                         hex = hex.trim()
@@ -1330,7 +1330,7 @@ function getWan(options, slot, pon, onuId) {
                     getWan = getWan.join(' ')
                     snmp_fh.sendSnmp(OID.setWan, getWan, options, true).then(ret => {
                         snmp_fh.sendSnmp(OID.confirmSetWan, getWan, options, true).then(confirm => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
@@ -1502,7 +1502,7 @@ function rebootOnu(options, slot, pon, onuId) {
                     bgmp[161] = onuId.toHex(2)
                     bgmp = bgmp.join(' ')
                     snmp_fh.sendSnmp(OID.rebootOnu, bgmp, options, true).then(ret => {
-                        var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                        var hex = '' // Adicionando espaço em branco a cada 2 bytes
                         for (var i = 0; i < ret.length; i += 2)
                             hex += ret.substring(i, i + 2) + ' '
                         hex = hex.trim()
@@ -2226,7 +2226,7 @@ function getLanPortsEPON(options, slot, pon, onuId) {
 
                     snmp_fh.sendSnmp(OID.setLanPortsEPON, getLanPorts, options, true).then(ret => {
                         snmp_fh.sendSnmp(OID.confirmSetLanPortsEPON, getLanPorts, options, true).then(confirm => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
@@ -2419,7 +2419,7 @@ function getLanPortsGPON(options, slot, pon, onuId) {
 
                     snmp_fh.sendSnmp(OID.setLanPorts, getLanPorts, options, true).then(ret => {
                         snmp_fh.sendSnmp(OID.confirmSetLanPorts, getLanPorts, options, true).then(confirm => {
-                            var hex = '' // Adicionando espeço em branco a cada 2 bytes
+                            var hex = '' // Adicionando espaço em branco a cada 2 bytes
                             for (var i = 0; i < ret.length; i += 2)
                                 hex += ret.substring(i, i + 2) + ' '
                             hex = hex.trim()
