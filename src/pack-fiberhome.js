@@ -126,7 +126,7 @@ function createPackage(objSNMP, requestId = 6189) {
         raw += `81 ${objSNMP.size.toHex(2)} `
 
     raw += `${dataType.Integer} 01 ${version.SNMPv2c.toHex(2)} `    // VERSION: <tipo> | <tamanho> | <versao>
-    raw += `${dataType.OctetString} ${("0" + (objSNMP.community.strToHex().replaceAll(' ', '').split('').length / 2).toString()).slice(-2)} ${objSNMP.community.strToHex()}`       // COMMUNITY: <tipo> | <tamanho> | <community>
+    raw += `${dataType.OctetString} ${(objSNMP.community.strToHex().replaceAll(' ', '').split('').length / 2).toHex(2)} ${objSNMP.community.strToHex()}`       // COMMUNITY: <tipo> | <tamanho> | <community>
 
     // PDU:  
     raw += `${dataType.SetRequestPDU} `
