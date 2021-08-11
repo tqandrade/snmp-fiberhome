@@ -2000,7 +2000,7 @@ example(options)
 |--------------|------|--------|
 | AN5506-01-A1 | GPON | Tested |
 | AN5506-04-F1 | GPON | Tested |
-|      -     | EPON | Testing |
+|      -     | EPON | Tested |
 
 ## Bug fixes and features
 
@@ -2019,12 +2019,9 @@ This module was sponsored by telecommunications company Valenet:
 
 Help us improve this module. If you have any information that the module does not provide or provides incompletely or incorrectly, please use our Github repository or email.
 
-**Pt-Br:**
-Ajude-nos a melhorar este módulo. Se você tiver alguma informação que o módulo não forneça ou forneça de maneira incompleta ou incorreta, use nosso repositório do [Github](https://github.com/) ou email. Pode enviar em português Brasil também! :)
+**pt-BR:**
+Ajude-nos a melhorar este módulo. Se você tiver alguma informação que o módulo não forneça ou forneça de maneira incompleta ou incorreta, use nosso repositório do Github ou email.
 
-Repository: https://github.com/davibaltar/snmp-fiberhome
-
-E-mail: davibaltar.npm@gmail.com
 
 # License
 
